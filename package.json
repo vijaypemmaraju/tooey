@@ -28,7 +28,9 @@
     "lint": "eslint src tests",
     "lint:fix": "eslint src tests --fix",
     "typecheck": "tsc --noEmit",
-    "count-tokens": "node count-tokens.js"
+    "count-tokens": "node count-tokens.js",
+    "benchmark": "node benchmarks/run-benchmark.js",
+    "benchmark:test": "vitest run benchmarks/benchmark.test.ts"
   },
   "keywords": [
     "ui",
