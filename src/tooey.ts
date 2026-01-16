@@ -2,97 +2,28 @@
  * tooey - token-efficient ui library for llms
  *
  * component types:
- *   layout:
- *     V = vstack (vertical flex)
- *     H = hstack (horizontal flex)
- *     D = div (generic container)
- *     G = grid
- *
- *   text & buttons:
- *     T = text (span)
- *     B = button
- *
- *   inputs:
- *     I = input
- *     Ta = textarea
- *     S = select
- *     C = checkbox
- *     R = radio
- *
- *   tables:
- *     Tb = table
- *     Th = thead
- *     Tb = tbody (use Tbd to distinguish)
- *     Tr = tr (table row)
- *     Td = td (table cell)
- *     Tc = th (table header cell)
- *
- *   lists:
- *     Ul = ul (unordered list)
- *     Ol = ol (ordered list)
- *     Li = li (list item)
- *
- *   media & links:
- *     M = image
- *     L = link
- *     Sv = svg container
+ *   layout: V (vstack), H (hstack), D (div), G (grid)
+ *   text & buttons: T (text/span), B (button)
+ *   inputs: I (input), Ta (textarea), S (select), C (checkbox), R (radio)
+ *   tables: Tb (table), Th (thead), Tbd (tbody), Tr (tr), Td (td), Tc (th)
+ *   lists: Ul (ul), Ol (ol), Li (li)
+ *   media & links: M (image), L (link), Sv (svg)
  *
  * props (short keys):
- *   spacing/sizing:
- *     g = gap, p = padding, m = margin
- *     w = width, h = height
- *     mw = max-width, mh = max-height
+ *   spacing: g (gap), p (padding), m (margin), w (width), h (height), mw, mh
+ *   colors: bg (background), fg (color), o (opacity)
+ *   borders: r (border-radius), bw (border-width), bc (border-color), bs (border-style)
+ *   positioning: pos (position), z (z-index), t (top), l (left), rt (right)
+ *   typography: fs (font-size), fw (font-weight), ff (font-family), ta, td, lh, ls
+ *   layout: ai (align-items), jc (justify-content), flw (flex-wrap), cols, rows
+ *   misc: cur (cursor), ov (overflow), pe (pointer-events), us (user-select), sh, tr
+ *   element-specific: v (value), ph (placeholder), type, href, src, alt, dis, ch, ro, opts
  *
- *   colors:
- *     bg = background, fg = color, o = opacity
+ * events: c (click), x (input/change), f (focus), bl (blur), k (keydown), ku, kp, e, lv, sub
  *
- *   borders:
- *     r = border-radius
- *     bw = border-width, bc = border-color, bs = border-style
+ * state operations: + (increment), - (decrement), ! (set), ~ (toggle), < (append), > (prepend), X (remove), . (set prop)
  *
- *   positioning:
- *     pos = position (rel/abs/fix/sticky)
- *     z = z-index
- *     t = top, l = left, b = bottom, rt = right
- *
- *   typography:
- *     fs = font-size, fw = font-weight, ff = font-family
- *     ta = text-align, td = text-decoration
- *     lh = line-height, ls = letter-spacing
- *
- *   layout:
- *     d = display, f = flex, ai = align-items, jc = justify-content
- *     fw = flex-wrap (use flw to avoid conflict with font-weight)
- *     cols = grid columns, rows = grid rows
- *
- *   misc:
- *     cur = cursor, ov = overflow, op = opacity
- *     pe = pointer-events, us = user-select
- *     sh = box-shadow, tr = transform
- *
- *   element-specific:
- *     v = value, ph = placeholder, t = type
- *     href, src, alt
- *     d = disabled, ch = checked, ro = readonly
- *     opts = select options
- *     cls = class, id = id
- *
- * events:
- *   c = click, x = change/input
- *   f = focus, bl = blur
- *   k = keydown, ku = keyup, kp = keypress
- *   e = mouseenter, lv = mouseleave
- *   sub = submit
- *
- * state operations:
- *   + = increment, - = decrement
- *   ! = set value, ~ = toggle boolean
- *   < = append to array, > = prepend to array
- *   X = remove from array, . = set property on object
- *
- * control flow:
- *   {if: stateRef, then: [...], else: [...]}
- *   {map: stateRef, as: (item, i) => [...]}
+ * control flow: {if: state, then: [...], else: [...]} | {map: state, as: [...]}
  */
 
 // ============ types ============
@@ -111,102 +42,91 @@ type EventHandler = [string, Op, unknown?] | (() => void);
 
 interface Props {
   // spacing/sizing
-  g?: number | string;    // gap
-  p?: number | string;    // padding
-  m?: number | string;    // margin
-  w?: number | string;    // width
-  h?: number | string;    // height
-  mw?: number | string;   // max-width
-  mh?: number | string;   // max-height
-
+  g?: number | string;
+  p?: number | string;
+  m?: number | string;
+  w?: number | string;
+  h?: number | string;
+  mw?: number | string;
+  mh?: number | string;
   // colors
-  bg?: string;            // background
-  fg?: string;            // color
-  o?: number;             // opacity
-
+  bg?: string;
+  fg?: string;
+  o?: number;
   // borders
-  r?: number | string;    // border-radius
-  bw?: number | string;   // border-width
-  bc?: string;            // border-color
-  bs?: string;            // border-style
-
+  r?: number | string;
+  bw?: number | string;
+  bc?: string;
+  bs?: string;
   // positioning
-  pos?: 'rel' | 'abs' | 'fix' | 'sticky' | string;  // position
-  z?: number;             // z-index
-  t?: number | string;    // top
-  l?: number | string;    // left
-  b?: number | string;    // bottom (note: conflicts with blur event, use context)
-  rt?: number | string;   // right
-
+  pos?: 'rel' | 'abs' | 'fix' | 'sticky' | string;
+  z?: number;
+  t?: number | string;
+  l?: number | string;
+  b?: number | string;
+  rt?: number | string;
   // typography
-  fs?: number | string;   // font-size
-  fw?: number | string;   // font-weight
-  ff?: string;            // font-family
-  ta?: string;            // text-align
-  td?: string;            // text-decoration
-  lh?: number | string;   // line-height
-  ls?: number | string;   // letter-spacing
-
+  fs?: number | string;
+  fw?: number | string;
+  ff?: string;
+  ta?: string;
+  td?: string;
+  lh?: number | string;
+  ls?: number | string;
   // layout
-  ai?: string;            // align-items
-  jc?: string;            // justify-content
-  flw?: string;           // flex-wrap
-  cols?: number | string; // grid columns
-  rows?: number | string; // grid rows
-
+  ai?: string;
+  jc?: string;
+  flw?: string;
+  cols?: number | string;
+  rows?: number | string;
   // misc
-  cur?: string;           // cursor
-  ov?: string;            // overflow
-  pe?: string;            // pointer-events
-  us?: string;            // user-select
-  sh?: string;            // box-shadow
-  tr?: string;            // transform
-
+  cur?: string;
+  ov?: string;
+  pe?: string;
+  us?: string;
+  sh?: string;
+  tr?: string;
   // element-specific
-  v?: unknown;            // value
-  ph?: string;            // placeholder
-  type?: string;          // input type
-  href?: string;          // link href
-  src?: string;           // image src
-  alt?: string;           // image alt
-  dis?: boolean;          // disabled
-  ch?: unknown;           // checked
-  ro?: boolean;           // readonly
-  opts?: Array<{v: string, l: string}>; // select options
-  cls?: string;           // class
-  id?: string;            // id
-  rw?: number;            // textarea rows
-  sp?: number;            // colspan
-  rsp?: number;           // rowspan
-
+  v?: unknown;
+  ph?: string;
+  type?: string;
+  href?: string;
+  src?: string;
+  alt?: string;
+  dis?: boolean;
+  ch?: unknown;
+  ro?: boolean;
+  opts?: Array<{v: string, l: string}>;
+  cls?: string;
+  id?: string;
+  rw?: number;
+  sp?: number;
+  rsp?: number;
   // events
-  c?: EventHandler;       // click
-  x?: EventHandler;       // change/input
-  f?: EventHandler;       // focus
-  bl?: EventHandler;      // blur
-  k?: EventHandler;       // keydown
-  ku?: EventHandler;      // keyup
-  kp?: EventHandler;      // keypress
-  e?: EventHandler;       // mouseenter
-  lv?: EventHandler;      // mouseleave
-  sub?: EventHandler;     // submit
-
+  c?: EventHandler;
+  x?: EventHandler;
+  f?: EventHandler;
+  bl?: EventHandler;
+  k?: EventHandler;
+  ku?: EventHandler;
+  kp?: EventHandler;
+  e?: EventHandler;
+  lv?: EventHandler;
+  sub?: EventHandler;
   // custom styles
   s?: Record<string, unknown>;
 }
 
 type ComponentType =
-  | 'V' | 'H' | 'D' | 'G'           // layout
-  | 'T' | 'B'                       // text & button
-  | 'I' | 'Ta' | 'S' | 'C' | 'R'    // inputs
-  | 'Tb' | 'Th' | 'Tbd' | 'Tr' | 'Td' | 'Tc'  // table
-  | 'Ul' | 'Ol' | 'Li'             // lists
-  | 'M' | 'L' | 'Sv';              // media & links
+  | 'V' | 'H' | 'D' | 'G'
+  | 'T' | 'B'
+  | 'I' | 'Ta' | 'S' | 'C' | 'R'
+  | 'Tb' | 'Th' | 'Tbd' | 'Tr' | 'Td' | 'Tc'
+  | 'Ul' | 'Ol' | 'Li'
+  | 'M' | 'L' | 'Sv';
 
-// state reference
 type StateRef = { $: string };
 
-// control flow
 interface IfNode {
   if: StateRef | string;
   then: NodeSpec | NodeSpec[];
@@ -223,13 +143,22 @@ type Content = string | number | StateRef | NodeSpec[] | IfNode | MapNode;
 type NodeSpec = [ComponentType, Content?, Props?] | IfNode | MapNode;
 
 interface TooeySpec {
-  s?: Record<string, StateValue>;  // initial state
-  r: NodeSpec;                      // root node
+  s?: Record<string, StateValue>;
+  r: NodeSpec;
+}
+
+// ============ render context for cleanup ============
+
+interface RenderContext {
+  cleanups: Array<() => void>;
+  state: StateStore;
 }
 
 // ============ signals ============
 
 let currentEffect: (() => void) | null = null;
+let batchDepth = 0;
+let pendingEffects = new Set<() => void>();
 
 function signal<T>(initial: T): Signal<T> {
   let value = initial;
@@ -246,7 +175,11 @@ function signal<T>(initial: T): Signal<T> {
     const newValue = typeof v === 'function' ? (v as (prev: T) => T)(value) : v;
     if (newValue !== value) {
       value = newValue;
-      subscribers.forEach(fn => fn());
+      if (batchDepth > 0) {
+        subscribers.forEach(fn => pendingEffects.add(fn));
+      } else {
+        subscribers.forEach(fn => fn());
+      }
     }
   };
 
@@ -258,8 +191,25 @@ function signal<T>(initial: T): Signal<T> {
   return sig;
 }
 
-function effect(fn: () => void): () => void {
+function batch(fn: () => void): void {
+  batchDepth++;
+  try {
+    fn();
+  } finally {
+    batchDepth--;
+    if (batchDepth === 0) {
+      const effects = pendingEffects;
+      pendingEffects = new Set();
+      effects.forEach(fn => fn());
+    }
+  }
+}
+
+function effect(fn: () => void, ctx?: RenderContext): () => void {
+  let isActive = true;
+
   const execute = () => {
+    if (!isActive) return;
     currentEffect = execute;
     try {
       fn();
@@ -267,69 +217,88 @@ function effect(fn: () => void): () => void {
       currentEffect = null;
     }
   };
+
   execute();
-  return () => { currentEffect = null; };
+
+  const cleanup = () => {
+    isActive = false;
+    currentEffect = null;
+  };
+
+  if (ctx) {
+    ctx.cleanups.push(cleanup);
+  }
+
+  return cleanup;
 }
 
 // ============ state operations ============
 
 function applyOp(state: Signal<StateValue>, op: Op, val?: unknown): void {
-  switch (op) {
-    case '+':
-      state.set((v) => (v as number) + (typeof val === 'number' ? val : 1));
-      break;
-    case '-':
-      state.set((v) => (v as number) - (typeof val === 'number' ? val : 1));
-      break;
-    case '!':
-      state.set(val);
-      break;
-    case '~':
-      state.set((v) => !v);
-      break;
-    case '<':
-      state.set((v) => [...(v as unknown[]), val]);
-      break;
-    case '>':
-      state.set((v) => [val, ...(v as unknown[])]);
-      break;
-    case 'X':
-      state.set((v) => {
-        const arr = v as unknown[];
-        if (typeof val === 'number') {
-          return arr.filter((_, i) => i !== val);
-        } else if (typeof val === 'function') {
-          return arr.filter((item, i) => !(val as (item: unknown, i: number) => boolean)(item, i));
+  try {
+    switch (op) {
+      case '+':
+        state.set((v) => (v as number) + (typeof val === 'number' ? val : 1));
+        break;
+      case '-':
+        state.set((v) => (v as number) - (typeof val === 'number' ? val : 1));
+        break;
+      case '!':
+        state.set(val);
+        break;
+      case '~':
+        state.set((v) => !v);
+        break;
+      case '<':
+        state.set((v) => [...(v as unknown[]), val]);
+        break;
+      case '>':
+        state.set((v) => [val, ...(v as unknown[])]);
+        break;
+      case 'X':
+        state.set((v) => {
+          const arr = v as unknown[];
+          if (typeof val === 'number') {
+            return arr.filter((_, i) => i !== val);
+          } else if (typeof val === 'function') {
+            return arr.filter((item, i) => !(val as (item: unknown, i: number) => boolean)(item, i));
+          }
+          return arr.filter(item => item !== val);
+        });
+        break;
+      case '.':
+        if (Array.isArray(val) && val.length === 2) {
+          state.set((v) => ({ ...(v as Record<string, unknown>), [val[0]]: val[1] }));
         }
-        return arr.filter(item => item !== val);
-      });
-      break;
-    case '.':
-      if (Array.isArray(val) && val.length === 2) {
-        state.set((v) => ({ ...(v as Record<string, unknown>), [val[0]]: val[1] }));
-      }
-      break;
+        break;
+    }
+  } catch (err) {
+    console.warn('[tooey] state operation error:', op, err);
   }
 }
 
 // ============ helpers ============
 
 function isStateRef(v: unknown): v is StateRef {
-  return typeof v === 'object' && v !== null && '$' in v;
+  return typeof v === 'object' && v !== null && !Array.isArray(v) && '$' in v;
 }
 
 function isIfNode(v: unknown): v is IfNode {
-  return typeof v === 'object' && v !== null && 'if' in v;
+  return typeof v === 'object' && v !== null && !Array.isArray(v) && 'if' in v;
 }
 
 function isMapNode(v: unknown): v is MapNode {
-  return typeof v === 'object' && v !== null && 'map' in v;
+  return typeof v === 'object' && v !== null && !Array.isArray(v) && 'map' in v;
 }
 
 function resolveValue(content: unknown, state: StateStore): unknown {
   if (isStateRef(content)) {
     const sig = state[content.$];
-    return sig ? sig() : undefined;
+    if (!sig) {
+      console.warn(`[tooey] unknown state key: "${content.$}"`);
+      return undefined;
+    }
+    return sig();
   }
   return content;
 }
@@ -340,6 +309,13 @@ function resolveCssValue(val: number | string | undefined): string | undefined {
   return val;
 }
 
+// XSS protection - escape HTML entities
+function escapeHtml(str: string): string {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 function createHandler(handler: EventHandler, state: StateStore, event?: Event): () => void {
   if (typeof handler === 'function') {
     return handler;
@@ -347,15 +323,16 @@ function createHandler(handler: EventHandler, state: StateStore, event?: Event):
   const [stateKey, op, val] = handler;
   return () => {
     const sig = state[stateKey];
-    if (sig) {
-      // for input events, use the event target value if val is not provided
-      let actualVal = val;
-      if (op === '!' && val === undefined && event) {
-        const target = event.target as HTMLInputElement;
-        actualVal = target.type === 'checkbox' ? target.checked : target.value;
-      }
-      applyOp(sig, op, actualVal);
+    if (!sig) {
+      console.warn(`[tooey] click handler: unknown state key "${stateKey}"`);
+      return;
     }
+    let actualVal = val;
+    if (op === '!' && val === undefined && event) {
+      const target = event.target as HTMLInputElement;
+      actualVal = target.type === 'checkbox' ? target.checked : target.value;
+    }
+    applyOp(sig, op, actualVal);
   };
 }
 
@@ -364,7 +341,6 @@ function createHandler(handler: EventHandler, state: StateStore, event?: Event):
 function applyStyles(el: HTMLElement, props: Props): void {
   const style = el.style;
 
-  // spacing/sizing
   if (props.g !== undefined) style.gap = resolveCssValue(props.g)!;
   if (props.p !== undefined) style.padding = resolveCssValue(props.p)!;
   if (props.m !== undefined) style.margin = resolveCssValue(props.m)!;
@@ -373,18 +349,15 @@ function applyStyles(el: HTMLElement, props: Props): void {
   if (props.mw !== undefined) style.maxWidth = resolveCssValue(props.mw)!;
   if (props.mh !== undefined) style.maxHeight = resolveCssValue(props.mh)!;
 
-  // colors
   if (props.bg !== undefined) style.background = props.bg;
   if (props.fg !== undefined) style.color = props.fg;
   if (props.o !== undefined) style.opacity = String(props.o);
 
-  // borders
   if (props.r !== undefined) style.borderRadius = resolveCssValue(props.r)!;
   if (props.bw !== undefined) style.borderWidth = resolveCssValue(props.bw)!;
   if (props.bc !== undefined) style.borderColor = props.bc;
   if (props.bs !== undefined) style.borderStyle = props.bs;
 
-  // positioning
   if (props.pos !== undefined) {
     const posMap: Record<string, string> = {
       rel: 'relative', abs: 'absolute', fix: 'fixed', sticky: 'sticky'
@@ -394,13 +367,11 @@ function applyStyles(el: HTMLElement, props: Props): void {
   if (props.z !== undefined) style.zIndex = String(props.z);
   if (props.t !== undefined) style.top = resolveCssValue(props.t)!;
   if (props.l !== undefined) style.left = resolveCssValue(props.l)!;
-  // props.b is bottom in positioning context (handled separately from blur event)
   if (typeof props.b === 'number' || (typeof props.b === 'string' && !Array.isArray(props.b))) {
     style.bottom = resolveCssValue(props.b as number | string)!;
   }
   if (props.rt !== undefined) style.right = resolveCssValue(props.rt)!;
 
-  // typography
   if (props.fs !== undefined) style.fontSize = resolveCssValue(props.fs)!;
   if (props.fw !== undefined) style.fontWeight = String(props.fw);
   if (props.ff !== undefined) style.fontFamily = props.ff;
@@ -409,12 +380,10 @@ function applyStyles(el: HTMLElement, props: Props): void {
   if (props.lh !== undefined) style.lineHeight = typeof props.lh === 'number' ? String(props.lh) : props.lh;
   if (props.ls !== undefined) style.letterSpacing = resolveCssValue(props.ls)!;
 
-  // layout
   if (props.ai !== undefined) style.alignItems = props.ai;
   if (props.jc !== undefined) style.justifyContent = props.jc;
   if (props.flw !== undefined) style.flexWrap = props.flw;
 
-  // misc
   if (props.cur !== undefined) style.cursor = props.cur;
   if (props.ov !== undefined) style.overflow = props.ov;
   if (props.pe !== undefined) style.pointerEvents = props.pe;
@@ -422,7 +391,6 @@ function applyStyles(el: HTMLElement, props: Props): void {
   if (props.sh !== undefined) style.boxShadow = props.sh;
   if (props.tr !== undefined) style.transform = props.tr;
 
-  // custom style object
   if (props.s) {
     Object.entries(props.s).forEach(([key, val]) => {
       (style as unknown as Record<string, string>)[key] = String(val);
@@ -432,53 +400,99 @@ function applyStyles(el: HTMLElement, props: Props): void {
 
 // ============ renderer ============
 
-function createElement(spec: NodeSpec, state: StateStore, itemContext?: { item: unknown, index: number }): HTMLElement | Text | null {
-  // handle if node
+function createElement(
+  spec: NodeSpec,
+  ctx: RenderContext,
+  itemContext?: { item: unknown, index: number }
+): HTMLElement | null {
+  const { state } = ctx;
+
+  // handle reactive if node
   if (isIfNode(spec)) {
-    const condition = typeof spec.if === 'string'
-      ? state[spec.if]?.()
-      : resolveValue(spec.if, state);
+    const placeholder = document.createElement('div');
+    placeholder.style.display = 'contents';
 
-    const branch = condition ? spec.then : spec.else;
-    if (!branch) return null;
+    let currentEl: HTMLElement | null = null;
+    let childCtx: RenderContext | null = null;
 
-    if (Array.isArray(branch) && branch.length > 0 && Array.isArray(branch[0])) {
-      // multiple nodes - wrap in fragment-like div
-      const wrapper = document.createElement('div');
-      wrapper.style.display = 'contents';
-      (branch as NodeSpec[]).forEach(child => {
-        const el = createElement(child, state, itemContext);
-        if (el) wrapper.appendChild(el);
-      });
-      return wrapper;
-    }
-    return createElement(branch as NodeSpec, state, itemContext);
+    const updateIf = () => {
+      // cleanup previous render
+      if (childCtx) {
+        childCtx.cleanups.forEach(fn => fn());
+        childCtx.cleanups = [];
+      }
+      if (currentEl) {
+        placeholder.innerHTML = '';
+        currentEl = null;
+      }
+
+      const condition = typeof spec.if === 'string'
+        ? state[spec.if]?.()
+        : resolveValue(spec.if, state);
+
+      const branch = condition ? spec.then : spec.else;
+      if (!branch) return;
+
+      childCtx = { cleanups: [], state };
+
+      if (Array.isArray(branch) && branch.length > 0 && Array.isArray(branch[0])) {
+        (branch as NodeSpec[]).forEach(child => {
+          const el = createElement(child, childCtx!, itemContext);
+          if (el) placeholder.appendChild(el);
+        });
+      } else {
+        currentEl = createElement(branch as NodeSpec, childCtx, itemContext);
+        if (currentEl) placeholder.appendChild(currentEl);
+      }
+    };
+
+    effect(updateIf, ctx);
+    return placeholder;
   }
 
-  // handle map node
+  // handle reactive map node
   if (isMapNode(spec)) {
-    const arr = (typeof spec.map === 'string'
-      ? state[spec.map]?.()
-      : resolveValue(spec.map, state)) as unknown[];
+    const placeholder = document.createElement('div');
+    placeholder.style.display = 'contents';
 
-    if (!Array.isArray(arr)) return null;
+    let childCtx: RenderContext | null = null;
 
-    const wrapper = document.createElement('div');
-    wrapper.style.display = 'contents';
+    const updateMap = () => {
+      // cleanup previous render
+      if (childCtx) {
+        childCtx.cleanups.forEach(fn => fn());
+        childCtx.cleanups = [];
+      }
+      placeholder.innerHTML = '';
 
-    arr.forEach((item, index) => {
-      const el = createElement(spec.as, state, { item, index });
-      if (el) wrapper.appendChild(el);
-    });
+      const arr = (typeof spec.map === 'string'
+        ? state[spec.map]?.()
+        : resolveValue(spec.map, state)) as unknown[];
 
-    return wrapper;
+      if (!Array.isArray(arr)) return;
+
+      childCtx = { cleanups: [], state };
+
+      arr.forEach((item, index) => {
+        const el = createElement(spec.as, childCtx!, { item, index });
+        if (el) placeholder.appendChild(el);
+      });
+    };
+
+    effect(updateMap, ctx);
+    return placeholder;
+  }
+
+  // validate spec structure
+  if (!Array.isArray(spec) || spec.length === 0) {
+    console.warn('[tooey] invalid node spec:', spec);
+    return null;
   }
 
   const [type, content, props = {}] = spec as [ComponentType, Content?, Props?];
   let el: HTMLElement;
 
   switch (type) {
-    // layout
     case 'V':
       el = document.createElement('div');
       el.style.display = 'flex';
@@ -494,28 +508,22 @@ function createElement(spec: NodeSpec, state: StateStore, itemContext?: { item: 
       el.style.display = 'grid';
       if (props.cols) {
         el.style.gridTemplateColumns = typeof props.cols === 'number'
-          ? `repeat(${props.cols}, 1fr)`
-          : props.cols;
+          ? `repeat(${props.cols}, 1fr)` : props.cols;
       }
       if (props.rows) {
         el.style.gridTemplateRows = typeof props.rows === 'number'
-          ? `repeat(${props.rows}, 1fr)`
-          : props.rows;
+          ? `repeat(${props.rows}, 1fr)` : props.rows;
       }
       break;
     case 'D':
       el = document.createElement('div');
       break;
-
-    // text & button
     case 'T':
       el = document.createElement('span');
       break;
     case 'B':
       el = document.createElement('button');
       break;
-
-    // inputs
     case 'I':
       el = document.createElement('input');
       (el as HTMLInputElement).type = props.type || 'text';
@@ -547,8 +555,6 @@ function createElement(spec: NodeSpec, state: StateStore, itemContext?: { item: 
       el = document.createElement('input');
       (el as HTMLInputElement).type = 'radio';
       break;
-
-    // tables
     case 'Tb':
       el = document.createElement('table');
       break;
@@ -571,8 +577,6 @@ function createElement(spec: NodeSpec, state: StateStore, itemContext?: { item: 
       if (props.sp) (el as HTMLTableCellElement).colSpan = props.sp;
       if (props.rsp) (el as HTMLTableCellElement).rowSpan = props.rsp;
       break;
-
-    // lists
     case 'Ul':
       el = document.createElement('ul');
       break;
@@ -582,8 +586,6 @@ function createElement(spec: NodeSpec, state: StateStore, itemContext?: { item: 
     case 'Li':
       el = document.createElement('li');
       break;
-
-    // media & links
     case 'M':
       el = document.createElement('img');
       if (props.src) (el as HTMLImageElement).src = props.src;
@@ -596,12 +598,11 @@ function createElement(spec: NodeSpec, state: StateStore, itemContext?: { item: 
     case 'Sv':
       el = document.createElementNS('http://www.w3.org/2000/svg', 'svg') as unknown as HTMLElement;
       break;
-
     default:
+      console.warn(`[tooey] unknown component type: ${type}`);
       el = document.createElement('div');
   }
 
-  // apply common attributes
   if (props.cls) el.className = props.cls;
   if (props.id) el.id = props.id;
   if (props.dis) (el as HTMLButtonElement).disabled = true;
@@ -611,18 +612,17 @@ function createElement(spec: NodeSpec, state: StateStore, itemContext?: { item: 
   // handle content
   if (content !== undefined) {
     if (Array.isArray(content) && content.length > 0 && (Array.isArray(content[0]) || isIfNode(content[0]) || isMapNode(content[0]))) {
-      // children array
       (content as NodeSpec[]).forEach(childSpec => {
-        const child = createElement(childSpec, state, itemContext);
+        const child = createElement(childSpec, ctx, itemContext);
         if (child) el.appendChild(child);
       });
     } else if (isIfNode(content) || isMapNode(content)) {
-      const child = createElement(content as NodeSpec, state, itemContext);
+      const child = createElement(content as NodeSpec, ctx, itemContext);
       if (child) el.appendChild(child);
     } else if (isStateRef(content)) {
-      // reactive text content
       effect(() => {
         const val = resolveValue(content, state);
+        const safeVal = escapeHtml(String(val ?? ''));
         if (type === 'I') {
           (el as HTMLInputElement).value = String(val ?? '');
         } else if (type === 'Ta') {
@@ -632,43 +632,41 @@ function createElement(spec: NodeSpec, state: StateStore, itemContext?: { item: 
         } else {
           el.textContent = String(val ?? '');
         }
-      });
+      }, ctx);
     } else if (typeof content === 'string' || typeof content === 'number') {
-      // check for item context placeholders
       let textContent = String(content);
       if (itemContext) {
-        textContent = textContent.replace(/\$item/g, String(itemContext.item));
-        textContent = textContent.replace(/\$index/g, String(itemContext.index));
-        // handle object property access like $item.name
+        // handle object property access first (before $item replacement)
         if (typeof itemContext.item === 'object' && itemContext.item !== null) {
           textContent = textContent.replace(/\$item\.(\w+)/g, (_, key) => {
             return String((itemContext.item as Record<string, unknown>)[key] ?? '');
           });
         }
+        textContent = textContent.replace(/\$item/g, String(itemContext.item));
+        textContent = textContent.replace(/\$index/g, String(itemContext.index));
       }
-
+      // XSS protection for static content
       if (type === 'I') {
         (el as HTMLInputElement).value = textContent;
       } else if (type === 'Ta') {
         (el as HTMLTextAreaElement).value = textContent;
-      } else {
+      } else if (type !== 'S') {
+        // don't set textContent for select (would clear options)
         el.textContent = textContent;
       }
     }
   }
 
   // handle value binding for inputs
-  if (props.v !== undefined) {
-    if (isStateRef(props.v)) {
-      effect(() => {
-        const val = resolveValue(props.v!, state);
-        if (type === 'I' || type === 'S' || type === 'Ta') {
-          (el as HTMLInputElement).value = String(val ?? '');
-        } else if (type === 'C' || type === 'R') {
-          (el as HTMLInputElement).checked = Boolean(val);
-        }
-      });
-    }
+  if (props.v !== undefined && isStateRef(props.v)) {
+    effect(() => {
+      const val = resolveValue(props.v!, state);
+      if (type === 'I' || type === 'S' || type === 'Ta') {
+        (el as HTMLInputElement).value = String(val ?? '');
+      } else if (type === 'C' || type === 'R') {
+        (el as HTMLInputElement).checked = Boolean(val);
+      }
+    }, ctx);
   }
 
   // handle checked binding
@@ -677,19 +675,24 @@ function createElement(spec: NodeSpec, state: StateStore, itemContext?: { item: 
       effect(() => {
         const val = resolveValue(props.ch as unknown as StateRef, state);
         (el as HTMLInputElement).checked = Boolean(val);
-      });
+      }, ctx);
     } else {
       (el as HTMLInputElement).checked = Boolean(props.ch);
     }
   }
 
-  // event handlers
+  // event handlers with cleanup tracking
+  const addEventListener = (event: string, handler: (e: Event) => void) => {
+    el.addEventListener(event, handler);
+    ctx.cleanups.push(() => el.removeEventListener(event, handler));
+  };
+
   if (props.c) {
-    el.addEventListener('click', (e) => createHandler(props.c!, state, e)());
+    addEventListener('click', (e) => createHandler(props.c!, state, e)());
   }
   if (props.x) {
     const handler = props.x;
-    el.addEventListener('input', (e) => {
+    addEventListener('input', (e) => {
       if (typeof handler === 'function') {
         handler();
       } else {
@@ -704,28 +707,28 @@ function createElement(spec: NodeSpec, state: StateStore, itemContext?: { item: 
     });
   }
   if (props.f) {
-    el.addEventListener('focus', (e) => createHandler(props.f!, state, e)());
+    addEventListener('focus', (e) => createHandler(props.f!, state, e)());
   }
   if (props.bl) {
-    el.addEventListener('blur', (e) => createHandler(props.bl!, state, e)());
+    addEventListener('blur', (e) => createHandler(props.bl!, state, e)());
   }
   if (props.k) {
-    el.addEventListener('keydown', (e) => createHandler(props.k!, state, e)());
+    addEventListener('keydown', (e) => createHandler(props.k!, state, e)());
   }
   if (props.ku) {
-    el.addEventListener('keyup', (e) => createHandler(props.ku!, state, e)());
+    addEventListener('keyup', (e) => createHandler(props.ku!, state, e)());
   }
   if (props.kp) {
-    el.addEventListener('keypress', (e) => createHandler(props.kp!, state, e)());
+    addEventListener('keypress', (e) => createHandler(props.kp!, state, e)());
   }
   if (props.e) {
-    el.addEventListener('mouseenter', (e) => createHandler(props.e!, state, e)());
+    addEventListener('mouseenter', (e) => createHandler(props.e!, state, e)());
   }
   if (props.lv) {
-    el.addEventListener('mouseleave', (e) => createHandler(props.lv!, state, e)());
+    addEventListener('mouseleave', (e) => createHandler(props.lv!, state, e)());
   }
   if (props.sub) {
-    el.addEventListener('submit', (e) => {
+    addEventListener('submit', (e) => {
       e.preventDefault();
       createHandler(props.sub!, state, e)();
     });
@@ -738,14 +741,21 @@ function createElement(spec: NodeSpec, state: StateStore, itemContext?: { item: 
 
 interface TooeyInstance {
   state: StateStore;
-  el: HTMLElement | Text | null;
+  el: HTMLElement | null;
+  destroy(): void;
   update(newSpec: TooeySpec): void;
   get(key: string): unknown;
   set(key: string, value: unknown): void;
 }
 
 function render(container: HTMLElement, spec: TooeySpec): TooeyInstance {
-  // initialize state
+  if (!container) {
+    throw new Error('[tooey] render requires a valid container element');
+  }
+  if (!spec || !spec.r) {
+    throw new Error('[tooey] render requires a spec with a root node (r)');
+  }
+
   const state: StateStore = {};
   if (spec.s) {
     Object.entries(spec.s).forEach(([key, val]) => {
@@ -753,29 +763,37 @@ function render(container: HTMLElement, spec: TooeySpec): TooeyInstance {
     });
   }
 
-  // clear container and render
+  const ctx: RenderContext = { cleanups: [], state };
+
   container.innerHTML = '';
-  const el = createElement(spec.r, state);
+  const el = createElement(spec.r, ctx);
   if (el) container.appendChild(el);
 
   const instance: TooeyInstance = {
     state,
     el,
+    destroy() {
+      ctx.cleanups.forEach(fn => fn());
+      ctx.cleanups = [];
+      container.innerHTML = '';
+    },
     update(newSpec: TooeySpec) {
-      // update state values
       if (newSpec.s) {
-        Object.entries(newSpec.s).forEach(([key, val]) => {
-          if (state[key]) {
-            state[key].set(val);
-          } else {
-            state[key] = signal(val);
-          }
+        batch(() => {
+          Object.entries(newSpec.s!).forEach(([key, val]) => {
+            if (state[key]) {
+              state[key].set(val);
+            } else {
+              state[key] = signal(val);
+            }
+          });
         });
       }
-      // re-render if root changed
       if (newSpec.r) {
+        ctx.cleanups.forEach(fn => fn());
+        ctx.cleanups = [];
         container.innerHTML = '';
-        const newEl = createElement(newSpec.r, state);
+        const newEl = createElement(newSpec.r, ctx);
         if (newEl) container.appendChild(newEl);
         instance.el = newEl;
       }
@@ -824,25 +842,18 @@ const M = 'M' as const;
 const L = 'L' as const;
 const Sv = 'Sv' as const;
 
-// export everything
 export {
   render,
   signal,
   effect,
+  batch,
   $,
-  // layout
   V, H, D, G,
-  // text & button
   T, B,
-  // inputs
   I, Ta, S, C, R,
-  // table
   Tb, Th, Tbd, Tr, Td, Tc,
-  // lists
   Ul, Ol, Li,
-  // media & links
   M, L, Sv,
-  // types
   TooeySpec,
   NodeSpec,
   Props,
