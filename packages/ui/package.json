@@ -1,0 +1,64 @@
+{
+  "name": "@tooey/ui",
+  "version": "1.0.0",
+  "description": "Token-efficient UI library for LLMs",
+  "main": "dist/tooey.js",
+  "module": "dist/tooey.esm.js",
+  "types": "dist/tooey.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/tooey.d.ts",
+      "import": "./dist/tooey.esm.js",
+      "require": "./dist/tooey.js",
+      "default": "./dist/tooey.esm.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src tests",
+    "lint:fix": "eslint src tests --fix",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "ui",
+    "llm",
+    "token-efficient",
+    "declarative",
+    "reactive",
+    "signals"
+  ],
+  "author": "Vijay Pemmaraju",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vijaypemmaraju/tooey.git",
+    "directory": "packages/ui"
+  },
+  "bugs": {
+    "url": "https://github.com/vijaypemmaraju/tooey/issues"
+  },
+  "homepage": "https://github.com/vijaypemmaraju/tooey/tree/main/packages/ui#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^3.0.0",
+    "esbuild": "^0.25.0",
+    "eslint": "^9.0.0",
+    "jsdom": "^24.0.0",
+    "typescript": "^5.3.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^3.0.0"
+  }
+}

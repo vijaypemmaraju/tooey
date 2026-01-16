@@ -384,22 +384,169 @@ const Card: Component<CardProps> = (props = {}, children = []) => {
 
 ---
 
-## 10. Package Ecosystem Structure
+## 10. Monorepo Structure
+
+Using pnpm workspaces for efficient package management.
+
+### Directory Structure
 
 ```
-@tooey/ui          - Core library (this repo)
-@tooey/components  - Official component library
-@tooey/forms       - Form handling utilities
-@tooey/router      - Client-side routing
-@tooey/motion      - Animations
-@tooey/icons       - Icon components
-@tooey/themes      - Pre-built themes
-@tooey/devtools    - Browser extension for debugging
+tooey/
+├── packages/
+│   ├── ui/                    # @tooey/ui - Core library
+│   │   ├── src/
+│   │   │   └── tooey.ts
+│   │   ├── tests/
+│   │   ├── dist/
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   └── README.md
+│   │
+│   ├── components/            # @tooey/components - Component library
+│   │   ├── src/
+│   │   │   ├── Card.ts
+│   │   │   ├── Modal.ts
+│   │   │   ├── Alert.ts
+│   │   │   └── index.ts
+│   │   ├── tests/
+│   │   ├── package.json
+│   │   └── README.md
+│   │
+│   ├── forms/                 # @tooey/forms - Form utilities
+│   ├── router/                # @tooey/router - Client-side routing
+│   ├── themes/                # @tooey/themes - Pre-built themes
+│   └── devtools/              # @tooey/devtools - Browser extension
+│
+├── examples/                  # Shared examples
+├── docs/                      # Documentation site
+├── .github/
+│   └── workflows/
+│       ├── ci.yml
+│       └── publish.yml
+├── pnpm-workspace.yaml
+├── package.json               # Root package.json (workspace scripts)
+├── tsconfig.base.json         # Shared TypeScript config
+├── vitest.workspace.ts        # Shared test config
+└── README.md
+```
+
+### Root package.json
+
+```json
+{
+  "name": "tooey-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "dev": "pnpm -r --parallel dev",
+    "publish-packages": "pnpm -r publish --access public"
+  },
+  "devDependencies": {
+    "pnpm": "^9.0.0"
+  }
+}
+```
+
+### pnpm-workspace.yaml
+
+```yaml
+packages:
+  - 'packages/*'
+```
+
+### Package Dependencies
+
+```
+@tooey/ui          (no dependencies)
+     ↑
+@tooey/components  (depends on @tooey/ui)
+@tooey/forms       (depends on @tooey/ui)
+@tooey/router      (depends on @tooey/ui)
+@tooey/themes      (depends on @tooey/ui)
+     ↑
+@tooey/devtools    (depends on @tooey/ui, @tooey/components)
+```
+
+### Shared Configuration
+
+**tsconfig.base.json** (root)
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "lib": ["ES2020", "DOM"]
+  }
+}
+```
+
+**Package tsconfig.json** (extends base)
+```json
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"]
+}
+```
+
+### CI/CD Updates
+
+Single workflow handles all packages:
+
+```yaml
+# .github/workflows/ci.yml
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pnpm/action-setup@v2
+      - run: pnpm install
+      - run: pnpm -r typecheck
+      - run: pnpm -r lint
+      - run: pnpm -r build
+      - run: pnpm -r test
+```
+
+Publish workflow uses changesets or manual version bumps:
+
+```yaml
+# .github/workflows/publish.yml
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pnpm/action-setup@v2
+      - run: pnpm install
+      - run: pnpm -r build
+      - run: pnpm -r test
+      - run: pnpm -r publish --access public --no-git-checks
 ```
 
 ---
 
 ## Implementation Priority
+
+### Phase 0: Monorepo Setup
+- [ ] Install pnpm and create workspace config
+- [ ] Create packages/ directory structure
+- [ ] Move @tooey/ui to packages/ui/
+- [ ] Create shared tsconfig.base.json
+- [ ] Update CI/CD for monorepo
+- [ ] Scaffold @tooey/components package
+- [ ] Test cross-package imports
 
 ### Phase 1: Function Components (Minor version)
 - [ ] Detect function as first element in NodeSpec
