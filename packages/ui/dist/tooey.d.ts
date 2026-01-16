@@ -188,3 +188,4 @@ declare const M: "M";
 declare const L: "L";
 declare const Sv: "Sv";
 export { render, signal, effect, batch, $, V, H, D, G, T, B, I, Ta, S, C, R, Tb, Th, Tbd, Tr, Td, Tc, Ul, Ol, Li, M, L, Sv, TooeySpec, NodeSpec, Props, StateRef, TooeyInstance, IfNode, MapNode, ErrorBoundaryNode, ErrorInfo, ErrorHandler };
+//# sourceMappingURL=tooey.d.ts.map

@@ -11,45 +11,54 @@ tooey provides a declarative, compact syntax for building reactive UIs with ~39%
 - reactive state management with signals
 - es2020 target, works in all modern browsers
 
-## structure
+## monorepo structure
 
 ```
 tooey/
-├── src/
-│   └── tooey.ts          # single source file (~1000 lines)
-├── dist/
-│   ├── tooey.js          # umd bundle
-│   ├── tooey.esm.js      # esm bundle
-│   └── tooey.d.ts        # typescript declarations
-├── tests/
-│   ├── tooey.test.ts     # core functionality tests
-│   ├── ui.test.ts        # comprehensive ui tests
-│   ├── security.test.ts  # security feature tests
-│   ├── accessibility.test.ts
-│   └── compatibility.test.ts
-├── examples/             # html demo files
-├── tsconfig.json         # typescript config (includes tests)
-├── tsconfig.build.json   # build-only config (src only)
-├── vitest.config.ts      # test configuration
-└── eslint.config.js      # linting rules
+├── packages/
+│   ├── ui/                    # @tooey/ui - core library
+│   │   ├── src/
+│   │   │   └── tooey.ts       # single source file (~1000 lines)
+│   │   ├── tests/
+│   │   ├── dist/
+│   │   ├── examples/
+│   │   └── package.json
+│   │
+│   └── components/            # @tooey/components - component library
+│       ├── src/
+│       └── package.json
+│
+├── .github/workflows/
+├── pnpm-workspace.yaml
+├── package.json               # root workspace config
+├── tsconfig.base.json         # shared typescript config
+├── API.md
+├── ECOSYSTEM.md
+└── readme.md
 ```
 
 ## commands
 
 ```bash
-npm run build        # build umd + esm bundles + typescript declarations
-npm run dev          # watch mode (no minification)
-npm run typecheck    # typescript type checking
-npm run lint         # eslint
-npm run test         # run tests
-npm run test:watch   # watch mode for tests
-npm run test:coverage # tests with coverage report
+# root commands (run all packages)
+pnpm install         # install all dependencies
+pnpm build           # build all packages
+pnpm test            # run all tests
+pnpm lint            # lint all packages
+pnpm typecheck       # type check all packages
+pnpm dev             # watch mode for all packages
+
+# package-specific (from packages/ui/)
+pnpm build           # build umd + esm bundles + typescript declarations
+pnpm dev             # watch mode (no minification)
+pnpm test            # run tests
+pnpm test:coverage   # tests with coverage report
 ```
 
 ## architecture
 
 ### single-file design
-the entire library is in `src/tooey.ts`. intentional for simplicity, auditability, zero internal dependencies, and easy bundling.
+the entire library is in `packages/ui/src/tooey.ts`. intentional for simplicity, auditability, zero internal dependencies, and easy bundling.
 
 ### component abbreviations
 ```
@@ -92,7 +101,7 @@ short keys: `g` (gap), `p` (padding), `bg` (background), `fg` (color), etc.
 - block: `javascript:`, `data:`, `vbscript:`
 
 ### testing
-- tests are in `tests/` directory
+- tests are in `packages/ui/tests/` directory
 - use `vitest` with `jsdom` environment
 - each test creates its own container and cleans up
 - cast dom elements when needed: `container.querySelector('input') as HTMLInputElement`
@@ -143,7 +152,7 @@ short keys: `g` (gap), `p` (padding), `bg` (background), `fg` (color), etc.
 
 ## versioning
 
-**follow semver strictly.** bump version in `package.json` when making changes:
+**follow semver strictly.** bump version in `packages/ui/package.json` when making changes:
 
 - **patch** (1.0.x): bug fixes, security patches, dependency updates
   - fixing a rendering bug
@@ -169,11 +178,11 @@ short keys: `g` (gap), `p` (padding), `bg` (background), `fg` (color), etc.
 github actions workflows:
 
 **ci.yml** (runs on PRs and pushes to main):
-1. type checking (`npm run typecheck`)
-2. linting (`npm run lint`)
-3. build (`npm run build`)
-4. tests with coverage (`npm run test:coverage`)
-5. security audit (`npm audit`)
+1. type checking (`pnpm typecheck`)
+2. linting (`pnpm lint`)
+3. build (`pnpm build`)
+4. tests with coverage (`pnpm test:coverage`)
+5. security audit (`pnpm audit`)
 
 **publish.yml** (runs on push to main):
 1. runs all ci checks

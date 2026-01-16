@@ -1,0 +1,50 @@
+{
+  "name": "@tooey/components",
+  "version": "0.0.1",
+  "description": "Component library for @tooey/ui",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.esm.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "echo 'TODO: implement build'",
+    "test": "echo 'TODO: implement tests'",
+    "lint": "echo 'TODO: implement lint'",
+    "typecheck": "echo 'TODO: implement typecheck'"
+  },
+  "keywords": [
+    "tooey",
+    "ui",
+    "components",
+    "llm"
+  ],
+  "author": "Vijay Pemmaraju",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vijaypemmaraju/tooey.git",
+    "directory": "packages/components"
+  },
+  "bugs": {
+    "url": "https://github.com/vijaypemmaraju/tooey/issues"
+  },
+  "homepage": "https://github.com/vijaypemmaraju/tooey/tree/main/packages/components#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@tooey/ui": "^1.0.0"
+  }
+}
