@@ -113,6 +113,34 @@ app.destroy()            // cleanup
 
 [/examples](./examples) - counter, todo, form, converter, table, tabs, modal, cart, wizard
 
+## security
+
+tooey includes several security features to protect against common vulnerabilities:
+
+### XSS Protection
+- All text content is escaped using `textContent` instead of `innerHTML`
+- Dynamic state values are sanitized before rendering
+
+### URL Validation
+- `href` and `src` props are validated against safe protocols
+- Blocked protocols: `javascript:`, `data:`, `vbscript:`
+- Allowed protocols: `http:`, `https:`, `mailto:`, `tel:`, `ftp:`
+- Relative URLs and anchors are allowed
+
+### Best Practices
+
+1. **Content Security Policy**: Add CSP headers to your deployment:
+```
+Content-Security-Policy: default-src 'self'; script-src 'self' https://unpkg.com
+```
+
+2. **User Input**: Always validate user input before passing to tooey specs
+3. **State Values**: Don't store sensitive data in state that gets rendered
+
+### Reporting Security Issues
+
+Report security vulnerabilities via GitHub issues with the `security` label.
+
 ## llm reference
 
 Copy this into your system prompt for LLMs to generate tooey specs:
