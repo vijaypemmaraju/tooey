@@ -3,42 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>temp - tooey</title>
+  <title>temperature - tooey</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; padding: 48px; }
+    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; padding: 24px; }
+    @media (min-width: 600px) { body { padding: 48px; } }
     a { color: #0af; text-decoration: none; }
-    h1 { font-size: 12px; font-weight: 400; color: #fff; margin-bottom: 4px; }
-    .tag { font-size: 11px; margin-bottom: 32px; }
-    pre { font-size: 10px; color: #4f8; background: #111; padding: 10px; overflow-x: auto; margin-bottom: 8px; }
-    .demo { background: #111; padding: 12px; }
-    .demo input { font-family: inherit; font-size: 14px; background: #0a0a0f; color: #fff; border: 1px solid #333; padding: 4px 8px; width: 80px; text-align: center; }
-    .demo span { color: #ccc; font-size: 11px; }
-    .eq { font-size: 24px; color: #0af; }
-    .back { font-size: 11px; margin-bottom: 24px; display: block; }
-    .cols { display: flex; gap: 32px; flex-wrap: wrap; }
-    .col { flex: 1; min-width: 260px; }
+    h1 { font-size: 14px; font-weight: 400; color: #fff; margin-bottom: 4px; }
+    .tag { font-size: 12px; margin-bottom: 32px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 32px; }
+    @media (min-width: 700px) { .grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
     .col h2 { font-size: 11px; font-weight: 400; color: #666; margin-bottom: 8px; }
+    pre { font-size: 10px; background: #111; padding: 12px; overflow-x: auto; margin-bottom: 16px; border-radius: 4px; }
+    .tooey pre { color: #4f8; }
+    .react pre { color: #f97; }
+    .demo { background: #111; padding: 16px; border-radius: 4px; }
+    .demo input { font-family: inherit; font-size: 16px; background: #0a0a0f; color: #fff; border: 1px solid #333; padding: 8px 12px; width: 100px; text-align: center; border-radius: 4px; }
+    .demo span { color: #ccc; font-size: 12px; }
+    .eq { font-size: 24px; color: #0af; }
+    .back { font-size: 12px; margin-bottom: 24px; display: block; }
   </style>
 </head>
 <body>
   <a href="index.html" class="back">&larr; back</a>
-  <h1>temperature</h1>
-  <p class="tag">-77% vs react</p>
+  <h1>temperature converter</h1>
+  <p class="tag">-77% fewer characters vs React</p>
 
-  <div class="cols">
-    <div class="col">
-      <h2>tooey ~198 chars</h2>
-      <pre>{s:{c:0,f:32},r:[H,{g:24},[
-  [V,{g:8},[[T,"celsius"],[I,"",{t:"number",v:{$:"c"},x:onC}]]],
-  [T,"=",{s:{fontSize:"32px"}}],
-  [V,{g:8},[[T,"fahrenheit"],[I,"",{t:"number",v:{$:"f"},x:onF}]]]
-]]}</pre>
-      <div class="demo" id="app"></div>
+  <div class="grid">
+    <div class="col tooey">
+      <h2>tooey (~198 chars)</h2>
+      <pre>{s:{c:0,f:32},r:[H,[
+  [V,[[T,"celsius"],[I,"",{type:"number",v:{$:"c"},x:onC}]],{g:4}],
+  [T,"=",{fs:24,fg:"#0af"}],
+  [V,[[T,"fahrenheit"],[I,"",{type:"number",v:{$:"f"},x:onF}]],{g:4}]
+],{g:16,ai:"center"}]}</pre>
+      <div class="demo" id="tooey-app"></div>
     </div>
-    <div class="col">
-      <h2>react ~856 chars</h2>
-      <pre style="color:#f87;">function TempConverter() {
+    <div class="col react">
+      <h2>react (~856 chars)</h2>
+      <pre style="color:#f97;">function TempConverter() {
   const [c, setC] = useState(0);
   const [f, setF] = useState(32);
   const onCelsiusChange = (e) => {
@@ -52,27 +55,36 @@
     setC((val - 32) * 5/9);
   };
   return (
-    &lt;div style={{display:'flex',gap:24,alignItems:'center'}}&gt;
-      ...
+    &lt;div style={{display:'flex',gap:16,alignItems:'center'}}&gt;
+      &lt;div style={{display:'flex',flexDirection:'column',gap:4}}&gt;
+        &lt;span&gt;celsius&lt;/span&gt;
+        &lt;input type="number" value={c} onChange={onCelsiusChange}/&gt;
+      &lt;/div&gt;
+      &lt;span style={{fontSize:24}}&gt;=&lt;/span&gt;
+      &lt;div style={{display:'flex',flexDirection:'column',gap:4}}&gt;
+        &lt;span&gt;fahrenheit&lt;/span&gt;
+        &lt;input type="number" value={f} onChange={onFahrenheitChange}/&gt;
+      &lt;/div&gt;
     &lt;/div&gt;
   );
 }</pre>
+      <div class="demo" id="react-app"></div>
     </div>
   </div>
 
   <script src="../dist/tooey.js"></script>
   <script>
-    const { signal } = tooey;
-
-    const container = document.getElementById('app');
+    // tooey demo - using signals for bidirectional binding
+    const{signal,V,H,T,I}=tooey;
     const c = signal(0);
     const f = signal(32);
     let updating = false;
 
-    function render() {
-      container.innerHTML = '';
+    function renderTooey() {
+      const el = document.getElementById('tooey-app');
+      el.innerHTML = '';
       const row = document.createElement('div');
-      row.style.cssText = 'display:flex;gap:24px;align-items:center';
+      row.style.cssText = 'display:flex;gap:16px;align-items:center;flex-wrap:wrap';
 
       const cCol = document.createElement('div');
       cCol.style.cssText = 'display:flex;flex-direction:column;gap:4px';
@@ -89,8 +101,7 @@
         f.set(val * 9/5 + 32);
         updating = false;
       });
-      cCol.appendChild(cLabel);
-      cCol.appendChild(cInput);
+      cCol.append(cLabel, cInput);
 
       const eq = document.createElement('span');
       eq.textContent = '=';
@@ -111,18 +122,61 @@
         c.set((val - 32) * 5/9);
         updating = false;
       });
-      fCol.appendChild(fLabel);
-      fCol.appendChild(fInput);
+      fCol.append(fLabel, fInput);
 
-      row.appendChild(cCol);
-      row.appendChild(eq);
-      row.appendChild(fCol);
-      container.appendChild(row);
+      row.append(cCol, eq, fCol);
+      el.appendChild(row);
     }
+    c.sub(renderTooey);
+    f.sub(renderTooey);
+    renderTooey();
 
-    c.sub(render);
-    f.sub(render);
-    render();
+    // react-style demo (vanilla JS)
+    (function() {
+      const el = document.getElementById('react-app');
+      let cVal = 0, fVal = 32;
+      function render() {
+        el.innerHTML = '';
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;gap:16px;align-items:center;flex-wrap:wrap';
+
+        const cCol = document.createElement('div');
+        cCol.style.cssText = 'display:flex;flex-direction:column;gap:4px';
+        const cLabel = document.createElement('span');
+        cLabel.textContent = 'celsius';
+        const cInput = document.createElement('input');
+        cInput.type = 'number';
+        cInput.value = cVal.toFixed(1);
+        cInput.addEventListener('input', e => {
+          cVal = parseFloat(e.target.value) || 0;
+          fVal = cVal * 9/5 + 32;
+          render();
+        });
+        cCol.append(cLabel, cInput);
+
+        const eq = document.createElement('span');
+        eq.textContent = '=';
+        eq.className = 'eq';
+
+        const fCol = document.createElement('div');
+        fCol.style.cssText = 'display:flex;flex-direction:column;gap:4px';
+        const fLabel = document.createElement('span');
+        fLabel.textContent = 'fahrenheit';
+        const fInput = document.createElement('input');
+        fInput.type = 'number';
+        fInput.value = fVal.toFixed(1);
+        fInput.addEventListener('input', e => {
+          fVal = parseFloat(e.target.value) || 0;
+          cVal = (fVal - 32) * 5/9;
+          render();
+        });
+        fCol.append(fLabel, fInput);
+
+        row.append(cCol, eq, fCol);
+        el.appendChild(row);
+      }
+      render();
+    })();
   </script>
 </body>
 </html>

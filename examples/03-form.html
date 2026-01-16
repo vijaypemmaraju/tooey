@@ -6,78 +6,131 @@
   <title>form - tooey</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; padding: 48px; }
+    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; padding: 24px; }
+    @media (min-width: 600px) { body { padding: 48px; } }
     a { color: #0af; text-decoration: none; }
-    h1 { font-size: 12px; font-weight: 400; color: #fff; margin-bottom: 4px; }
-    .tag { font-size: 11px; margin-bottom: 32px; }
-    pre { font-size: 10px; color: #4f8; background: #111; padding: 10px; overflow-x: auto; margin-bottom: 8px; }
-    .demo { background: #111; padding: 12px; }
-    .demo input { font-family: inherit; font-size: 11px; background: #0a0a0f; color: #fff; border: 1px solid #333; padding: 4px 8px; width: 100%; }
-    .demo button { font-family: inherit; font-size: 11px; background: #222; color: #fff; border: 1px solid #333; padding: 4px 10px; cursor: pointer; }
-    .demo button:hover { background: #333; }
-    .demo label { font-size: 10px; color: #666; margin-bottom: 2px; display: block; }
-    .back { font-size: 11px; margin-bottom: 24px; display: block; }
-    .cols { display: flex; gap: 32px; flex-wrap: wrap; }
-    .col { flex: 1; min-width: 260px; }
+    h1 { font-size: 14px; font-weight: 400; color: #fff; margin-bottom: 4px; }
+    .tag { font-size: 12px; margin-bottom: 32px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 32px; }
+    @media (min-width: 700px) { .grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
     .col h2 { font-size: 11px; font-weight: 400; color: #666; margin-bottom: 8px; }
+    pre { font-size: 10px; background: #111; padding: 12px; overflow-x: auto; margin-bottom: 16px; border-radius: 4px; }
+    .tooey pre { color: #4f8; }
+    .react pre { color: #f97; }
+    .demo { background: #111; padding: 16px; border-radius: 4px; max-width: 300px; }
+    .demo input[type="text"], .demo input[type="email"], .demo input[type="password"] {
+      font-family: inherit; font-size: 13px; background: #0a0a0f; color: #fff; border: 1px solid #333; padding: 8px 12px; width: 100%; border-radius: 4px;
+    }
+    .demo input[type="checkbox"] { width: 16px; height: 16px; }
+    .demo button { font-family: inherit; font-size: 13px; background: #0af; color: #000; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; width: 100%; font-weight: 500; }
+    .demo button:hover { background: #0cf; }
+    .demo label { font-size: 11px; color: #888; }
+    .demo span { font-size: 12px; color: #ccc; }
+    .back { font-size: 12px; margin-bottom: 24px; display: block; }
   </style>
 </head>
 <body>
   <a href="index.html" class="back">&larr; back</a>
   <h1>form</h1>
-  <p class="tag">-64% vs react</p>
+  <p class="tag">-64% fewer characters vs React</p>
 
-  <div class="cols">
-    <div class="col">
-      <h2>tooey ~421 chars</h2>
-      <pre>{s:{name:"",email:"",pw:"",agree:false},r:[V,{g:16,w:300},[
-  [V,{g:4},[[T,"name"],[I,"",{ph:"your name",v:{$:"name"},x:["name","!"]}]]],
-  [V,{g:4},[[T,"email"],[I,"",{t:"email",ph:"you@example.com",v:{$:"email"},x:["email","!"]}]]],
-  [V,{g:4},[[T,"password"],[I,"",{t:"password",ph:"••••••••",v:{$:"pw"},x:["pw","!"]}]]],
-  [H,{g:8},[[C,"",{v:{$:"agree"},x:["agree","~"]}],[T,"i agree to terms"]]],
-  [B,"sign up",{c:()=>alert("submitted!")}]
-]]}</pre>
-      <div class="demo" id="app"></div>
+  <div class="grid">
+    <div class="col tooey">
+      <h2>tooey (~421 chars)</h2>
+      <pre>{s:{name:"",email:"",pw:"",agree:false},r:[V,[
+  [V,[[T,"name"],[I,"",{ph:"your name",v:{$:"name"},x:["name","!"]}]],{g:4}],
+  [V,[[T,"email"],[I,"",{type:"email",ph:"you@example.com",v:{$:"email"},x:["email","!"]}]],{g:4}],
+  [V,[[T,"password"],[I,"",{type:"password",ph:"********",v:{$:"pw"},x:["pw","!"]}]],{g:4}],
+  [H,[[C,"",{ch:{$:"agree"},x:["agree","~"]}],[T,"i agree to terms"]],{g:8,ai:"center"}],
+  [B,"sign up",{c:submit}]
+],{g:16}]}</pre>
+      <div class="demo" id="tooey-app"></div>
     </div>
-    <div class="col">
-      <h2>react ~1156 chars</h2>
-      <pre style="color:#f87;">function RegistrationForm() {
+    <div class="col react">
+      <h2>react (~1156 chars)</h2>
+      <pre style="color:#f97;">function Form() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [pw, setPw] = useState('');
   const [agree, setAgree] = useState(false);
-  const valid = name && email && pw.length >= 6 && agree;
   return (
-    &lt;div style={{display:'flex',flexDirection:'column',gap:16,width:300}}&gt;
+    &lt;div style={{display:'flex',flexDirection:'column',gap:16}}&gt;
       &lt;div style={{display:'flex',flexDirection:'column',gap:4}}&gt;
         &lt;label&gt;name&lt;/label&gt;
         &lt;input placeholder="your name" value={name}
           onChange={e=&gt;setName(e.target.value)} /&gt;
       &lt;/div&gt;
+      &lt;div style={{display:'flex',flexDirection:'column',gap:4}}&gt;
+        &lt;label&gt;email&lt;/label&gt;
+        &lt;input type="email" placeholder="you@example.com"
+          value={email} onChange={e=&gt;setEmail(e.target.value)} /&gt;
+      &lt;/div&gt;
       ...
+      &lt;button onClick={submit}&gt;sign up&lt;/button&gt;
     &lt;/div&gt;
   );
 }</pre>
+      <div class="demo" id="react-app"></div>
     </div>
   </div>
 
   <script src="../dist/tooey.js"></script>
   <script>
-    const { render, V, H, T, B, I, C } = tooey;
-
-    const instance = render(document.getElementById('app'), {
-      s: {name:"",email:"",pw:"",agree:false},
-      r: [V,{g:16,w:260},[
-        [V,{g:4},[[T,"name"],[I,"",{ph:"your name",v:{$:"name"},x:["name","!"]}]]],
-        [V,{g:4},[[T,"email"],[I,"",{t:"email",ph:"you@example.com",v:{$:"email"},x:["email","!"]}]]],
-        [V,{g:4},[[T,"password"],[I,"",{t:"password",ph:"••••••••",v:{$:"pw"},x:["pw","!"]}]]],
-        [H,{g:8},[[C,"",{ch:{$:"agree"},x:["agree","~"]}],[T,"i agree to terms"]]],
-        [B,"sign up",{c:()=>alert("submitted: " + JSON.stringify({
-          name: instance.get('name'),
-          email: instance.get('email')
-        }))}]
-      ]]
+    // tooey demo
+    const{render,V,H,T,B,I,C}=tooey;
+    const app = render(document.getElementById('tooey-app'),{
+      s:{name:"",email:"",pw:"",agree:false},
+      r:[V,[
+        [V,[[T,"name"],[I,"",{ph:"your name",v:{$:"name"},x:["name","!"]}]],{g:4}],
+        [V,[[T,"email"],[I,"",{type:"email",ph:"you@example.com",v:{$:"email"},x:["email","!"]}]],{g:4}],
+        [V,[[T,"password"],[I,"",{type:"password",ph:"********",v:{$:"pw"},x:["pw","!"]}]],{g:4}],
+        [H,[[C,"",{ch:{$:"agree"},x:["agree","~"]}],[T,"i agree to terms"]],{g:8,ai:"center"}],
+        [B,"sign up",{c:()=>alert("Submitted: "+JSON.stringify({name:app.get('name'),email:app.get('email')}))}]
+      ],{g:16}]
     });
+
+    // react-style demo (vanilla JS)
+    (function() {
+      const el = document.getElementById('react-app');
+      let name='', email='', pw='', agree=false;
+      function render() {
+        el.innerHTML = '';
+        const col = document.createElement('div');
+        col.style.cssText = 'display:flex;flex-direction:column;gap:16px';
+
+        [[name,'name','text','your name',v=>name=v],
+         [email,'email','email','you@example.com',v=>email=v],
+         [pw,'password','password','********',v=>pw=v]].forEach(([val,lbl,type,ph,set])=>{
+          const g = document.createElement('div');
+          g.style.cssText = 'display:flex;flex-direction:column;gap:4px';
+          const l = document.createElement('label');
+          l.textContent = lbl;
+          const i = document.createElement('input');
+          i.type = type; i.placeholder = ph; i.value = val;
+          i.oninput = e => set(e.target.value);
+          g.append(l,i);
+          col.appendChild(g);
+        });
+
+        const chkRow = document.createElement('div');
+        chkRow.style.cssText = 'display:flex;gap:8px;align-items:center';
+        const chk = document.createElement('input');
+        chk.type = 'checkbox'; chk.checked = agree;
+        chk.onchange = () => { agree = !agree; };
+        const chkLbl = document.createElement('span');
+        chkLbl.textContent = 'i agree to terms';
+        chkRow.append(chk, chkLbl);
+        col.appendChild(chkRow);
+
+        const btn = document.createElement('button');
+        btn.textContent = 'sign up';
+        btn.onclick = () => alert("Submitted: "+JSON.stringify({name,email}));
+        col.appendChild(btn);
+
+        el.appendChild(col);
+      }
+      render();
+    })();
   </script>
 </body>
 </html>
