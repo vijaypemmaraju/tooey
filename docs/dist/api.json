@@ -1,0 +1,6594 @@
+{
+	"id": 0,
+	"name": "@tooey/ui",
+	"variant": "project",
+	"kind": 1,
+	"flags": {},
+	"children": [
+		{
+			"id": 253,
+			"name": "AsyncSpec",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 254,
+					"name": "s",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 387,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "AsyncState"
+						},
+						"typeArguments": [
+							{
+								"type": "reference",
+								"target": 258,
+								"name": "T",
+								"package": "@tooey/ui",
+								"qualifiedName": "AsyncSpec.T",
+								"refersToTypeParameter": true
+							}
+						],
+						"name": "AsyncState",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 255,
+					"name": "init",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 388,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 256,
+							"name": "init",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 388,
+									"character": 2
+								}
+							],
+							"parameters": [
+								{
+									"id": 257,
+									"name": "instance",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "reference",
+										"target": 145,
+										"name": "TooeyInstance",
+										"package": "@tooey/ui"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.es5.d.ts",
+									"qualifiedName": "Promise"
+								},
+								"typeArguments": [
+									{
+										"type": "intrinsic",
+										"name": "void"
+									}
+								],
+								"name": "Promise",
+								"package": "typescript"
+							}
+						}
+					]
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						254
+					]
+				},
+				{
+					"title": "Methods",
+					"children": [
+						255
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 386,
+					"character": 10
+				}
+			],
+			"typeParameters": [
+				{
+					"id": 258,
+					"name": "T",
+					"variant": "typeParam",
+					"kind": 131072,
+					"flags": {}
+				}
+			]
+		},
+		{
+			"id": 243,
+			"name": "ComputedSignal",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 244,
+					"name": "sub",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 329,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 245,
+							"name": "sub",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 329,
+									"character": 2
+								}
+							],
+							"parameters": [
+								{
+									"id": 246,
+									"name": "fn",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "reflection",
+										"declaration": {
+											"id": 247,
+											"name": "__type",
+											"variant": "declaration",
+											"kind": 65536,
+											"flags": {},
+											"sources": [
+												{
+													"fileName": "tooey.ts",
+													"line": 329,
+													"character": 10
+												}
+											],
+											"signatures": [
+												{
+													"id": 248,
+													"name": "__type",
+													"variant": "signature",
+													"kind": 4096,
+													"flags": {},
+													"sources": [
+														{
+															"fileName": "tooey.ts",
+															"line": 329,
+															"character": 10
+														}
+													],
+													"type": {
+														"type": "intrinsic",
+														"name": "void"
+													}
+												}
+											]
+										}
+									}
+								}
+							],
+							"type": {
+								"type": "reflection",
+								"declaration": {
+									"id": 249,
+									"name": "__type",
+									"variant": "declaration",
+									"kind": 65536,
+									"flags": {},
+									"sources": [
+										{
+											"fileName": "tooey.ts",
+											"line": 329,
+											"character": 23
+										}
+									],
+									"signatures": [
+										{
+											"id": 250,
+											"name": "__type",
+											"variant": "signature",
+											"kind": 4096,
+											"flags": {},
+											"sources": [
+												{
+													"fileName": "tooey.ts",
+													"line": 329,
+													"character": 23
+												}
+											],
+											"type": {
+												"type": "intrinsic",
+												"name": "void"
+											}
+										}
+									]
+								}
+							}
+						}
+					]
+				}
+			],
+			"groups": [
+				{
+					"title": "Methods",
+					"children": [
+						244
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 327,
+					"character": 10
+				}
+			],
+			"typeParameters": [
+				{
+					"id": 251,
+					"name": "T",
+					"variant": "typeParam",
+					"kind": 131072,
+					"flags": {}
+				}
+			],
+			"signatures": [
+				{
+					"id": 252,
+					"name": "ComputedSignal",
+					"variant": "signature",
+					"kind": 4096,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 328,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 251,
+						"name": "T",
+						"package": "@tooey/ui",
+						"qualifiedName": "ComputedSignal.T",
+						"refersToTypeParameter": true
+					}
+				}
+			]
+		},
+		{
+			"id": 170,
+			"name": "CreateTooeyOptions",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 172,
+					"name": "plugins",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1325,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "array",
+						"elementType": {
+							"type": "reference",
+							"target": 217,
+							"name": "TooeyPlugin",
+							"package": "@tooey/ui"
+						}
+					}
+				},
+				{
+					"id": 171,
+					"name": "theme",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1324,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 207,
+						"name": "Theme",
+						"package": "@tooey/ui"
+					}
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						172,
+						171
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1323,
+					"character": 10
+				}
+			]
+		},
+		{
+			"id": 188,
+			"name": "ErrorBoundaryNode",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 189,
+					"name": "boundary",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 231,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "literal",
+						"value": true
+					}
+				},
+				{
+					"id": 190,
+					"name": "child",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 232,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 73,
+						"name": "NodeSpec",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 191,
+					"name": "fallback",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 233,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 73,
+						"name": "NodeSpec",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 192,
+					"name": "onError",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 234,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 197,
+						"name": "ErrorHandler",
+						"package": "@tooey/ui"
+					}
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						189,
+						190,
+						191,
+						192
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 230,
+					"character": 10
+				}
+			]
+		},
+		{
+			"id": 193,
+			"name": "ErrorInfo",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 195,
+					"name": "componentType",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 214,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 194,
+					"name": "message",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 213,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 196,
+					"name": "stack",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 215,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						195,
+						194,
+						196
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 212,
+					"character": 10
+				}
+			]
+		},
+		{
+			"id": 173,
+			"name": "IfNode",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 177,
+					"name": "?",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 181,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "reference",
+								"target": 142,
+								"name": "StateRef",
+								"package": "@tooey/ui"
+							}
+						]
+					}
+				},
+				{
+					"id": 179,
+					"name": "e",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 183,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "reference",
+								"target": 73,
+								"name": "NodeSpec",
+								"package": "@tooey/ui"
+							},
+							{
+								"type": "array",
+								"elementType": {
+									"type": "reference",
+									"target": 73,
+									"name": "NodeSpec",
+									"package": "@tooey/ui"
+								}
+							}
+						]
+					}
+				},
+				{
+					"id": 176,
+					"name": "else",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 179,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "reference",
+								"target": 73,
+								"name": "NodeSpec",
+								"package": "@tooey/ui"
+							},
+							{
+								"type": "array",
+								"elementType": {
+									"type": "reference",
+									"target": 73,
+									"name": "NodeSpec",
+									"package": "@tooey/ui"
+								}
+							}
+						]
+					}
+				},
+				{
+					"id": 180,
+					"name": "eq",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 185,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "unknown"
+					}
+				},
+				{
+					"id": 174,
+					"name": "if",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 177,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "reference",
+								"target": 142,
+								"name": "StateRef",
+								"package": "@tooey/ui"
+							}
+						]
+					}
+				},
+				{
+					"id": 181,
+					"name": "is",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 186,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "unknown"
+					}
+				},
+				{
+					"id": 178,
+					"name": "t",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 182,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "reference",
+								"target": 73,
+								"name": "NodeSpec",
+								"package": "@tooey/ui"
+							},
+							{
+								"type": "array",
+								"elementType": {
+									"type": "reference",
+									"target": 73,
+									"name": "NodeSpec",
+									"package": "@tooey/ui"
+								}
+							}
+						]
+					}
+				},
+				{
+					"id": 175,
+					"name": "then",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 178,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "reference",
+								"target": 73,
+								"name": "NodeSpec",
+								"package": "@tooey/ui"
+							},
+							{
+								"type": "array",
+								"elementType": {
+									"type": "reference",
+									"target": 73,
+									"name": "NodeSpec",
+									"package": "@tooey/ui"
+								}
+							}
+						]
+					}
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						177,
+						179,
+						176,
+						180,
+						174,
+						181,
+						178,
+						175
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 175,
+					"character": 10
+				}
+			]
+		},
+		{
+			"id": 182,
+			"name": "MapNode",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 186,
+					"name": "a",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 195,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 73,
+						"name": "NodeSpec",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 184,
+					"name": "as",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 192,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 73,
+						"name": "NodeSpec",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 187,
+					"name": "key",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 196,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 185,
+					"name": "m",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 194,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "reference",
+								"target": 142,
+								"name": "StateRef",
+								"package": "@tooey/ui"
+							}
+						]
+					}
+				},
+				{
+					"id": 183,
+					"name": "map",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 191,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "reference",
+								"target": 142,
+								"name": "StateRef",
+								"package": "@tooey/ui"
+							}
+						]
+					}
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						186,
+						184,
+						187,
+						185,
+						183
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 189,
+					"character": 10
+				}
+			]
+		},
+		{
+			"id": 74,
+			"name": "Props",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 102,
+					"name": "ai",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 119,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 118,
+					"name": "alt",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 137,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 93,
+					"name": "b",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 108,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 87,
+					"name": "bc",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 101,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 82,
+					"name": "bg",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 95,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 134,
+					"name": "bl",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 151,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "EventHandler"
+						},
+						"name": "EventHandler",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 88,
+					"name": "bs",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 102,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 86,
+					"name": "bw",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 100,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 131,
+					"name": "c",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 148,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "EventHandler"
+						},
+						"name": "EventHandler",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 120,
+					"name": "ch",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 139,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "unknown"
+					}
+				},
+				{
+					"id": 126,
+					"name": "cls",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 142,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 105,
+					"name": "cols",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 122,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 107,
+					"name": "cur",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 125,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 119,
+					"name": "dis",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 138,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "boolean"
+					}
+				},
+				{
+					"id": 138,
+					"name": "e",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 155,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "EventHandler"
+						},
+						"name": "EventHandler",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 133,
+					"name": "f",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 150,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "EventHandler"
+						},
+						"name": "EventHandler",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 97,
+					"name": "ff",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 113,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 83,
+					"name": "fg",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 96,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 104,
+					"name": "flw",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 121,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 95,
+					"name": "fs",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 111,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 96,
+					"name": "fw",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 112,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 75,
+					"name": "g",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 87,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 79,
+					"name": "h",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 91,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 116,
+					"name": "href",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 135,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 127,
+					"name": "id",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 143,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 103,
+					"name": "jc",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 120,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 135,
+					"name": "k",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 152,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "EventHandler"
+						},
+						"name": "EventHandler",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 137,
+					"name": "kp",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 154,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "EventHandler"
+						},
+						"name": "EventHandler",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 136,
+					"name": "ku",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 153,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "EventHandler"
+						},
+						"name": "EventHandler",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 92,
+					"name": "l",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 107,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 100,
+					"name": "lh",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 116,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 101,
+					"name": "ls",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 117,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 139,
+					"name": "lv",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 156,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "EventHandler"
+						},
+						"name": "EventHandler",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 77,
+					"name": "m",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 89,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 81,
+					"name": "mh",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 93,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 80,
+					"name": "mw",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 92,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 84,
+					"name": "o",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 97,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "number"
+					}
+				},
+				{
+					"id": 122,
+					"name": "opts",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 141,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "array",
+						"elementType": {
+							"type": "reflection",
+							"declaration": {
+								"id": 123,
+								"name": "__type",
+								"variant": "declaration",
+								"kind": 65536,
+								"flags": {},
+								"children": [
+									{
+										"id": 125,
+										"name": "l",
+										"variant": "declaration",
+										"kind": 1024,
+										"flags": {},
+										"sources": [
+											{
+												"fileName": "tooey.ts",
+												"line": 141,
+												"character": 27
+											}
+										],
+										"type": {
+											"type": "intrinsic",
+											"name": "string"
+										}
+									},
+									{
+										"id": 124,
+										"name": "v",
+										"variant": "declaration",
+										"kind": 1024,
+										"flags": {},
+										"sources": [
+											{
+												"fileName": "tooey.ts",
+												"line": 141,
+												"character": 16
+											}
+										],
+										"type": {
+											"type": "intrinsic",
+											"name": "string"
+										}
+									}
+								],
+								"groups": [
+									{
+										"title": "Properties",
+										"children": [
+											125,
+											124
+										]
+									}
+								],
+								"sources": [
+									{
+										"fileName": "tooey.ts",
+										"line": 141,
+										"character": 15
+									}
+								]
+							}
+						}
+					}
+				},
+				{
+					"id": 108,
+					"name": "ov",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 126,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 76,
+					"name": "p",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 88,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 109,
+					"name": "pe",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 127,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 114,
+					"name": "ph",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 133,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 89,
+					"name": "pos",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 104,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 85,
+					"name": "r",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 99,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 121,
+					"name": "ro",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 140,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "boolean"
+					}
+				},
+				{
+					"id": 106,
+					"name": "rows",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 123,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 130,
+					"name": "rsp",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 146,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "number"
+					}
+				},
+				{
+					"id": 94,
+					"name": "rt",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 109,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 128,
+					"name": "rw",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 144,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "number"
+					}
+				},
+				{
+					"id": 141,
+					"name": "s",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 159,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.es5.d.ts",
+							"qualifiedName": "Record"
+						},
+						"typeArguments": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "unknown"
+							}
+						],
+						"name": "Record",
+						"package": "typescript"
+					}
+				},
+				{
+					"id": 111,
+					"name": "sh",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 129,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 129,
+					"name": "sp",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 145,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "number"
+					}
+				},
+				{
+					"id": 117,
+					"name": "src",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 136,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 140,
+					"name": "sub",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 157,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "EventHandler"
+						},
+						"name": "EventHandler",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 91,
+					"name": "t",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 106,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 98,
+					"name": "ta",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 114,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 99,
+					"name": "td",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 115,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 112,
+					"name": "tr",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 130,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 115,
+					"name": "type",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 134,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 110,
+					"name": "us",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 128,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 113,
+					"name": "v",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 132,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "unknown"
+					}
+				},
+				{
+					"id": 78,
+					"name": "w",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 90,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "number"
+							}
+						]
+					}
+				},
+				{
+					"id": 132,
+					"name": "x",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 149,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "EventHandler"
+						},
+						"name": "EventHandler",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 90,
+					"name": "z",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 105,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "number"
+					}
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						102,
+						118,
+						93,
+						87,
+						82,
+						134,
+						88,
+						86,
+						131,
+						120,
+						126,
+						105,
+						107,
+						119,
+						138,
+						133,
+						97,
+						83,
+						104,
+						95,
+						96,
+						75,
+						79,
+						116,
+						127,
+						103,
+						135,
+						137,
+						136,
+						92,
+						100,
+						101,
+						139,
+						77,
+						81,
+						80,
+						84,
+						122,
+						108,
+						76,
+						109,
+						114,
+						89,
+						85,
+						121,
+						106,
+						130,
+						94,
+						128,
+						141,
+						111,
+						129,
+						117,
+						140,
+						91,
+						98,
+						99,
+						112,
+						115,
+						110,
+						113,
+						78,
+						132,
+						90
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 85,
+					"character": 10
+				}
+			]
+		},
+		{
+			"id": 214,
+			"name": "RenderOptions",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 216,
+					"name": "plugins",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 73,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "array",
+						"elementType": {
+							"type": "reference",
+							"target": 217,
+							"name": "TooeyPlugin",
+							"package": "@tooey/ui"
+						}
+					}
+				},
+				{
+					"id": 215,
+					"name": "theme",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 72,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 207,
+						"name": "Theme",
+						"package": "@tooey/ui"
+					}
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						216,
+						215
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 71,
+					"character": 10
+				}
+			]
+		},
+		{
+			"id": 207,
+			"name": "Theme",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 208,
+					"name": "colors",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 44,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "ThemeCategory"
+						},
+						"name": "ThemeCategory",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 211,
+					"name": "fonts",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 47,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "ThemeCategory"
+						},
+						"name": "ThemeCategory",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 210,
+					"name": "radius",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 46,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "ThemeCategory"
+						},
+						"name": "ThemeCategory",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 209,
+					"name": "spacing",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 45,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "ThemeCategory"
+						},
+						"name": "ThemeCategory",
+						"package": "@tooey/ui"
+					}
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						208,
+						211,
+						210,
+						209
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 43,
+					"character": 10
+				}
+			],
+			"indexSignature": {
+				"id": 212,
+				"name": "__index",
+				"variant": "signature",
+				"kind": 8192,
+				"flags": {},
+				"sources": [
+					{
+						"fileName": "tooey.ts",
+						"line": 48,
+						"character": 2
+					}
+				],
+				"parameters": [
+					{
+						"id": 213,
+						"name": "key",
+						"variant": "param",
+						"kind": 32768,
+						"flags": {},
+						"type": {
+							"type": "intrinsic",
+							"name": "string"
+						}
+					}
+				],
+				"type": {
+					"type": "union",
+					"types": [
+						{
+							"type": "reference",
+							"target": {
+								"sourceFileName": "../packages/ui/src/tooey.ts",
+								"qualifiedName": "ThemeCategory"
+							},
+							"name": "ThemeCategory",
+							"package": "@tooey/ui"
+						},
+						{
+							"type": "intrinsic",
+							"name": "undefined"
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": 162,
+			"name": "TooeyFactory",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 169,
+					"name": "plugins",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1331,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "array",
+						"elementType": {
+							"type": "reference",
+							"target": 217,
+							"name": "TooeyPlugin",
+							"package": "@tooey/ui"
+						}
+					}
+				},
+				{
+					"id": 163,
+					"name": "render",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1329,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reflection",
+						"declaration": {
+							"id": 164,
+							"name": "__type",
+							"variant": "declaration",
+							"kind": 65536,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 1329,
+									"character": 10
+								}
+							],
+							"signatures": [
+								{
+									"id": 165,
+									"name": "__type",
+									"variant": "signature",
+									"kind": 4096,
+									"flags": {},
+									"sources": [
+										{
+											"fileName": "tooey.ts",
+											"line": 1329,
+											"character": 10
+										}
+									],
+									"parameters": [
+										{
+											"id": 166,
+											"name": "container",
+											"variant": "param",
+											"kind": 32768,
+											"flags": {},
+											"type": {
+												"type": "reference",
+												"target": {
+													"sourceFileName": "../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.dom.d.ts",
+													"qualifiedName": "HTMLElement"
+												},
+												"name": "HTMLElement",
+												"package": "typescript"
+											}
+										},
+										{
+											"id": 167,
+											"name": "spec",
+											"variant": "param",
+											"kind": 32768,
+											"flags": {},
+											"type": {
+												"type": "reference",
+												"target": 70,
+												"name": "TooeySpec",
+												"package": "@tooey/ui"
+											}
+										}
+									],
+									"type": {
+										"type": "reference",
+										"target": 145,
+										"name": "TooeyInstance",
+										"package": "@tooey/ui"
+									}
+								}
+							]
+						}
+					}
+				},
+				{
+					"id": 168,
+					"name": "theme",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1330,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 207,
+						"name": "Theme",
+						"package": "@tooey/ui"
+					}
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						169,
+						163,
+						168
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1328,
+					"character": 10
+				}
+			]
+		},
+		{
+			"id": 145,
+			"name": "TooeyInstance",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 147,
+					"name": "el",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1217,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "union",
+						"types": [
+							{
+								"type": "literal",
+								"value": null
+							},
+							{
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.dom.d.ts",
+									"qualifiedName": "HTMLElement"
+								},
+								"name": "HTMLElement",
+								"package": "typescript"
+							}
+						]
+					}
+				},
+				{
+					"id": 146,
+					"name": "state",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1216,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "StateStore"
+						},
+						"name": "StateStore",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 148,
+					"name": "destroy",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1218,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 149,
+							"name": "destroy",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 1218,
+									"character": 2
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				},
+				{
+					"id": 153,
+					"name": "get",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1220,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 154,
+							"name": "get",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 1220,
+									"character": 2
+								}
+							],
+							"parameters": [
+								{
+									"id": 155,
+									"name": "key",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "string"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "unknown"
+							}
+						}
+					]
+				},
+				{
+					"id": 156,
+					"name": "set",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1221,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 157,
+							"name": "set",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 1221,
+									"character": 2
+								}
+							],
+							"parameters": [
+								{
+									"id": 158,
+									"name": "key",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "string"
+									}
+								},
+								{
+									"id": 159,
+									"name": "value",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "unknown"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				},
+				{
+					"id": 150,
+					"name": "update",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1219,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 151,
+							"name": "update",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 1219,
+									"character": 2
+								}
+							],
+							"parameters": [
+								{
+									"id": 152,
+									"name": "newSpec",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "reference",
+										"target": 70,
+										"name": "TooeySpec",
+										"package": "@tooey/ui"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						147,
+						146
+					]
+				},
+				{
+					"title": "Methods",
+					"children": [
+						148,
+						153,
+						156,
+						150
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1215,
+					"character": 10
+				}
+			],
+			"indexSignature": {
+				"id": 160,
+				"name": "__index",
+				"variant": "signature",
+				"kind": 8192,
+				"flags": {},
+				"sources": [
+					{
+						"fileName": "tooey.ts",
+						"line": 1223,
+						"character": 2
+					}
+				],
+				"parameters": [
+					{
+						"id": 161,
+						"name": "key",
+						"variant": "param",
+						"kind": 32768,
+						"flags": {},
+						"type": {
+							"type": "intrinsic",
+							"name": "string"
+						}
+					}
+				],
+				"type": {
+					"type": "intrinsic",
+					"name": "unknown"
+				}
+			}
+		},
+		{
+			"id": 217,
+			"name": "TooeyPlugin",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 238,
+					"name": "extend",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 68,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.es5.d.ts",
+							"qualifiedName": "Record"
+						},
+						"typeArguments": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "reflection",
+								"declaration": {
+									"id": 239,
+									"name": "__type",
+									"variant": "declaration",
+									"kind": 65536,
+									"flags": {},
+									"sources": [
+										{
+											"fileName": "tooey.ts",
+											"line": 68,
+											"character": 26
+										}
+									],
+									"signatures": [
+										{
+											"id": 240,
+											"name": "__type",
+											"variant": "signature",
+											"kind": 4096,
+											"flags": {},
+											"sources": [
+												{
+													"fileName": "tooey.ts",
+													"line": 68,
+													"character": 26
+												}
+											],
+											"parameters": [
+												{
+													"id": 241,
+													"name": "this",
+													"variant": "param",
+													"kind": 32768,
+													"flags": {},
+													"type": {
+														"type": "reference",
+														"target": 145,
+														"name": "TooeyInstance",
+														"package": "@tooey/ui"
+													}
+												},
+												{
+													"id": 242,
+													"name": "args",
+													"variant": "param",
+													"kind": 32768,
+													"flags": {
+														"isRest": true
+													},
+													"type": {
+														"type": "array",
+														"elementType": {
+															"type": "intrinsic",
+															"name": "unknown"
+														}
+													}
+												}
+											],
+											"type": {
+												"type": "intrinsic",
+												"name": "unknown"
+											}
+										}
+									]
+								}
+							}
+						],
+						"name": "Record",
+						"package": "typescript"
+					}
+				},
+				{
+					"id": 218,
+					"name": "name",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 54,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "string"
+					}
+				},
+				{
+					"id": 229,
+					"name": "afterRender",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 62,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 230,
+							"name": "afterRender",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 62,
+									"character": 2
+								}
+							],
+							"parameters": [
+								{
+									"id": 231,
+									"name": "el",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.dom.d.ts",
+											"qualifiedName": "HTMLElement"
+										},
+										"name": "HTMLElement",
+										"package": "typescript"
+									}
+								},
+								{
+									"id": 232,
+									"name": "spec",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "reference",
+										"target": 73,
+										"name": "NodeSpec",
+										"package": "@tooey/ui"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				},
+				{
+					"id": 225,
+					"name": "beforeRender",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 61,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 226,
+							"name": "beforeRender",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 61,
+									"character": 2
+								}
+							],
+							"parameters": [
+								{
+									"id": 227,
+									"name": "spec",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "reference",
+										"target": 73,
+										"name": "NodeSpec",
+										"package": "@tooey/ui"
+									}
+								},
+								{
+									"id": 228,
+									"name": "ctx",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../packages/ui/src/tooey.ts",
+											"qualifiedName": "RenderContext"
+										},
+										"name": "RenderContext",
+										"package": "@tooey/ui"
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": 73,
+								"name": "NodeSpec",
+								"package": "@tooey/ui"
+							}
+						}
+					]
+				},
+				{
+					"id": 222,
+					"name": "onDestroy",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 58,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 223,
+							"name": "onDestroy",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 58,
+									"character": 2
+								}
+							],
+							"parameters": [
+								{
+									"id": 224,
+									"name": "instance",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "reference",
+										"target": 145,
+										"name": "TooeyInstance",
+										"package": "@tooey/ui"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				},
+				{
+					"id": 219,
+					"name": "onInit",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 57,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 220,
+							"name": "onInit",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 57,
+									"character": 2
+								}
+							],
+							"parameters": [
+								{
+									"id": 221,
+									"name": "instance",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "reference",
+										"target": 145,
+										"name": "TooeyInstance",
+										"package": "@tooey/ui"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				},
+				{
+					"id": 233,
+					"name": "onStateChange",
+					"variant": "declaration",
+					"kind": 2048,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 65,
+							"character": 2
+						}
+					],
+					"signatures": [
+						{
+							"id": 234,
+							"name": "onStateChange",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 65,
+									"character": 2
+								}
+							],
+							"parameters": [
+								{
+									"id": 235,
+									"name": "key",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "string"
+									}
+								},
+								{
+									"id": 236,
+									"name": "oldVal",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "unknown"
+									}
+								},
+								{
+									"id": 237,
+									"name": "newVal",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "unknown"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						238,
+						218
+					]
+				},
+				{
+					"title": "Methods",
+					"children": [
+						229,
+						225,
+						222,
+						219,
+						233
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 53,
+					"character": 10
+				}
+			]
+		},
+		{
+			"id": 70,
+			"name": "TooeySpec",
+			"variant": "declaration",
+			"kind": 256,
+			"flags": {},
+			"children": [
+				{
+					"id": 72,
+					"name": "r",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 207,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 73,
+						"name": "NodeSpec",
+						"package": "@tooey/ui"
+					}
+				},
+				{
+					"id": 71,
+					"name": "s",
+					"variant": "declaration",
+					"kind": 1024,
+					"flags": {
+						"isOptional": true
+					},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 206,
+							"character": 2
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.es5.d.ts",
+							"qualifiedName": "Record"
+						},
+						"typeArguments": [
+							{
+								"type": "intrinsic",
+								"name": "string"
+							},
+							{
+								"type": "intrinsic",
+								"name": "unknown"
+							}
+						],
+						"name": "Record",
+						"package": "typescript"
+					}
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"children": [
+						72,
+						71
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 205,
+					"character": 10
+				}
+			]
+		},
+		{
+			"id": 201,
+			"name": "Component",
+			"variant": "declaration",
+			"kind": 2097152,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 171,
+					"character": 5
+				}
+			],
+			"typeParameters": [
+				{
+					"id": 206,
+					"name": "P",
+					"variant": "typeParam",
+					"kind": 131072,
+					"flags": {},
+					"type": {
+						"type": "reference",
+						"target": 74,
+						"name": "Props",
+						"package": "@tooey/ui"
+					},
+					"default": {
+						"type": "reference",
+						"target": 74,
+						"name": "Props",
+						"package": "@tooey/ui"
+					}
+				}
+			],
+			"type": {
+				"type": "reflection",
+				"declaration": {
+					"id": 202,
+					"name": "__type",
+					"variant": "declaration",
+					"kind": 65536,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 171,
+							"character": 42
+						}
+					],
+					"signatures": [
+						{
+							"id": 203,
+							"name": "__type",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"parameters": [
+								{
+									"id": 204,
+									"name": "props",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"type": {
+										"type": "reference",
+										"target": 206,
+										"name": "P",
+										"package": "@tooey/ui",
+										"refersToTypeParameter": true
+									}
+								},
+								{
+									"id": 205,
+									"name": "children",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {
+										"isOptional": true
+									},
+									"type": {
+										"type": "array",
+										"elementType": {
+											"type": "reference",
+											"target": 73,
+											"name": "NodeSpec",
+											"package": "@tooey/ui"
+										}
+									}
+								}
+							],
+							"type": {
+								"type": "reference",
+								"target": 73,
+								"name": "NodeSpec",
+								"package": "@tooey/ui"
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": 197,
+			"name": "ErrorHandler",
+			"variant": "declaration",
+			"kind": 2097152,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 218,
+					"character": 5
+				}
+			],
+			"type": {
+				"type": "reflection",
+				"declaration": {
+					"id": 198,
+					"name": "__type",
+					"variant": "declaration",
+					"kind": 65536,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 218,
+							"character": 20
+						}
+					],
+					"signatures": [
+						{
+							"id": 199,
+							"name": "__type",
+							"variant": "signature",
+							"kind": 4096,
+							"flags": {},
+							"parameters": [
+								{
+									"id": 200,
+									"name": "error",
+									"variant": "param",
+									"kind": 32768,
+									"flags": {},
+									"type": {
+										"type": "reference",
+										"target": 193,
+										"name": "ErrorInfo",
+										"package": "@tooey/ui"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": 73,
+			"name": "NodeSpec",
+			"variant": "declaration",
+			"kind": 2097152,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 203,
+					"character": 5
+				}
+			],
+			"type": {
+				"type": "union",
+				"types": [
+					{
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "BuiltinNodeSpec"
+						},
+						"name": "BuiltinNodeSpec",
+						"package": "@tooey/ui"
+					},
+					{
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "FunctionNodeSpec"
+						},
+						"name": "FunctionNodeSpec",
+						"package": "@tooey/ui"
+					},
+					{
+						"type": "reference",
+						"target": 173,
+						"name": "IfNode",
+						"package": "@tooey/ui"
+					},
+					{
+						"type": "reference",
+						"target": 182,
+						"name": "MapNode",
+						"package": "@tooey/ui"
+					}
+				]
+			}
+		},
+		{
+			"id": 142,
+			"name": "StateRef",
+			"variant": "declaration",
+			"kind": 2097152,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 173,
+					"character": 5
+				}
+			],
+			"type": {
+				"type": "reflection",
+				"declaration": {
+					"id": 143,
+					"name": "__type",
+					"variant": "declaration",
+					"kind": 65536,
+					"flags": {},
+					"children": [
+						{
+							"id": 144,
+							"name": "$",
+							"variant": "declaration",
+							"kind": 1024,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 173,
+									"character": 18
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "string"
+							}
+						}
+					],
+					"groups": [
+						{
+							"title": "Properties",
+							"children": [
+								144
+							]
+						}
+					],
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 173,
+							"character": 16
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": 52,
+			"name": "B",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1359,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "B"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 56,
+			"name": "C",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1363,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "C"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 49,
+			"name": "D",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1356,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "D"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 50,
+			"name": "G",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1357,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "G"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 48,
+			"name": "H",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1355,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "H"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 53,
+			"name": "I",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1360,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "I"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 68,
+			"name": "L",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1375,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "L"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 66,
+			"name": "Li",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1373,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "Li"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 67,
+			"name": "M",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1374,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "M"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 65,
+			"name": "Ol",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1372,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "Ol"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 57,
+			"name": "R",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1364,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "R"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 55,
+			"name": "S",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1362,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "S"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 69,
+			"name": "Sv",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1376,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "Sv"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 51,
+			"name": "T",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1358,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "T"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 54,
+			"name": "Ta",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1361,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "Ta"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 58,
+			"name": "Tb",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1365,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "Tb"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 60,
+			"name": "Tbd",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1367,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "Tbd"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 63,
+			"name": "Tc",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1370,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "Tc"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 62,
+			"name": "Td",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1369,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "Td"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 59,
+			"name": "Th",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1366,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "Th"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 61,
+			"name": "Tr",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1368,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "Tr"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 64,
+			"name": "Ul",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1371,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "Ul"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 47,
+			"name": "V",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1354,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "V"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 44,
+			"name": "$",
+			"variant": "declaration",
+			"kind": 64,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1349,
+					"character": 9
+				}
+			],
+			"signatures": [
+				{
+					"id": 45,
+					"name": "$",
+					"variant": "signature",
+					"kind": 4096,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1349,
+							"character": 9
+						}
+					],
+					"parameters": [
+						{
+							"id": 46,
+							"name": "name",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {},
+							"type": {
+								"type": "intrinsic",
+								"name": "string"
+							}
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 142,
+						"name": "StateRef",
+						"package": "@tooey/ui"
+					}
+				}
+			]
+		},
+		{
+			"id": 32,
+			"name": "async$",
+			"variant": "declaration",
+			"kind": 64,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 391,
+					"character": 9
+				}
+			],
+			"signatures": [
+				{
+					"id": 33,
+					"name": "async$",
+					"variant": "signature",
+					"kind": 4096,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 391,
+							"character": 9
+						}
+					],
+					"typeParameter": [
+						{
+							"id": 34,
+							"name": "T",
+							"variant": "typeParam",
+							"kind": 131072,
+							"flags": {}
+						}
+					],
+					"parameters": [
+						{
+							"id": 35,
+							"name": "promiseOrFn",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {},
+							"type": {
+								"type": "union",
+								"types": [
+									{
+										"type": "reference",
+										"target": {
+											"sourceFileName": "../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.es5.d.ts",
+											"qualifiedName": "Promise"
+										},
+										"typeArguments": [
+											{
+												"type": "reference",
+												"target": 34,
+												"name": "T",
+												"package": "@tooey/ui",
+												"refersToTypeParameter": true
+											}
+										],
+										"name": "Promise",
+										"package": "typescript"
+									},
+									{
+										"type": "reflection",
+										"declaration": {
+											"id": 36,
+											"name": "__type",
+											"variant": "declaration",
+											"kind": 65536,
+											"flags": {},
+											"sources": [
+												{
+													"fileName": "tooey.ts",
+													"line": 392,
+													"character": 29
+												}
+											],
+											"signatures": [
+												{
+													"id": 37,
+													"name": "__type",
+													"variant": "signature",
+													"kind": 4096,
+													"flags": {},
+													"sources": [
+														{
+															"fileName": "tooey.ts",
+															"line": 392,
+															"character": 29
+														}
+													],
+													"type": {
+														"type": "reference",
+														"target": {
+															"sourceFileName": "../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.es5.d.ts",
+															"qualifiedName": "Promise"
+														},
+														"typeArguments": [
+															{
+																"type": "reference",
+																"target": 34,
+																"name": "T",
+																"package": "@tooey/ui",
+																"refersToTypeParameter": true
+															}
+														],
+														"name": "Promise",
+														"package": "typescript"
+													}
+												}
+											]
+										}
+									}
+								]
+							}
+						},
+						{
+							"id": 38,
+							"name": "options",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {
+								"isOptional": true
+							},
+							"type": {
+								"type": "reflection",
+								"declaration": {
+									"id": 39,
+									"name": "__type",
+									"variant": "declaration",
+									"kind": 65536,
+									"flags": {},
+									"children": [
+										{
+											"id": 40,
+											"name": "onError",
+											"variant": "declaration",
+											"kind": 1024,
+											"flags": {
+												"isOptional": true
+											},
+											"sources": [
+												{
+													"fileName": "tooey.ts",
+													"line": 393,
+													"character": 14
+												}
+											],
+											"type": {
+												"type": "reflection",
+												"declaration": {
+													"id": 41,
+													"name": "__type",
+													"variant": "declaration",
+													"kind": 65536,
+													"flags": {},
+													"sources": [
+														{
+															"fileName": "tooey.ts",
+															"line": 393,
+															"character": 24
+														}
+													],
+													"signatures": [
+														{
+															"id": 42,
+															"name": "__type",
+															"variant": "signature",
+															"kind": 4096,
+															"flags": {},
+															"sources": [
+																{
+																	"fileName": "tooey.ts",
+																	"line": 393,
+																	"character": 24
+																}
+															],
+															"parameters": [
+																{
+																	"id": 43,
+																	"name": "error",
+																	"variant": "param",
+																	"kind": 32768,
+																	"flags": {},
+																	"type": {
+																		"type": "reference",
+																		"target": {
+																			"sourceFileName": "../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.es5.d.ts",
+																			"qualifiedName": "Error"
+																		},
+																		"name": "Error",
+																		"package": "typescript"
+																	}
+																}
+															],
+															"type": {
+																"type": "intrinsic",
+																"name": "void"
+															}
+														}
+													]
+												}
+											}
+										}
+									],
+									"groups": [
+										{
+											"title": "Properties",
+											"children": [
+												40
+											]
+										}
+									],
+									"sources": [
+										{
+											"fileName": "tooey.ts",
+											"line": 393,
+											"character": 12
+										}
+									]
+								}
+							}
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 253,
+						"typeArguments": [
+							{
+								"type": "reference",
+								"target": 34,
+								"name": "T",
+								"package": "@tooey/ui",
+								"refersToTypeParameter": true
+							}
+						],
+						"name": "AsyncSpec",
+						"package": "@tooey/ui"
+					}
+				}
+			]
+		},
+		{
+			"id": 21,
+			"name": "batch",
+			"variant": "declaration",
+			"kind": 64,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 285,
+					"character": 9
+				}
+			],
+			"signatures": [
+				{
+					"id": 22,
+					"name": "batch",
+					"variant": "signature",
+					"kind": 4096,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 285,
+							"character": 9
+						}
+					],
+					"parameters": [
+						{
+							"id": 23,
+							"name": "fn",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {},
+							"type": {
+								"type": "reflection",
+								"declaration": {
+									"id": 24,
+									"name": "__type",
+									"variant": "declaration",
+									"kind": 65536,
+									"flags": {},
+									"sources": [
+										{
+											"fileName": "tooey.ts",
+											"line": 285,
+											"character": 19
+										}
+									],
+									"signatures": [
+										{
+											"id": 25,
+											"name": "__type",
+											"variant": "signature",
+											"kind": 4096,
+											"flags": {},
+											"sources": [
+												{
+													"fileName": "tooey.ts",
+													"line": 285,
+													"character": 19
+												}
+											],
+											"type": {
+												"type": "intrinsic",
+												"name": "void"
+											}
+										}
+									]
+								}
+							}
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "void"
+					}
+				}
+			]
+		},
+		{
+			"id": 26,
+			"name": "computed",
+			"variant": "declaration",
+			"kind": 64,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 332,
+					"character": 9
+				}
+			],
+			"signatures": [
+				{
+					"id": 27,
+					"name": "computed",
+					"variant": "signature",
+					"kind": 4096,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 332,
+							"character": 9
+						}
+					],
+					"typeParameter": [
+						{
+							"id": 28,
+							"name": "T",
+							"variant": "typeParam",
+							"kind": 131072,
+							"flags": {}
+						}
+					],
+					"parameters": [
+						{
+							"id": 29,
+							"name": "fn",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {},
+							"type": {
+								"type": "reflection",
+								"declaration": {
+									"id": 30,
+									"name": "__type",
+									"variant": "declaration",
+									"kind": 65536,
+									"flags": {},
+									"sources": [
+										{
+											"fileName": "tooey.ts",
+											"line": 332,
+											"character": 25
+										}
+									],
+									"signatures": [
+										{
+											"id": 31,
+											"name": "__type",
+											"variant": "signature",
+											"kind": 4096,
+											"flags": {},
+											"sources": [
+												{
+													"fileName": "tooey.ts",
+													"line": 332,
+													"character": 25
+												}
+											],
+											"type": {
+												"type": "reference",
+												"target": 28,
+												"name": "T",
+												"package": "@tooey/ui",
+												"refersToTypeParameter": true
+											}
+										}
+									]
+								}
+							}
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 243,
+						"typeArguments": [
+							{
+								"type": "reference",
+								"target": 28,
+								"name": "T",
+								"package": "@tooey/ui",
+								"refersToTypeParameter": true
+							}
+						],
+						"name": "ComputedSignal",
+						"package": "@tooey/ui"
+					}
+				}
+			]
+		},
+		{
+			"id": 6,
+			"name": "createTooey",
+			"variant": "declaration",
+			"kind": 64,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1335,
+					"character": 9
+				}
+			],
+			"signatures": [
+				{
+					"id": 7,
+					"name": "createTooey",
+					"variant": "signature",
+					"kind": 4096,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1335,
+							"character": 9
+						}
+					],
+					"parameters": [
+						{
+							"id": 8,
+							"name": "themeOrOptions",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {},
+							"type": {
+								"type": "union",
+								"types": [
+									{
+										"type": "reference",
+										"target": 207,
+										"name": "Theme",
+										"package": "@tooey/ui"
+									},
+									{
+										"type": "reference",
+										"target": 170,
+										"name": "CreateTooeyOptions",
+										"package": "@tooey/ui"
+									}
+								]
+							}
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 162,
+						"name": "TooeyFactory",
+						"package": "@tooey/ui"
+					}
+				}
+			]
+		},
+		{
+			"id": 13,
+			"name": "effect",
+			"variant": "declaration",
+			"kind": 64,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 299,
+					"character": 9
+				}
+			],
+			"signatures": [
+				{
+					"id": 14,
+					"name": "effect",
+					"variant": "signature",
+					"kind": 4096,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 299,
+							"character": 9
+						}
+					],
+					"parameters": [
+						{
+							"id": 15,
+							"name": "fn",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {},
+							"type": {
+								"type": "reflection",
+								"declaration": {
+									"id": 16,
+									"name": "__type",
+									"variant": "declaration",
+									"kind": 65536,
+									"flags": {},
+									"sources": [
+										{
+											"fileName": "tooey.ts",
+											"line": 299,
+											"character": 20
+										}
+									],
+									"signatures": [
+										{
+											"id": 17,
+											"name": "__type",
+											"variant": "signature",
+											"kind": 4096,
+											"flags": {},
+											"sources": [
+												{
+													"fileName": "tooey.ts",
+													"line": 299,
+													"character": 20
+												}
+											],
+											"type": {
+												"type": "intrinsic",
+												"name": "void"
+											}
+										}
+									]
+								}
+							}
+						},
+						{
+							"id": 18,
+							"name": "ctx",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {
+								"isOptional": true
+							},
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../packages/ui/src/tooey.ts",
+									"qualifiedName": "RenderContext"
+								},
+								"name": "RenderContext",
+								"package": "@tooey/ui"
+							}
+						}
+					],
+					"type": {
+						"type": "reflection",
+						"declaration": {
+							"id": 19,
+							"name": "__type",
+							"variant": "declaration",
+							"kind": 65536,
+							"flags": {},
+							"sources": [
+								{
+									"fileName": "tooey.ts",
+									"line": 299,
+									"character": 54
+								}
+							],
+							"signatures": [
+								{
+									"id": 20,
+									"name": "__type",
+									"variant": "signature",
+									"kind": 4096,
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "void"
+									}
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"id": 1,
+			"name": "render",
+			"variant": "declaration",
+			"kind": 64,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1226,
+					"character": 9
+				}
+			],
+			"signatures": [
+				{
+					"id": 2,
+					"name": "render",
+					"variant": "signature",
+					"kind": 4096,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 1226,
+							"character": 9
+						}
+					],
+					"parameters": [
+						{
+							"id": 3,
+							"name": "container",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {},
+							"type": {
+								"type": "reference",
+								"target": {
+									"sourceFileName": "../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.dom.d.ts",
+									"qualifiedName": "HTMLElement"
+								},
+								"name": "HTMLElement",
+								"package": "typescript"
+							}
+						},
+						{
+							"id": 4,
+							"name": "spec",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {},
+							"type": {
+								"type": "reference",
+								"target": 70,
+								"name": "TooeySpec",
+								"package": "@tooey/ui"
+							}
+						},
+						{
+							"id": 5,
+							"name": "options",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {
+								"isOptional": true
+							},
+							"type": {
+								"type": "reference",
+								"target": 214,
+								"name": "RenderOptions",
+								"package": "@tooey/ui"
+							}
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": 145,
+						"name": "TooeyInstance",
+						"package": "@tooey/ui"
+					}
+				}
+			]
+		},
+		{
+			"id": 9,
+			"name": "signal",
+			"variant": "declaration",
+			"kind": 64,
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 254,
+					"character": 9
+				}
+			],
+			"signatures": [
+				{
+					"id": 10,
+					"name": "signal",
+					"variant": "signature",
+					"kind": 4096,
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "tooey.ts",
+							"line": 254,
+							"character": 9
+						}
+					],
+					"typeParameter": [
+						{
+							"id": 11,
+							"name": "T",
+							"variant": "typeParam",
+							"kind": 131072,
+							"flags": {}
+						}
+					],
+					"parameters": [
+						{
+							"id": 12,
+							"name": "initial",
+							"variant": "param",
+							"kind": 32768,
+							"flags": {},
+							"type": {
+								"type": "reference",
+								"target": 11,
+								"name": "T",
+								"package": "@tooey/ui",
+								"refersToTypeParameter": true
+							}
+						}
+					],
+					"type": {
+						"type": "reference",
+						"target": {
+							"sourceFileName": "../packages/ui/src/tooey.ts",
+							"qualifiedName": "Signal"
+						},
+						"typeArguments": [
+							{
+								"type": "reference",
+								"target": 11,
+								"name": "T",
+								"package": "@tooey/ui",
+								"refersToTypeParameter": true
+							}
+						],
+						"name": "Signal",
+						"package": "@tooey/ui"
+					}
+				}
+			]
+		}
+	],
+	"groups": [
+		{
+			"title": "Interfaces",
+			"children": [
+				253,
+				243,
+				170,
+				188,
+				193,
+				173,
+				182,
+				74,
+				214,
+				207,
+				162,
+				145,
+				217,
+				70
+			]
+		},
+		{
+			"title": "Type Aliases",
+			"children": [
+				201,
+				197,
+				73,
+				142
+			]
+		},
+		{
+			"title": "Variables",
+			"children": [
+				52,
+				56,
+				49,
+				50,
+				48,
+				53,
+				68,
+				66,
+				67,
+				65,
+				57,
+				55,
+				69,
+				51,
+				54,
+				58,
+				60,
+				63,
+				62,
+				59,
+				61,
+				64,
+				47
+			]
+		},
+		{
+			"title": "Functions",
+			"children": [
+				44,
+				32,
+				21,
+				26,
+				6,
+				13,
+				1,
+				9
+			]
+		}
+	],
+	"packageName": "@tooey/ui",
+	"packageVersion": "1.2.0",
+	"symbolIdMap": {
+		"0": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": ""
+		},
+		"1": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "render"
+		},
+		"2": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "render"
+		},
+		"3": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "container"
+		},
+		"4": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "spec"
+		},
+		"5": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "options"
+		},
+		"6": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "createTooey"
+		},
+		"7": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "createTooey"
+		},
+		"8": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "themeOrOptions"
+		},
+		"9": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "signal"
+		},
+		"10": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "signal"
+		},
+		"11": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "T"
+		},
+		"12": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "initial"
+		},
+		"13": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "effect"
+		},
+		"14": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "effect"
+		},
+		"15": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "fn"
+		},
+		"16": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"17": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"18": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ctx"
+		},
+		"19": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"20": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"21": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "batch"
+		},
+		"22": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "batch"
+		},
+		"23": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "fn"
+		},
+		"24": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"25": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"26": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "computed"
+		},
+		"27": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "computed"
+		},
+		"28": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "T"
+		},
+		"29": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "fn"
+		},
+		"30": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"31": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"32": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "async$"
+		},
+		"33": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "async$"
+		},
+		"34": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "T"
+		},
+		"35": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "promiseOrFn"
+		},
+		"36": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"37": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"38": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "options"
+		},
+		"39": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"40": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type.onError"
+		},
+		"41": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"42": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"43": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "error"
+		},
+		"44": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "$"
+		},
+		"45": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "$"
+		},
+		"46": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "name"
+		},
+		"47": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "V"
+		},
+		"48": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "H"
+		},
+		"49": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "D"
+		},
+		"50": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "G"
+		},
+		"51": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "T"
+		},
+		"52": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "B"
+		},
+		"53": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "I"
+		},
+		"54": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Ta"
+		},
+		"55": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "S"
+		},
+		"56": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "C"
+		},
+		"57": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "R"
+		},
+		"58": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Tb"
+		},
+		"59": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Th"
+		},
+		"60": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Tbd"
+		},
+		"61": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Tr"
+		},
+		"62": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Td"
+		},
+		"63": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Tc"
+		},
+		"64": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Ul"
+		},
+		"65": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Ol"
+		},
+		"66": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Li"
+		},
+		"67": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "M"
+		},
+		"68": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "L"
+		},
+		"69": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Sv"
+		},
+		"70": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeySpec"
+		},
+		"71": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeySpec.s"
+		},
+		"72": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeySpec.r"
+		},
+		"73": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "NodeSpec"
+		},
+		"74": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props"
+		},
+		"75": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.g"
+		},
+		"76": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.p"
+		},
+		"77": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.m"
+		},
+		"78": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.w"
+		},
+		"79": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.h"
+		},
+		"80": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.mw"
+		},
+		"81": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.mh"
+		},
+		"82": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.bg"
+		},
+		"83": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.fg"
+		},
+		"84": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.o"
+		},
+		"85": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.r"
+		},
+		"86": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.bw"
+		},
+		"87": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.bc"
+		},
+		"88": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.bs"
+		},
+		"89": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.pos"
+		},
+		"90": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.z"
+		},
+		"91": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.t"
+		},
+		"92": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.l"
+		},
+		"93": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.b"
+		},
+		"94": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.rt"
+		},
+		"95": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.fs"
+		},
+		"96": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.fw"
+		},
+		"97": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.ff"
+		},
+		"98": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.ta"
+		},
+		"99": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.td"
+		},
+		"100": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.lh"
+		},
+		"101": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.ls"
+		},
+		"102": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.ai"
+		},
+		"103": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.jc"
+		},
+		"104": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.flw"
+		},
+		"105": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.cols"
+		},
+		"106": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.rows"
+		},
+		"107": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.cur"
+		},
+		"108": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.ov"
+		},
+		"109": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.pe"
+		},
+		"110": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.us"
+		},
+		"111": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.sh"
+		},
+		"112": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.tr"
+		},
+		"113": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.v"
+		},
+		"114": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.ph"
+		},
+		"115": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.type"
+		},
+		"116": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.href"
+		},
+		"117": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.src"
+		},
+		"118": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.alt"
+		},
+		"119": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.dis"
+		},
+		"120": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.ch"
+		},
+		"121": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.ro"
+		},
+		"122": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.opts"
+		},
+		"123": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"124": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type.v"
+		},
+		"125": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type.l"
+		},
+		"126": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.cls"
+		},
+		"127": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.id"
+		},
+		"128": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.rw"
+		},
+		"129": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.sp"
+		},
+		"130": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.rsp"
+		},
+		"131": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.c"
+		},
+		"132": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.x"
+		},
+		"133": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.f"
+		},
+		"134": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.bl"
+		},
+		"135": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.k"
+		},
+		"136": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.ku"
+		},
+		"137": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.kp"
+		},
+		"138": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.e"
+		},
+		"139": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.lv"
+		},
+		"140": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.sub"
+		},
+		"141": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Props.s"
+		},
+		"142": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "StateRef"
+		},
+		"143": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"144": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type.$"
+		},
+		"145": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance"
+		},
+		"146": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance.state"
+		},
+		"147": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance.el"
+		},
+		"148": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance.destroy"
+		},
+		"149": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance.destroy"
+		},
+		"150": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance.update"
+		},
+		"151": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance.update"
+		},
+		"152": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "newSpec"
+		},
+		"153": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance.get"
+		},
+		"154": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance.get"
+		},
+		"155": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "key"
+		},
+		"156": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance.set"
+		},
+		"157": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance.set"
+		},
+		"158": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "key"
+		},
+		"159": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "value"
+		},
+		"160": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyInstance.__index"
+		},
+		"162": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyFactory"
+		},
+		"163": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyFactory.render"
+		},
+		"164": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"165": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"166": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "container"
+		},
+		"167": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "spec"
+		},
+		"168": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyFactory.theme"
+		},
+		"169": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyFactory.plugins"
+		},
+		"170": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "CreateTooeyOptions"
+		},
+		"171": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "CreateTooeyOptions.theme"
+		},
+		"172": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "CreateTooeyOptions.plugins"
+		},
+		"173": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "IfNode"
+		},
+		"174": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "IfNode.if"
+		},
+		"175": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "IfNode.then"
+		},
+		"176": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "IfNode.else"
+		},
+		"177": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "IfNode.?"
+		},
+		"178": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "IfNode.t"
+		},
+		"179": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "IfNode.e"
+		},
+		"180": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "IfNode.eq"
+		},
+		"181": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "IfNode.is"
+		},
+		"182": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "MapNode"
+		},
+		"183": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "MapNode.map"
+		},
+		"184": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "MapNode.as"
+		},
+		"185": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "MapNode.m"
+		},
+		"186": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "MapNode.a"
+		},
+		"187": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "MapNode.key"
+		},
+		"188": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ErrorBoundaryNode"
+		},
+		"189": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ErrorBoundaryNode.boundary"
+		},
+		"190": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ErrorBoundaryNode.child"
+		},
+		"191": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ErrorBoundaryNode.fallback"
+		},
+		"192": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ErrorBoundaryNode.onError"
+		},
+		"193": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ErrorInfo"
+		},
+		"194": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ErrorInfo.message"
+		},
+		"195": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ErrorInfo.componentType"
+		},
+		"196": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ErrorInfo.stack"
+		},
+		"197": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ErrorHandler"
+		},
+		"198": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"199": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"200": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "error"
+		},
+		"201": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Component"
+		},
+		"202": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"203": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"204": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "props"
+		},
+		"205": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "children"
+		},
+		"206": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "P"
+		},
+		"207": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Theme"
+		},
+		"208": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Theme.colors"
+		},
+		"209": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Theme.spacing"
+		},
+		"210": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Theme.radius"
+		},
+		"211": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Theme.fonts"
+		},
+		"212": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "Theme.__index"
+		},
+		"214": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "RenderOptions"
+		},
+		"215": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "RenderOptions.theme"
+		},
+		"216": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "RenderOptions.plugins"
+		},
+		"217": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin"
+		},
+		"218": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.name"
+		},
+		"219": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.onInit"
+		},
+		"220": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.onInit"
+		},
+		"221": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "instance"
+		},
+		"222": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.onDestroy"
+		},
+		"223": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.onDestroy"
+		},
+		"224": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "instance"
+		},
+		"225": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.beforeRender"
+		},
+		"226": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.beforeRender"
+		},
+		"227": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "spec"
+		},
+		"228": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ctx"
+		},
+		"229": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.afterRender"
+		},
+		"230": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.afterRender"
+		},
+		"231": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "el"
+		},
+		"232": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "spec"
+		},
+		"233": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.onStateChange"
+		},
+		"234": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.onStateChange"
+		},
+		"235": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "key"
+		},
+		"236": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "oldVal"
+		},
+		"237": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "newVal"
+		},
+		"238": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "TooeyPlugin.extend"
+		},
+		"239": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"240": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"241": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "this"
+		},
+		"242": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "args"
+		},
+		"243": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ComputedSignal"
+		},
+		"244": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ComputedSignal.sub"
+		},
+		"245": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ComputedSignal.sub"
+		},
+		"246": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "fn"
+		},
+		"247": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"248": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"249": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"250": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "__type"
+		},
+		"251": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ComputedSignal.T"
+		},
+		"252": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "ComputedSignal"
+		},
+		"253": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "AsyncSpec"
+		},
+		"254": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "AsyncSpec.s"
+		},
+		"255": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "AsyncSpec.init"
+		},
+		"256": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "AsyncSpec.init"
+		},
+		"257": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "instance"
+		},
+		"258": {
+			"sourceFileName": "../packages/ui/src/tooey.ts",
+			"qualifiedName": "AsyncSpec.T"
+		}
+	}
+}

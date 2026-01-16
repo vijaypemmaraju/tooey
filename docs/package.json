@@ -1,0 +1,21 @@
+{
+  "name": "@tooey/docs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "typedoc --json dist/api.json ../packages/ui/src/tooey.ts && tsx scripts/transform-api.ts",
+    "build": "pnpm run generate && esbuild src/docs.ts --bundle --outfile=dist/docs.js --format=esm --minify --sourcemap --external:@tooey/ui",
+    "dev": "esbuild src/docs.ts --bundle --outfile=dist/docs.js --format=esm --sourcemap --watch --external:@tooey/ui"
+  },
+  "dependencies": {
+    "@tooey/ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.20.0",
+    "tsx": "^4.7.0",
+    "typedoc": "^0.25.0",
+    "typescript": "^5.3.3"
+  }
+}

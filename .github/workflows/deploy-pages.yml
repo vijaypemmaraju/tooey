@@ -38,10 +38,15 @@ jobs:
 
       - name: prepare pages content
         run: |
-          mkdir -p _site/examples
+          mkdir -p _site/examples _site/dist
+          # copy docs site (main entry point) - html and built js
+          cp docs/index.html _site/
+          cp -r docs/dist _site/
+          # copy examples
           cp -r packages/ui/examples/* _site/examples/
-          cp -r packages/ui/dist _site/dist
-          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=examples/"></head></html>' > _site/index.html
+          # copy @tooey/ui dist for module imports
+          mkdir -p _site/packages/ui
+          cp -r packages/ui/dist _site/packages/ui/dist
 
       - name: setup pages
         uses: actions/configure-pages@v4
