@@ -113,6 +113,22 @@ app.destroy()            // cleanup
 
 [/examples](./examples) - counter, todo, form, converter, table, tabs, modal, cart, wizard
 
+## llm reference
+
+Copy this into your system prompt for LLMs to generate tooey specs:
+
+```
+tooey: token-efficient UI lib. spec={s:{state},r:[component,content?,props?]}
+components: V(vstack) H(hstack) D(div) G(grid) T(text) B(button) I(input) Ta(textarea) S(select) C(checkbox) R(radio) Tb/Th/Tbd/Tr/Td/Tc(table) Ul/Ol/Li(list) M(img) L(a) Sv(svg)
+props: g(gap) p(padding) m(margin) w(width) h(height) mw mh bg(background) fg(color) o(opacity) r(radius) bw bc bs pos(position:rel/abs/fix) z t l rt b fs(font-size) fw ff ta td lh ls ai(align-items) jc(justify-content) flw cols rows cur ov sh tr pe us v(value) ph(placeholder) type href src alt dis(disabled) ch(checked) ro(readonly) opts cls id
+layout shortcuts: c=center sb=space-between fe=flex-end fs=flex-start st=stretch
+events: c(click) x(input) f(focus) bl(blur) k(keydown) e(mouseenter) lv(mouseleave) sub(submit)
+state ops: "key+"(inc) "key-"(dec) "key~"(toggle) "key!val"(set) or ["key","op",val?] where op=+/-/!/~/</>/X/.
+control: {?:"key",t:[...],e:[...]} {?:"key",is:val,t:[...]} {m:"arr",a:[...]}
+state ref: {$:"key"} | in map: $item $index $item.prop
+example: {s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:"n"}],[B,"+",{c:"n"}]],{g:8}]],{g:8}]}
+```
+
 ## license
 
 mit
