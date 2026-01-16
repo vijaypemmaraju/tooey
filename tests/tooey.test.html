@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tooey tests</title>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; }
+    h1 { color: #00d9ff; }
+    .test { margin: 10px 0; padding: 10px; background: #16213e; border-radius: 8px; }
+    .test.pass { border-left: 4px solid #7fff7f; }
+    .test.fail { border-left: 4px solid #ff7f7f; }
+    .test .name { font-weight: bold; }
+    .test .error { color: #ff7f7f; margin-top: 5px; font-size: 0.9em; }
+    .summary { margin-top: 20px; padding: 15px; background: #16213e; border-radius: 8px; font-size: 1.2em; }
+    .summary.pass { color: #7fff7f; }
+    .summary.fail { color: #ff7f7f; }
+    #test-container { display: none; }
+  </style>
+</head>
+<body>
+  <h1>tooey test suite</h1>
+  <div id="results"></div>
+  <div id="test-container"></div>
+
+  <script src="../dist/tooey.js"></script>
+  <script>
+    const { render, signal, effect, batch, V, H, T, B, I, C, D, Ul, Li, $ } = tooey;
+    const container = document.getElementById('test-container');
+    const results = document.getElementById('results');
+
+    let passed = 0;
+    let failed = 0;
+
+    function test(name, fn) {
+      const testEl = document.createElement('div');
+      testEl.className = 'test';
+      testEl.innerHTML = `<div class="name">${name}</div>`;
+      results.appendChild(testEl);
+
+      try {
+        container.innerHTML = '';
+        fn();
+        testEl.classList.add('pass');
+        testEl.innerHTML += ` ✓`;
+        passed++;
+      } catch (e) {
+        testEl.classList.add('fail');
+        testEl.innerHTML += ` ✗`;
+        testEl.innerHTML += `<div class="error">${e.message}</div>`;
+        failed++;
+        console.error(name, e);
+      }
+    }
+
+    function assert(condition, message) {
+      if (!condition) throw new Error(message || 'Assertion failed');
+    }
+
+    function assertEqual(actual, expected, message) {
+      if (actual !== expected) {
+        throw new Error(`${message || 'Values not equal'}: expected "${expected}", got "${actual}"`);
+      }
+    }
+
+    // ============ tests ============
+
+    test('render basic element', () => {
+      const instance = render(container, {
+        r: [T, 'hello world']
+      });
+      assertEqual(container.textContent, 'hello world');
+    });
+
+    test('render with state', () => {
+      const instance = render(container, {
+        s: { msg: 'hello' },
+        r: [T, {$: 'msg'}]
+      });
+      assertEqual(container.textContent, 'hello');
+    });
+
+    test('state updates reactively', () => {
+      const instance = render(container, {
+        s: { count: 0 },
+        r: [T, {$: 'count'}]
+      });
+      assertEqual(container.textContent, '0');
+      instance.set('count', 5);
+      assertEqual(container.textContent, '5');
+    });
+
+    test('click handler increments state', () => {
+      const instance = render(container, {
+        s: { n: 0 },
+        r: [V, [
+          [T, {$: 'n'}],
+          [B, '+', {c: ['n', '+']}]
+        ]]
+      });
+      assertEqual(instance.get('n'), 0);
+      container.querySelector('button').click();
+      assertEqual(instance.get('n'), 1);
+      assertEqual(container.querySelector('span').textContent, '1');
+    });
+
+    test('click handler decrements state', () => {
+      const instance = render(container, {
+        s: { n: 10 },
+        r: [B, '-', {c: ['n', '-']}]
+      });
+      container.querySelector('button').click();
+      assertEqual(instance.get('n'), 9);
+    });
+
+    test('click handler sets value', () => {
+      const instance = render(container, {
+        s: { val: 'a' },
+        r: [B, 'set', {c: ['val', '!', 'b']}]
+      });
+      container.querySelector('button').click();
+      assertEqual(instance.get('val'), 'b');
+    });
+
+    test('click handler toggles boolean', () => {
+      const instance = render(container, {
+        s: { on: false },
+        r: [B, 'toggle', {c: ['on', '~']}]
+      });
+      assert(instance.get('on') === false);
+      container.querySelector('button').click();
+      assert(instance.get('on') === true);
+      container.querySelector('button').click();
+      assert(instance.get('on') === false);
+    });
+
+    test('append to array', () => {
+      const instance = render(container, {
+        s: { items: ['a'] },
+        r: [B, 'add', {c: ['items', '<', 'b']}]
+      });
+      container.querySelector('button').click();
+      const items = instance.get('items');
+      assertEqual(items.length, 2);
+      assertEqual(items[1], 'b');
+    });
+
+    test('prepend to array', () => {
+      const instance = render(container, {
+        s: { items: ['a'] },
+        r: [B, 'add', {c: ['items', '>', 'b']}]
+      });
+      container.querySelector('button').click();
+      const items = instance.get('items');
+      assertEqual(items.length, 2);
+      assertEqual(items[0], 'b');
+    });
+
+    test('remove from array by index', () => {
+      const instance = render(container, {
+        s: { items: ['a', 'b', 'c'] },
+        r: [B, 'remove', {c: ['items', 'X', 1]}]
+      });
+      container.querySelector('button').click();
+      const items = instance.get('items');
+      assertEqual(items.length, 2);
+      assertEqual(items.join(','), 'a,c');
+    });
+
+    test('input binding with x handler', () => {
+      const instance = render(container, {
+        s: { text: '' },
+        r: [I, '', {v: {$: 'text'}, x: ['text', '!']}]
+      });
+      const input = container.querySelector('input');
+      input.value = 'hello';
+      input.dispatchEvent(new Event('input'));
+      assertEqual(instance.get('text'), 'hello');
+    });
+
+    test('checkbox binding', () => {
+      const instance = render(container, {
+        s: { checked: false },
+        r: [C, '', {ch: {$: 'checked'}, x: ['checked', '!']}]
+      });
+      const checkbox = container.querySelector('input');
+      assert(checkbox.checked === false);
+      checkbox.click();
+      assertEqual(instance.get('checked'), true);
+    });
+
+    test('conditional rendering - if true', () => {
+      const instance = render(container, {
+        s: { show: true },
+        r: [D, [
+          {if: 'show', then: [T, 'visible'], else: [T, 'hidden']}
+        ]]
+      });
+      assertEqual(container.textContent, 'visible');
+    });
+
+    test('conditional rendering - if false', () => {
+      const instance = render(container, {
+        s: { show: false },
+        r: [D, [
+          {if: 'show', then: [T, 'visible'], else: [T, 'hidden']}
+        ]]
+      });
+      assertEqual(container.textContent, 'hidden');
+    });
+
+    test('conditional rendering - reactive update', () => {
+      const instance = render(container, {
+        s: { show: true },
+        r: [D, [
+          {if: 'show', then: [T, 'visible'], else: [T, 'hidden']}
+        ]]
+      });
+      assertEqual(container.textContent, 'visible');
+      instance.set('show', false);
+      assertEqual(container.textContent, 'hidden');
+      instance.set('show', true);
+      assertEqual(container.textContent, 'visible');
+    });
+
+    test('map rendering', () => {
+      const instance = render(container, {
+        s: { items: ['a', 'b', 'c'] },
+        r: [Ul, [
+          {map: 'items', as: [Li, '$item']}
+        ]]
+      });
+      const lis = container.querySelectorAll('li');
+      assertEqual(lis.length, 3);
+      assertEqual(lis[0].textContent, 'a');
+      assertEqual(lis[1].textContent, 'b');
+      assertEqual(lis[2].textContent, 'c');
+    });
+
+    test('map rendering - reactive update', () => {
+      const instance = render(container, {
+        s: { items: ['a', 'b'] },
+        r: [Ul, [
+          {map: 'items', as: [Li, '$item']}
+        ]]
+      });
+      assertEqual(container.querySelectorAll('li').length, 2);
+      instance.set('items', ['a', 'b', 'c', 'd']);
+      assertEqual(container.querySelectorAll('li').length, 4);
+      instance.set('items', []);
+      assertEqual(container.querySelectorAll('li').length, 0);
+    });
+
+    test('map with index', () => {
+      const instance = render(container, {
+        s: { items: ['x', 'y'] },
+        r: [Ul, [
+          {map: 'items', as: [Li, '$index: $item']}
+        ]]
+      });
+      const lis = container.querySelectorAll('li');
+      assertEqual(lis[0].textContent, '0: x');
+      assertEqual(lis[1].textContent, '1: y');
+    });
+
+    test('map with object items', () => {
+      const instance = render(container, {
+        s: { users: [{name: 'alice'}, {name: 'bob'}] },
+        r: [Ul, [
+          {map: 'users', as: [Li, '$item.name']}
+        ]]
+      });
+      const lis = container.querySelectorAll('li');
+      assertEqual(lis[0].textContent, 'alice');
+      assertEqual(lis[1].textContent, 'bob');
+    });
+
+    test('styling - gap', () => {
+      const instance = render(container, {
+        r: [V, [], {g: 10}]
+      });
+      assertEqual(container.querySelector('div').style.gap, '10px');
+    });
+
+    test('styling - padding and margin', () => {
+      const instance = render(container, {
+        r: [D, '', {p: 20, m: 10}]
+      });
+      const el = container.querySelector('div');
+      assertEqual(el.style.padding, '20px');
+      assertEqual(el.style.margin, '10px');
+    });
+
+    test('styling - colors', () => {
+      const instance = render(container, {
+        r: [D, '', {bg: '#ff0000', fg: '#00ff00'}]
+      });
+      const el = container.querySelector('div');
+      assertEqual(el.style.background, 'rgb(255, 0, 0)');
+      assertEqual(el.style.color, 'rgb(0, 255, 0)');
+    });
+
+    test('signal standalone', () => {
+      const count = signal(0);
+      assertEqual(count(), 0);
+      count.set(5);
+      assertEqual(count(), 5);
+      count.set(n => n + 1);
+      assertEqual(count(), 6);
+    });
+
+    test('effect tracks signal', () => {
+      const count = signal(0);
+      let effectRan = 0;
+      effect(() => {
+        count();
+        effectRan++;
+      });
+      assertEqual(effectRan, 1);
+      count.set(1);
+      assertEqual(effectRan, 2);
+    });
+
+    test('batch delays effects', () => {
+      const a = signal(0);
+      const b = signal(0);
+      let effectRan = 0;
+      effect(() => {
+        a();
+        b();
+        effectRan++;
+      });
+      assertEqual(effectRan, 1);
+      batch(() => {
+        a.set(1);
+        b.set(1);
+      });
+      assertEqual(effectRan, 2); // only ran once after batch
+    });
+
+    test('destroy cleans up', () => {
+      const instance = render(container, {
+        s: { n: 0 },
+        r: [T, {$: 'n'}]
+      });
+      assertEqual(container.textContent, '0');
+      instance.destroy();
+      assertEqual(container.innerHTML, '');
+    });
+
+    test('nested children', () => {
+      const instance = render(container, {
+        r: [V, [
+          [H, [
+            [T, 'a'],
+            [T, 'b']
+          ]],
+          [T, 'c']
+        ]]
+      });
+      assertEqual(container.textContent, 'abc');
+    });
+
+    test('button disabled', () => {
+      const instance = render(container, {
+        r: [B, 'click', {dis: true}]
+      });
+      assert(container.querySelector('button').disabled === true);
+    });
+
+    test('input placeholder', () => {
+      const instance = render(container, {
+        r: [I, '', {ph: 'enter text'}]
+      });
+      assertEqual(container.querySelector('input').placeholder, 'enter text');
+    });
+
+    test('css class and id', () => {
+      const instance = render(container, {
+        r: [D, '', {cls: 'my-class', id: 'my-id'}]
+      });
+      const el = container.querySelector('div');
+      assertEqual(el.className, 'my-class');
+      assertEqual(el.id, 'my-id');
+    });
+
+    test('instance.get and instance.set', () => {
+      const instance = render(container, {
+        s: { foo: 'bar' },
+        r: [T, '']
+      });
+      assertEqual(instance.get('foo'), 'bar');
+      instance.set('foo', 'baz');
+      assertEqual(instance.get('foo'), 'baz');
+    });
+
+    // ============ summary ============
+
+    const summary = document.createElement('div');
+    summary.className = `summary ${failed === 0 ? 'pass' : 'fail'}`;
+    summary.textContent = `${passed} passed, ${failed} failed`;
+    results.appendChild(summary);
+  </script>
+</body>
+</html>
