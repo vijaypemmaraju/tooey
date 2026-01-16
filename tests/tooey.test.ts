@@ -565,6 +565,39 @@ describe('tooey', () => {
       });
       expect(container.querySelectorAll('li').length).toBe(2);
     });
+
+    it('$index works in event handlers for deletion', () => {
+      const instance = render(container, {
+        s: { items: ['a', 'b', 'c'] },
+        r: [V, [{ map: 'items', as: [H, [[T, '$item'], [B, 'x', { c: ['items', 'X', '$index'] }]]] }]]
+      });
+      expect(instance.get('items')).toEqual(['a', 'b', 'c']);
+      // Click delete on second item (index 1)
+      const buttons = container.querySelectorAll('button');
+      expect(buttons.length).toBe(3);
+      buttons[1].click();
+      expect(instance.get('items')).toEqual(['a', 'c']);
+    });
+
+    it('$item works in event handlers', () => {
+      const instance = render(container, {
+        s: { items: ['x', 'y', 'z'], selected: '' },
+        r: [V, [{ map: 'items', as: [B, '$item', { c: ['selected', '!', '$item'] }] }]]
+      });
+      const buttons = container.querySelectorAll('button');
+      buttons[1].click();
+      expect(instance.get('selected')).toBe('y');
+    });
+
+    it('$item.prop works in event handlers', () => {
+      const instance = render(container, {
+        s: { users: [{ id: 1, name: 'alice' }, { id: 2, name: 'bob' }], selectedId: 0 },
+        r: [V, [{ map: 'users', as: [B, '$item.name', { c: ['selectedId', '!', '$item.id'] }] }]]
+      });
+      const buttons = container.querySelectorAll('button');
+      buttons[1].click();
+      expect(instance.get('selectedId')).toBe(2);
+    });
   });
 
   describe('instance API', () => {

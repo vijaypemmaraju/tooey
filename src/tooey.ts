@@ -316,7 +316,12 @@ function escapeHtml(str: string): string {
   return div.innerHTML;
 }
 
-function createHandler(handler: EventHandler, state: StateStore, event?: Event): () => void {
+function createHandler(
+  handler: EventHandler,
+  state: StateStore,
+  event?: Event,
+  itemContext?: { item: unknown, index: number }
+): () => void {
   if (typeof handler === 'function') {
     return handler;
   }
@@ -328,6 +333,17 @@ function createHandler(handler: EventHandler, state: StateStore, event?: Event):
       return;
     }
     let actualVal = val;
+    // Resolve $item and $index in event handler values
+    if (itemContext && typeof actualVal === 'string') {
+      if (actualVal === '$index') {
+        actualVal = itemContext.index;
+      } else if (actualVal === '$item') {
+        actualVal = itemContext.item;
+      } else if (actualVal.startsWith('$item.')) {
+        const key = actualVal.substring(6);
+        actualVal = (itemContext.item as Record<string, unknown>)?.[key];
+      }
+    }
     if (op === '!' && val === undefined && event) {
       const target = event.target as HTMLInputElement;
       actualVal = target.type === 'checkbox' ? target.checked : target.value;
@@ -688,7 +704,7 @@ function createElement(
   };
 
   if (props.c) {
-    addEventListener('click', (e) => createHandler(props.c!, state, e)());
+    addEventListener('click', (e) => createHandler(props.c!, state, e, itemContext)());
   }
   if (props.x) {
     const handler = props.x;
@@ -707,30 +723,30 @@ function createElement(
     });
   }
   if (props.f) {
-    addEventListener('focus', (e) => createHandler(props.f!, state, e)());
+    addEventListener('focus', (e) => createHandler(props.f!, state, e, itemContext)());
   }
   if (props.bl) {
-    addEventListener('blur', (e) => createHandler(props.bl!, state, e)());
+    addEventListener('blur', (e) => createHandler(props.bl!, state, e, itemContext)());
   }
   if (props.k) {
-    addEventListener('keydown', (e) => createHandler(props.k!, state, e)());
+    addEventListener('keydown', (e) => createHandler(props.k!, state, e, itemContext)());
   }
   if (props.ku) {
-    addEventListener('keyup', (e) => createHandler(props.ku!, state, e)());
+    addEventListener('keyup', (e) => createHandler(props.ku!, state, e, itemContext)());
   }
   if (props.kp) {
-    addEventListener('keypress', (e) => createHandler(props.kp!, state, e)());
+    addEventListener('keypress', (e) => createHandler(props.kp!, state, e, itemContext)());
   }
   if (props.e) {
-    addEventListener('mouseenter', (e) => createHandler(props.e!, state, e)());
+    addEventListener('mouseenter', (e) => createHandler(props.e!, state, e, itemContext)());
   }
   if (props.lv) {
-    addEventListener('mouseleave', (e) => createHandler(props.lv!, state, e)());
+    addEventListener('mouseleave', (e) => createHandler(props.lv!, state, e, itemContext)());
   }
   if (props.sub) {
     addEventListener('submit', (e) => {
       e.preventDefault();
-      createHandler(props.sub!, state, e)();
+      createHandler(props.sub!, state, e, itemContext)();
     });
   }
 
