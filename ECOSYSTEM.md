@@ -19,7 +19,7 @@ design document for making tooey extensible while preserving token efficiency.
 |-------|-------------|--------|
 | phase 0 | monorepo setup | ✅ complete |
 | phase 1 | function components | ✅ complete |
-| phase 2 | theming | ⬜ not started |
+| phase 2 | theming | ✅ complete |
 | phase 3 | plugins | ⬜ not started |
 | phase 4 | computed & async | ⬜ not started |
 
@@ -42,11 +42,12 @@ design document for making tooey extensible while preserving token efficiency.
 - [x] add tests (10 tests covering all use cases)
 - [x] update documentation (readme.md, api.md)
 
-### phase 2: theming ⬜
+### phase 2: theming ✅
 
-- [ ] add optional theme parameter to render
-- [ ] resolve `$token` values in props
-- [ ] export createTooey factory
+- [x] add optional theme parameter to render
+- [x] resolve `$token` values in props
+- [x] export createTooey factory
+- [x] add theming tests
 
 ### phase 3: plugins ⬜
 

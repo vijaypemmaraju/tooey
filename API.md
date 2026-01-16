@@ -5,6 +5,7 @@ complete api documentation for @tooey/ui - the token-efficient ui library for ll
 ## table of contents
 
 - [core functions](#core-functions)
+- [theming](#theming)
 - [components](#components)
 - [props reference](#props-reference)
 - [events](#events)
@@ -110,6 +111,90 @@ helper to create a state reference.
 ```typescript
 function $(name: string): StateRef  // returns { $: name }
 ```
+
+## theming
+
+tooey supports theming via `$token` syntax in props. theme tokens are resolved at render time.
+
+### using theme with render
+
+pass a theme object to the render options:
+
+```javascript
+const theme = {
+  colors: { primary: '#007bff', danger: '#dc3545' },
+  spacing: { sm: 8, md: 16, lg: 24 },
+  radius: { rSm: 4, rMd: 8, rLg: 16 }
+};
+
+render(container, {
+  r: [B, 'Submit', { bg: '$primary', p: '$md', r: '$rSm' }]
+}, { theme });
+```
+
+### createTooey factory
+
+for apps with consistent theming, use `createTooey` to create a themed render function:
+
+```typescript
+function createTooey(theme: Theme): TooeyFactory
+
+interface TooeyFactory {
+  render: (container: HTMLElement, spec: TooeySpec) => TooeyInstance;
+  theme: Theme;
+}
+```
+
+**example:**
+
+```javascript
+import { createTooey, V, T, B } from '@tooey/ui';
+
+const tooey = createTooey({
+  colors: { primary: '#007bff', success: '#28a745' },
+  spacing: { sm: 8, md: 16, lg: 24 }
+});
+
+// all renders automatically use the theme
+tooey.render(container, {
+  s: { count: 0 },
+  r: [V, [
+    [T, { $: 'count' }, { fg: '$primary' }],
+    [B, '+', { c: 'count+', bg: '$success', p: '$md' }]
+  ], { g: '$sm' }]
+});
+```
+
+### theme interface
+
+```typescript
+interface Theme {
+  colors?: Record<string, string>;
+  spacing?: Record<string, number | string>;
+  radius?: Record<string, number | string>;
+  fonts?: Record<string, string>;
+  [key: string]: Record<string, string | number> | undefined;  // custom categories
+}
+```
+
+### token resolution
+
+- tokens start with `$` followed by the token name: `$primary`, `$md`, etc.
+- tokens are looked up in theme categories in order: `colors`, `spacing`, `radius`, `fonts`, then custom categories
+- if a token is not found, a warning is logged and the value is not applied
+- use unique token names across categories to avoid ambiguity
+
+### supported props
+
+theme tokens can be used with these props:
+
+| prop category | props |
+|---------------|-------|
+| colors | `bg`, `fg`, `bc` |
+| spacing | `g`, `p`, `m`, `w`, `h`, `mw`, `mh`, `t`, `l`, `b`, `rt`, `fs`, `ls` |
+| radius | `r` |
+| fonts | `ff` |
+| misc | `sh`, any prop in `s` object |
 
 ## components
 
@@ -538,6 +623,41 @@ interface MapNode {
   map?: StateRef | string;  // or 'm'
   as?: NodeSpec;            // or 'a'
   key?: string;
+}
+```
+
+### Theme
+
+theme configuration object.
+
+```typescript
+interface Theme {
+  colors?: Record<string, string | number>;
+  spacing?: Record<string, string | number>;
+  radius?: Record<string, string | number>;
+  fonts?: Record<string, string | number>;
+  [key: string]: Record<string, string | number> | undefined;
+}
+```
+
+### RenderOptions
+
+options passed to `render()`.
+
+```typescript
+interface RenderOptions {
+  theme?: Theme;
+}
+```
+
+### TooeyFactory
+
+object returned by `createTooey()`.
+
+```typescript
+interface TooeyFactory {
+  render: (container: HTMLElement, spec: TooeySpec) => TooeyInstance;
+  theme: Theme;
 }
 ```
 

@@ -35,6 +35,23 @@
 type StateValue = unknown;
 type StateStore = Record<string, Signal<StateValue>>;
 
+// ============ theming ============
+
+type ThemeValue = string | number;
+type ThemeCategory = Record<string, ThemeValue>;
+
+interface Theme {
+  colors?: ThemeCategory;
+  spacing?: ThemeCategory;
+  radius?: ThemeCategory;
+  fonts?: ThemeCategory;
+  [key: string]: ThemeCategory | undefined;
+}
+
+interface RenderOptions {
+  theme?: Theme;
+}
+
 interface Signal<T> {
   (): T;
   set(v: T | ((prev: T) => T)): void;
@@ -129,30 +146,30 @@ type ComponentType =
   | 'Ul' | 'Ol' | 'Li'
   | 'M' | 'L' | 'Sv';
 
-// Function component type - returns a NodeSpec
+// function component type - returns a NodeSpec
 type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
 
 type StateRef = { $: string };
 
 interface IfNode {
-  // Long form
+  // long form
   if?: StateRef | string;
   then?: NodeSpec | NodeSpec[];
   else?: NodeSpec | NodeSpec[];
-  // Short form
+  // short form
   '?'?: StateRef | string;
   t?: NodeSpec | NodeSpec[];
   e?: NodeSpec | NodeSpec[];
-  // Equality check (works with both forms)
+  // equality check (works with both forms)
   eq?: unknown;
   is?: unknown;
 }
 
 interface MapNode {
-  // Long form
+  // long form
   map?: StateRef | string;
   as?: NodeSpec;
-  // Short form
+  // short form
   m?: StateRef | string;
   a?: NodeSpec;
   key?: string;
@@ -182,6 +199,7 @@ type ErrorHandler = (error: ErrorInfo) => void;
 interface RenderContext {
   cleanups: Array<() => void>;
   state: StateStore;
+  theme?: Theme;
   onError?: ErrorHandler;
 }
 
@@ -360,7 +378,31 @@ function resolveCssValue(val: number | string | undefined): string | undefined {
   return val;
 }
 
-// Style value shortcuts for common layout values
+function resolveThemeValue(token: string, theme: Theme | undefined): ThemeValue | undefined {
+  if (!theme) return undefined;
+
+  // try direct category lookup: $primary -> colors.primary, $md -> spacing.md, etc.
+  // check in order of most common usage
+  const categories: (keyof Theme)[] = ['colors', 'spacing', 'radius', 'fonts'];
+
+  for (const category of categories) {
+    const cat = theme[category];
+    if (cat && token in cat) {
+      return cat[token];
+    }
+  }
+
+  // check any custom categories
+  for (const [key, cat] of Object.entries(theme)) {
+    if (cat && !categories.includes(key as keyof Theme) && token in cat) {
+      return cat[token];
+    }
+  }
+
+  return undefined;
+}
+
+// style value shortcuts for common layout values
 const styleShortcuts: Record<string, string> = {
   'c': 'center',
   'sb': 'space-between',
@@ -377,24 +419,24 @@ function expandStyleValue(val: string | undefined): string | undefined {
   return styleShortcuts[val] || val;
 }
 
-// Parse string-based event handler shorthand
-// Format: "stateName+" | "stateName-" | "stateName~" | "stateName!value"
+// parse string-based event handler shorthand
+// format: "stateName+" | "stateName-" | "stateName~" | "stateName!value"
 function parseEventShorthand(str: string): [string, Op, unknown?] | null {
   if (typeof str !== 'string' || str.length < 2) return null;
 
   const lastChar = str[str.length - 1];
 
-  // Simple ops: +, -, ~
+  // simple ops: +, -, ~
   if (lastChar === '+' || lastChar === '-' || lastChar === '~') {
     return [str.slice(0, -1), lastChar as Op];
   }
 
-  // Set operation with value: "state!value"
+  // set operation with value: "state!value"
   const bangIdx = str.indexOf('!');
   if (bangIdx > 0) {
     const stateKey = str.slice(0, bangIdx);
     const valStr = str.slice(bangIdx + 1);
-    // Try to parse as number or boolean
+    // try to parse as number or boolean
     let val: unknown = valStr;
     if (valStr === 'true') val = true;
     else if (valStr === 'false') val = false;
@@ -405,20 +447,20 @@ function parseEventShorthand(str: string): [string, Op, unknown?] | null {
   return null;
 }
 
-// XSS protection - escape HTML entities (kept for future use, textContent provides protection now)
+// xss protection - escape html entities (kept for future use, textContent provides protection now)
 function _escapeHtml(str: string): string {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
 }
 
-// URL validation - prevent dangerous protocols
+// url validation - prevent dangerous protocols
 const SAFE_URL_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:', 'ftp:'];
 
 function isValidUrl(url: string): boolean {
   if (!url || typeof url !== 'string') return false;
 
-  // Allow relative URLs and anchors
+  // allow relative urls and anchors
   if (url.startsWith('/') || url.startsWith('#') || url.startsWith('.')) {
     return true;
   }
@@ -427,7 +469,7 @@ function isValidUrl(url: string): boolean {
     const parsed = new URL(url, window.location.href);
     return SAFE_URL_PROTOCOLS.includes(parsed.protocol);
   } catch {
-    // If URL parsing fails, check for dangerous patterns directly
+    // if url parsing fails, check for dangerous patterns directly
     const lowerUrl = url.toLowerCase().trim();
     const dangerousPatterns = ['javascript:', 'data:', 'vbscript:'];
     return !dangerousPatterns.some(pattern => lowerUrl.startsWith(pattern));
@@ -456,20 +498,20 @@ function createHandler(
     return handler;
   }
 
-  // Handle string shorthand: "state+", "state-", "state~", "state!value"
+  // handle string shorthand: "state+", "state-", "state~", "state!value"
   let normalizedHandler: [string, Op, unknown?];
   if (typeof handler === 'string') {
     const parsed = parseEventShorthand(handler);
     if (parsed) {
       normalizedHandler = parsed;
     } else {
-      // Plain state key - infer operation from button text if available
+      // plain state key - infer operation from button text if available
       if (buttonText === '+') {
         normalizedHandler = [handler, '+'];
       } else if (buttonText === '-') {
         normalizedHandler = [handler, '-'];
       } else {
-        // Default to toggle for plain state key
+        // default to toggle for plain state key
         normalizedHandler = [handler, '~'];
       }
     }
@@ -485,7 +527,7 @@ function createHandler(
       return;
     }
     let actualVal = val;
-    // Resolve $item and $index in event handler values
+    // resolve $item and $index in event handler values
     if (itemContext && typeof actualVal === 'string') {
       if (actualVal === '$index') {
         actualVal = itemContext.index;
@@ -506,24 +548,49 @@ function createHandler(
 
 // ============ styles ============
 
-function applyStyles(el: HTMLElement, props: Props): void {
+function resolveStyleValue(val: string | number | undefined, theme: Theme | undefined): string | number | undefined {
+  if (val === undefined) return undefined;
+  if (typeof val === 'string' && val.startsWith('$')) {
+    const token = val.slice(1);
+    const themeVal = resolveThemeValue(token, theme);
+    if (themeVal !== undefined) return themeVal;
+    console.warn(`[tooey] unknown theme token: "${val}"`);
+    return undefined;
+  }
+  return val;
+}
+
+function applyStyles(el: HTMLElement, props: Props, theme?: Theme): void {
   const style = el.style;
 
-  if (props.g !== undefined) style.gap = resolveCssValue(props.g)!;
-  if (props.p !== undefined) style.padding = resolveCssValue(props.p)!;
-  if (props.m !== undefined) style.margin = resolveCssValue(props.m)!;
-  if (props.w !== undefined) style.width = resolveCssValue(props.w)!;
-  if (props.h !== undefined) style.height = resolveCssValue(props.h)!;
-  if (props.mw !== undefined) style.maxWidth = resolveCssValue(props.mw)!;
-  if (props.mh !== undefined) style.maxHeight = resolveCssValue(props.mh)!;
+  // helper to resolve and apply css value with theme token support
+  const resolve = (val: string | number | undefined): string | undefined => {
+    const resolved = resolveStyleValue(val, theme);
+    return resolveCssValue(resolved as string | number | undefined);
+  };
 
-  if (props.bg !== undefined) style.background = props.bg;
-  if (props.fg !== undefined) style.color = props.fg;
+  // helper for string values that support theme tokens
+  const resolveStr = (val: string | undefined): string | undefined => {
+    if (val === undefined) return undefined;
+    const resolved = resolveStyleValue(val, theme);
+    return resolved !== undefined ? String(resolved) : undefined;
+  };
+
+  if (props.g !== undefined) { const v = resolve(props.g); if (v) style.gap = v; }
+  if (props.p !== undefined) { const v = resolve(props.p); if (v) style.padding = v; }
+  if (props.m !== undefined) { const v = resolve(props.m); if (v) style.margin = v; }
+  if (props.w !== undefined) { const v = resolve(props.w); if (v) style.width = v; }
+  if (props.h !== undefined) { const v = resolve(props.h); if (v) style.height = v; }
+  if (props.mw !== undefined) { const v = resolve(props.mw); if (v) style.maxWidth = v; }
+  if (props.mh !== undefined) { const v = resolve(props.mh); if (v) style.maxHeight = v; }
+
+  if (props.bg !== undefined) { const v = resolveStr(props.bg); if (v) style.background = v; }
+  if (props.fg !== undefined) { const v = resolveStr(props.fg); if (v) style.color = v; }
   if (props.o !== undefined) style.opacity = String(props.o);
 
-  if (props.r !== undefined) style.borderRadius = resolveCssValue(props.r)!;
-  if (props.bw !== undefined) style.borderWidth = resolveCssValue(props.bw)!;
-  if (props.bc !== undefined) style.borderColor = props.bc;
+  if (props.r !== undefined) { const v = resolve(props.r); if (v) style.borderRadius = v; }
+  if (props.bw !== undefined) { const v = resolve(props.bw); if (v) style.borderWidth = v; }
+  if (props.bc !== undefined) { const v = resolveStr(props.bc); if (v) style.borderColor = v; }
   if (props.bs !== undefined) style.borderStyle = props.bs;
 
   if (props.pos !== undefined) {
@@ -533,20 +600,21 @@ function applyStyles(el: HTMLElement, props: Props): void {
     style.position = posMap[props.pos] || props.pos;
   }
   if (props.z !== undefined) style.zIndex = String(props.z);
-  if (props.t !== undefined) style.top = resolveCssValue(props.t)!;
-  if (props.l !== undefined) style.left = resolveCssValue(props.l)!;
+  if (props.t !== undefined) { const v = resolve(props.t); if (v) style.top = v; }
+  if (props.l !== undefined) { const v = resolve(props.l); if (v) style.left = v; }
   if (typeof props.b === 'number' || (typeof props.b === 'string' && !Array.isArray(props.b))) {
-    style.bottom = resolveCssValue(props.b as number | string)!;
+    const v = resolve(props.b as number | string);
+    if (v) style.bottom = v;
   }
-  if (props.rt !== undefined) style.right = resolveCssValue(props.rt)!;
+  if (props.rt !== undefined) { const v = resolve(props.rt); if (v) style.right = v; }
 
-  if (props.fs !== undefined) style.fontSize = resolveCssValue(props.fs)!;
+  if (props.fs !== undefined) { const v = resolve(props.fs); if (v) style.fontSize = v; }
   if (props.fw !== undefined) style.fontWeight = String(props.fw);
-  if (props.ff !== undefined) style.fontFamily = props.ff;
+  if (props.ff !== undefined) { const v = resolveStr(props.ff); if (v) style.fontFamily = v; }
   if (props.ta !== undefined) style.textAlign = props.ta;
   if (props.td !== undefined) style.textDecoration = props.td;
   if (props.lh !== undefined) style.lineHeight = typeof props.lh === 'number' ? String(props.lh) : props.lh;
-  if (props.ls !== undefined) style.letterSpacing = resolveCssValue(props.ls)!;
+  if (props.ls !== undefined) { const v = resolve(props.ls); if (v) style.letterSpacing = v; }
 
   if (props.ai !== undefined) style.alignItems = expandStyleValue(props.ai)!;
   if (props.jc !== undefined) style.justifyContent = expandStyleValue(props.jc)!;
@@ -556,12 +624,15 @@ function applyStyles(el: HTMLElement, props: Props): void {
   if (props.ov !== undefined) style.overflow = props.ov;
   if (props.pe !== undefined) style.pointerEvents = props.pe;
   if (props.us !== undefined) style.userSelect = props.us;
-  if (props.sh !== undefined) style.boxShadow = props.sh;
+  if (props.sh !== undefined) { const v = resolveStr(props.sh); if (v) style.boxShadow = v; }
   if (props.tr !== undefined) style.transform = props.tr;
 
   if (props.s) {
     Object.entries(props.s).forEach(([key, val]) => {
-      (style as unknown as Record<string, string>)[key] = String(val);
+      const resolved = resolveStyleValue(val as string | number | undefined, theme);
+      if (resolved !== undefined) {
+        (style as unknown as Record<string, string>)[key] = String(resolved);
+      }
     });
   }
 }
@@ -624,7 +695,7 @@ function createElement(
     let currentEl: HTMLElement | null = null;
     let childCtx: RenderContext | null = null;
 
-    // Normalize short form to long form
+    // normalize short form to long form
     const ifCond = spec.if ?? spec['?'];
     const thenBranch = spec.then ?? spec.t;
     const elseBranch = spec.else ?? spec.e;
@@ -645,7 +716,7 @@ function createElement(
         ? state[ifCond]?.()
         : resolveValue(ifCond, state);
 
-      // Handle equality check (eq or is)
+      // handle equality check (eq or is)
       let condition: boolean;
       if (eqValue !== undefined) {
         condition = rawValue === eqValue;
@@ -680,7 +751,7 @@ function createElement(
 
     let childCtx: RenderContext | null = null;
 
-    // Normalize short form to long form
+    // normalize short form to long form
     const mapSource = spec.map ?? spec.m;
     const asTemplate = spec.as ?? spec.a;
 
@@ -719,7 +790,7 @@ function createElement(
   // handle function components
   const [first, content, props = {}] = spec as [ComponentType | Component, Content?, Props?];
   if (typeof first === 'function') {
-    // Function component: call it with (props, children)
+    // function component: call it with (props, children)
     const children = Array.isArray(content) && content.length > 0 && (Array.isArray(content[0]) || isIfNode(content[0]) || isMapNode(content[0]) || typeof content[0] === 'function')
       ? content as NodeSpec[]
       : undefined;
@@ -851,7 +922,7 @@ function createElement(
   if (props.id) el.id = props.id;
   if (props.dis) (el as HTMLButtonElement).disabled = true;
 
-  applyStyles(el, props);
+  applyStyles(el, props, ctx.theme);
 
   // handle content
   if (content !== undefined) {
@@ -889,7 +960,7 @@ function createElement(
         textContent = textContent.replace(/\$item/g, String(itemContext.item));
         textContent = textContent.replace(/\$index/g, String(itemContext.index));
       }
-      // XSS protection for static content
+      // xss protection for static content
       if (type === 'I') {
         (el as HTMLInputElement).value = textContent;
       } else if (type === 'Ta') {
@@ -931,7 +1002,7 @@ function createElement(
     ctx.cleanups.push(() => el.removeEventListener(event, handler));
   };
 
-  // Get button text for implicit operation inference
+  // get button text for implicit operation inference
   const buttonText = type === 'B' && (typeof content === 'string' || typeof content === 'number')
     ? String(content)
     : undefined;
@@ -945,7 +1016,7 @@ function createElement(
       if (typeof handler === 'function') {
         handler();
       } else {
-        // Normalize string shorthand to array form
+        // normalize string shorthand to array form
         let stateKey: string;
         let op: Op;
         if (typeof handler === 'string') {
@@ -953,7 +1024,7 @@ function createElement(
           if (parsed) {
             [stateKey, op] = parsed;
           } else {
-            // Plain state key defaults to set (!) for input
+            // plain state key defaults to set (!) for input
             stateKey = handler;
             op = '!';
           }
@@ -1011,13 +1082,15 @@ interface TooeyInstance {
   set(key: string, value: unknown): void;
 }
 
-function render(container: HTMLElement, spec: TooeySpec): TooeyInstance {
+function render(container: HTMLElement, spec: TooeySpec, options?: RenderOptions): TooeyInstance {
   if (!container) {
     throw new Error('[tooey] render requires a valid container element');
   }
   if (!spec || !spec.r) {
     throw new Error('[tooey] render requires a spec with a root node (r)');
   }
+
+  const theme = options?.theme;
 
   const state: StateStore = {};
   if (spec.s) {
@@ -1026,7 +1099,7 @@ function render(container: HTMLElement, spec: TooeySpec): TooeyInstance {
     });
   }
 
-  const ctx: RenderContext = { cleanups: [], state };
+  const ctx: RenderContext = { cleanups: [], state, theme };
 
   container.innerHTML = '';
   const el = createElement(spec.r, ctx);
@@ -1074,6 +1147,20 @@ function render(container: HTMLElement, spec: TooeySpec): TooeyInstance {
   return instance;
 }
 
+// ============ factory function ============
+
+interface TooeyFactory {
+  render: (container: HTMLElement, spec: TooeySpec) => TooeyInstance;
+  theme: Theme;
+}
+
+function createTooey(theme: Theme): TooeyFactory {
+  return {
+    render: (container: HTMLElement, spec: TooeySpec) => render(container, spec, { theme }),
+    theme
+  };
+}
+
 // ============ convenience helpers ============
 
 function $(name: string): StateRef {
@@ -1107,6 +1194,7 @@ const Sv = 'Sv' as const;
 
 export {
   render,
+  createTooey,
   signal,
   effect,
   batch,
@@ -1122,10 +1210,13 @@ export {
   Props,
   StateRef,
   TooeyInstance,
+  TooeyFactory,
   IfNode,
   MapNode,
   ErrorBoundaryNode,
   ErrorInfo,
   ErrorHandler,
-  Component
+  Component,
+  Theme,
+  RenderOptions
 };
