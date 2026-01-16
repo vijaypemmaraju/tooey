@@ -7,7 +7,7 @@
 token-efficient ui library for llm output
 
 ```
-~36% fewer tokens than react | ~9kb minified | 0 deps
+~39% fewer tokens than react | ~10kb minified | 0 deps
 ```
 
 ## install
@@ -21,7 +21,7 @@ token-efficient ui library for llm output
 ```javascript
 tooey.render(document.getElementById('app'), {
   s: {n: 0},
-  r: [V,[[T,{$:"n"}],[B,"+",{c:["n","+"]}]],{g:8}]
+  r: [V,[[T,{$:"n"}],[H,[[B,"-",{c:"n"}],[B,"+",{c:"n"}]],{g:8}]],{g:8}]
 });
 ```
 
@@ -47,6 +47,8 @@ type      fs fw ff ta td lh ls
 layout    ai jc flw cols rows
 misc      cur ov sh tr pe us
 element   v ph type href src alt dis ch ro opts rw sp rsp cls id
+
+layout shortcuts: c=center sb=space-between fe=flex-end fs=flex-start st=stretch
 ```
 
 ## events
@@ -65,6 +67,7 @@ sub submit
 ## state ops
 
 ```javascript
+// array form
 ["state", "+"]         // increment
 ["state", "-"]         // decrement
 ["state", "!", val]    // set
@@ -73,13 +76,28 @@ sub submit
 ["state", ">", item]   // prepend
 ["state", "X", idx]    // remove
 ["state", ".", [k,v]]  // set prop
+
+// string shorthand (for events)
+"state+"               // increment
+"state-"               // decrement
+"state~"               // toggle
+"state!val"            // set value
+"state"                // for inputs: set, for +/- buttons: infers op
 ```
 
 ## control flow
 
 ```javascript
+// long form
 {if: "show", then: [T, "yes"], else: [T, "no"]}
 {map: "items", as: [Li, "$item"]}
+
+// short form (saves tokens)
+{?: "show", t: [T, "yes"], e: [T, "no"]}
+{m: "items", a: [Li, "$item"]}
+
+// equality check
+{?: "step", is: 0, t: [T, "step 1"]}
 ```
 
 ## api
@@ -94,6 +112,22 @@ app.destroy()            // cleanup
 ## examples
 
 [/examples](./examples) - counter, todo, form, converter, table, tabs, modal, cart, wizard
+
+## llm reference
+
+Copy this into your system prompt for LLMs to generate tooey specs:
+
+```
+tooey: token-efficient UI lib. spec={s:{state},r:[component,content?,props?]}
+components: V(vstack) H(hstack) D(div) G(grid) T(text) B(button) I(input) Ta(textarea) S(select) C(checkbox) R(radio) Tb/Th/Tbd/Tr/Td/Tc(table) Ul/Ol/Li(list) M(img) L(a) Sv(svg)
+props: g(gap) p(padding) m(margin) w(width) h(height) mw mh bg(background) fg(color) o(opacity) r(radius) bw bc bs pos(position:rel/abs/fix) z t l rt b fs(font-size) fw ff ta td lh ls ai(align-items) jc(justify-content) flw cols rows cur ov sh tr pe us v(value) ph(placeholder) type href src alt dis(disabled) ch(checked) ro(readonly) opts cls id
+layout shortcuts: c=center sb=space-between fe=flex-end fs=flex-start st=stretch
+events: c(click) x(input) f(focus) bl(blur) k(keydown) e(mouseenter) lv(mouseleave) sub(submit)
+state ops: "key+"(inc) "key-"(dec) "key~"(toggle) "key!val"(set) or ["key","op",val?] where op=+/-/!/~/</>/X/.
+control: {?:"key",t:[...],e:[...]} {?:"key",is:val,t:[...]} {m:"arr",a:[...]}
+state ref: {$:"key"} | in map: $item $index $item.prop
+example: {s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:"n"}],[B,"+",{c:"n"}]],{g:8}]],{g:8}]}
+```
 
 ## license
 

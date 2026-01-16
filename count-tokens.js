@@ -8,9 +8,17 @@
 import { encode } from 'gpt-tokenizer';
 
 // Example code snippets - exact code from HTML files
+// Using ALL new token-efficient syntax:
+// - Style shortcuts: c=center, sb=space-between, fe=flex-end
+// - Short control flow: ? t e (if/then/else), m a (map/as)
+// - String event shorthand: "n+" "n-" "n~" "n!val"
+// - Equality shortcut: is (instead of eq)
+// - Implicit operation: {c:"n"} with "+" button text → increment
 const examples = {
   counter: {
-    tooey: `{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:["n","-"]}],[B,"+",{c:["n","+"]}]],{g:8}]],{g:8}]}`,
+    // Old: {c:["n","-"]} and {c:["n","+"]}
+    // New: {c:"n"} with button text inferring operation
+    tooey: `{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:"n"}],[B,"+",{c:"n"}]],{g:8}]],{g:8}]}`,
     react: `function Counter() {
   const [n, setN] = useState(0);
   return (
@@ -25,9 +33,11 @@ const examples = {
 }`
   },
   todoList: {
+    // Old: x:["txt","!"] → New: x:"txt"
+    // Old: {map:"items",as:...} → New: {m:"items",a:...}
     tooey: `{s:{txt:"",items:[]},r:[V,[
-  [H,[[I,"",{v:{$:"txt"},x:["txt","!"],ph:"add..."}],[B,"+",{c:add}]],{g:8}],
-  {map:"items",as:[H,[[T,"$item"],[B,"x",{c:del}]],{g:8}]}
+  [H,[[I,"",{v:{$:"txt"},x:"txt",ph:"add..."}],[B,"+",{c:add}]],{g:8}],
+  {m:"items",a:[H,[[T,"$item"],[B,"x",{c:del}]],{g:8}]}
 ],{g:12}]}`,
     react: `function TodoList() {
   const [txt, setTxt] = useState('');
@@ -56,11 +66,13 @@ const examples = {
 }`
   },
   form: {
+    // Old: x:["name","!"] → New: x:"name"
+    // Old: ai:"center" → New: ai:"c"
     tooey: `{s:{name:"",email:"",pw:"",agree:false},r:[V,[
-  [V,[[T,"name"],[I,"",{ph:"your name",v:{$:"name"},x:["name","!"]}]],{g:4}],
-  [V,[[T,"email"],[I,"",{type:"email",ph:"you@example.com",v:{$:"email"},x:["email","!"]}]],{g:4}],
-  [V,[[T,"password"],[I,"",{type:"password",ph:"********",v:{$:"pw"},x:["pw","!"]}]],{g:4}],
-  [H,[[C,"",{ch:{$:"agree"},x:["agree","~"]}],[T,"i agree to terms"]],{g:8,ai:"center"}],
+  [V,[[T,"name"],[I,"",{ph:"your name",v:{$:"name"},x:"name"}]],{g:4}],
+  [V,[[T,"email"],[I,"",{type:"email",ph:"you@example.com",v:{$:"email"},x:"email"}]],{g:4}],
+  [V,[[T,"password"],[I,"",{type:"password",ph:"********",v:{$:"pw"},x:"pw"}]],{g:4}],
+  [H,[[C,"",{ch:{$:"agree"},x:"agree~"}],[T,"i agree to terms"]],{g:8,ai:"c"}],
   [B,"sign up",{c:submit}]
 ],{g:16}]}`,
     react: `function Form() {
@@ -87,11 +99,12 @@ const examples = {
 }`
   },
   temperatureConverter: {
+    // Old: ai:"center" → New: ai:"c"
     tooey: `{s:{c:0,f:32},r:[H,[
   [V,[[T,"celsius"],[I,"",{type:"number",v:{$:"c"},x:onC}]],{g:4}],
   [T,"=",{fs:24,fg:"#0af"}],
   [V,[[T,"fahrenheit"],[I,"",{type:"number",v:{$:"f"},x:onF}]],{g:4}]
-],{g:16,ai:"center"}]}`,
+],{g:16,ai:"c"}]}`,
     react: `function TempConverter() {
   const [c, setC] = useState(0);
   const [f, setF] = useState(32);
@@ -121,11 +134,13 @@ const examples = {
 }`
   },
   dataTable: {
+    // Old: x:["q","!"] → New: x:"q"
+    // Old: {map:"filtered",as:...} → New: {m:"filtered",a:...}
     tooey: `{s:{q:"",sort:"name",asc:true,data:[...]},r:[V,[
-  [I,"",{ph:"search...",v:{$:"q"},x:["q","!"]}],
+  [I,"",{ph:"search...",v:{$:"q"},x:"q"}],
   [Tb,[
     [Th,[[Tr,[[Tc,"name",{c:sort}],[Tc,"age",{c:sort}],[Tc,"role",{c:sort}]]]]],
-    [Tbd,[{map:"filtered",as:[Tr,[[Td,"$item.name"],[Td,"$item.age"],[Td,"$item.role"]]]}]]
+    [Tbd,[{m:"filtered",a:[Tr,[[Td,"$item.name"],[Td,"$item.age"],[Td,"$item.role"]]]}]]
   ]]
 ],{g:12}]}`,
     react: `function DataTable() {
@@ -167,9 +182,11 @@ const examples = {
 }`
   },
   tabs: {
+    // Old: {if:{$:"tab"},eq:0,then:...} → New: {?:"tab",is:0,t:...}
+    // Old: c:["tab","!",0] → New: c:"tab!0"
     tooey: `{s:{tab:0},r:[V,[
-  [H,[[B,"profile",{c:["tab","!",0]}],[B,"settings",{c:["tab","!",1]}],[B,"about",{c:["tab","!",2]}]]],
-  {if:{$:"tab"},eq:0,then:[T,"user profile content"],else:{if:{$:"tab"},eq:1,then:[T,"settings panel"],else:[T,"about section"]}}
+  [H,[[B,"profile",{c:"tab!0"}],[B,"settings",{c:"tab!1"}],[B,"about",{c:"tab!2"}]]],
+  {?:"tab",is:0,t:[T,"user profile content"],e:{?:"tab",is:1,t:[T,"settings panel"],e:[T,"about section"]}}
 ],{g:0}]}`,
     react: `function Tabs() {
   const [tab, setTab] = useState(0);
@@ -189,11 +206,14 @@ const examples = {
 }`
   },
   modal: {
+    // Old: c:["open","~"] → New: c:"open~"
+    // Old: {if:"open",then:...} → New: {?:"open",t:...}
+    // Old: ai:"center",jc:"center" → New: ai:"c",jc:"c"
     tooey: `{s:{open:false},r:[V,[
-  [B,"open modal",{c:["open","~"]}],
-  {if:"open",then:[D,[
-    [D,[[T,"confirm action",{fw:600}],[T,"are you sure?"],[B,"close",{c:["open","~"]}]],{bg:"#1a1a1a",p:24,r:8,g:12}]
-  ],{pos:"abs",t:0,l:0,w:"100%",h:"100%",bg:"rgba(0,0,0,0.7)",ai:"center",jc:"center"}]}
+  [B,"open modal",{c:"open~"}],
+  {?:"open",t:[D,[
+    [D,[[T,"confirm action",{fw:600}],[T,"are you sure?"],[B,"close",{c:"open~"}]],{bg:"#1a1a1a",p:24,r:8,g:12}]
+  ],{pos:"abs",t:0,l:0,w:"100%",h:"100%",bg:"rgba(0,0,0,0.7)",ai:"c",jc:"c"}]}
 ]]}`,
     react: `function Modal() {
   const [open, setOpen] = useState(false);
@@ -216,13 +236,15 @@ const examples = {
 }`
   },
   shoppingCart: {
+    // Old: {map:"items",as:...} → New: {m:"items",a:...}
+    // Old: jc:"space-between",ai:"center" → New: jc:"sb",ai:"c"
     tooey: `{s:{items:[{n:"widget",p:25,q:1},{n:"gadget",p:35,q:2}]},r:[V,[
-  {map:"items",as:[H,[
+  {m:"items",a:[H,[
     [T,"$item.n",{fg:"#ccc"}],
-    [H,[[B,"-",{c:dec}],[T,"$item.q"],[B,"+",{c:inc}]],{g:8,ai:"center"}],
+    [H,[[B,"-",{c:dec}],[T,"$item.q"],[B,"+",{c:inc}]],{g:8,ai:"c"}],
     [T,"$item.price",{fg:"#0af"}]
-  ],{jc:"space-between",ai:"center",p:"8px 0",s:{borderBottom:'1px solid #1a1a1a'}}]},
-  [H,[[T,"total:"],[T,{$:"total"},{fg:"#4f8",fw:600}]],{jc:"space-between",p:"16px 0"}]
+  ],{jc:"sb",ai:"c",p:"8px 0",s:{borderBottom:'1px solid #1a1a1a'}}]},
+  [H,[[T,"total:"],[T,{$:"total"},{fg:"#4f8",fw:600}]],{jc:"sb",p:"16px 0"}]
 ],{g:0}]}`,
     react: `function Cart() {
   const [items, setItems] = useState([
@@ -257,12 +279,16 @@ const examples = {
 }`
   },
   wizard: {
+    // Old: {if:{$:"step"},eq:0,then:...} → New: {?:"step",is:0,t:...}
+    // Old: x:["name","!"] → New: x:"name"
+    // Old: c:["step","-"] and c:["step","+"] → New: c:"step-" and c:"step+"
+    // Old: jc:"flex-end" → New: jc:"fe"
     tooey: `{s:{step:0,name:"",email:""},r:[V,[
   [H,[[D,{cls:"step done"}],[D,{cls:"step"}],[D,{cls:"step"}]],{g:4}],
-  {if:{$:"step"},eq:0,then:[V,[[T,"step 1: name"],[I,"",{v:{$:"name"},x:["name","!"],ph:"your name"}]],{g:12}]},
-  {if:{$:"step"},eq:1,then:[V,[[T,"step 2: email"],[I,"",{v:{$:"email"},x:["email","!"],ph:"email",type:"email"}]],{g:12}]},
-  {if:{$:"step"},eq:2,then:[V,[[T,"done!"],[T,"thanks for signing up"]],{g:12}]},
-  [H,[[B,"back",{c:["step","-"],dis:{$:"step"},eq:0}],[B,"next",{c:["step","+"]}]],{g:8,jc:"flex-end"}]
+  {?:"step",is:0,t:[V,[[T,"step 1: name"],[I,"",{v:{$:"name"},x:"name",ph:"your name"}]],{g:12}]},
+  {?:"step",is:1,t:[V,[[T,"step 2: email"],[I,"",{v:{$:"email"},x:"email",ph:"email",type:"email"}]],{g:12}]},
+  {?:"step",is:2,t:[V,[[T,"done!"],[T,"thanks for signing up"]],{g:12}]},
+  [H,[[B,"back",{c:"step-",dis:{$:"step"},eq:0}],[B,"next",{c:"step+"}]],{g:8,jc:"fe"}]
 ],{g:16}]}`,
     react: `function Wizard() {
   const [step, setStep] = useState(0);
