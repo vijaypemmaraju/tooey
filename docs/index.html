@@ -127,6 +127,43 @@
       body {
         font-size: 14px;
       }
+
+      /* make all grids single column on mobile */
+      [style*="display: grid"] {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* reduce padding on cards */
+      [style*="padding: 16px"] {
+        padding: 12px !important;
+      }
+
+      /* make flex rows wrap on mobile */
+      [style*="flex-direction: row"] {
+        flex-wrap: wrap;
+      }
+
+      /* adjust font sizes for mobile */
+      [style*="font-size: 28px"] {
+        font-size: 22px !important;
+      }
+
+      [style*="font-size: 18px"] {
+        font-size: 16px !important;
+      }
+
+      /* ensure code blocks don't overflow */
+      [style*="font-family: ui-monospace"] {
+        font-size: 11px !important;
+        overflow-x: auto !important;
+      }
+
+      /* prevent horizontal scroll on tables */
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
     }
   </style>
   <script type="importmap">
