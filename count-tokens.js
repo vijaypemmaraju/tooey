@@ -165,6 +165,138 @@ const examples = {
     </div>
   );
 }`
+  },
+  tabs: {
+    tooey: `{s:{tab:0},r:[V,[
+  [H,[[B,"profile",{c:["tab","!",0]}],[B,"settings",{c:["tab","!",1]}],[B,"about",{c:["tab","!",2]}]]],
+  {if:{$:"tab"},eq:0,then:[T,"user profile content"],else:{if:{$:"tab"},eq:1,then:[T,"settings panel"],else:[T,"about section"]}}
+],{g:0}]}`,
+    react: `function Tabs() {
+  const [tab, setTab] = useState(0);
+  const panels = ['user profile content', 'settings panel', 'about section'];
+  return (
+    <div>
+      <div style={{display:'flex'}}>
+        {['profile','settings','about'].map((t,i) => (
+          <button key={i} onClick={()=>setTab(i)}
+            className={tab===i?'active':''}
+          >{t}</button>
+        ))}
+      </div>
+      <div className="panel">{panels[tab]}</div>
+    </div>
+  );
+}`
+  },
+  modal: {
+    tooey: `{s:{open:false},r:[V,[
+  [B,"open modal",{c:["open","~"]}],
+  {if:"open",then:[D,[
+    [D,[[T,"confirm action",{fw:600}],[T,"are you sure?"],[B,"close",{c:["open","~"]}]],{bg:"#1a1a1a",p:24,r:8,g:12}]
+  ],{pos:"abs",t:0,l:0,w:"100%",h:"100%",bg:"rgba(0,0,0,0.7)",ai:"center",jc:"center"}]}
+]]}`,
+    react: `function Modal() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <button onClick={()=>setOpen(true)}>open modal</button>
+      {open && (
+        <div style={{position:'absolute',top:0,left:0,width:'100%',
+          height:'100%',background:'rgba(0,0,0,0.7)',
+          display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <div style={{background:'#1a1a1a',padding:24,borderRadius:8}}>
+            <h3 style={{fontWeight:600}}>confirm action</h3>
+            <p>are you sure?</p>
+            <button onClick={()=>setOpen(false)}>close</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}`
+  },
+  shoppingCart: {
+    tooey: `{s:{items:[{n:"widget",p:25,q:1},{n:"gadget",p:35,q:2}]},r:[V,[
+  {map:"items",as:[H,[
+    [T,"$item.n",{fg:"#ccc"}],
+    [H,[[B,"-",{c:dec}],[T,"$item.q"],[B,"+",{c:inc}]],{g:8,ai:"center"}],
+    [T,"$item.price",{fg:"#0af"}]
+  ],{jc:"space-between",ai:"center",p:"8px 0",s:{borderBottom:'1px solid #1a1a1a'}}]},
+  [H,[[T,"total:"],[T,{$:"total"},{fg:"#4f8",fw:600}]],{jc:"space-between",p:"16px 0"}]
+],{g:0}]}`,
+    react: `function Cart() {
+  const [items, setItems] = useState([
+    {n:"widget",p:25,q:1},
+    {n:"gadget",p:35,q:2}
+  ]);
+  const updateQty = (i, delta) => {
+    setItems(items.map((item, j) =>
+      j === i ? {...item, q: Math.max(0, item.q + delta)} : item
+    ).filter(item => item.q > 0));
+  };
+  const total = items.reduce((s,i) => s + i.p * i.q, 0);
+  return (
+    <div>
+      {items.map((item, i) => (
+        <div key={i} className="cart-item">
+          <span className="name">{item.n}</span>
+          <div className="qty">
+            <button onClick={()=>updateQty(i,-1)}>-</button>
+            <span>{item.q}</span>
+            <button onClick={()=>updateQty(i,1)}>+</button>
+          </div>
+          <span className="price">\${item.p * item.q}</span>
+        </div>
+      ))}
+      <div className="total">
+        <span>total:</span>
+        <span>\${total}</span>
+      </div>
+    </div>
+  );
+}`
+  },
+  wizard: {
+    tooey: `{s:{step:0,name:"",email:""},r:[V,[
+  [H,[[D,{cls:"step done"}],[D,{cls:"step"}],[D,{cls:"step"}]],{g:4}],
+  {if:{$:"step"},eq:0,then:[V,[[T,"step 1: name"],[I,"",{v:{$:"name"},x:["name","!"],ph:"your name"}]],{g:12}]},
+  {if:{$:"step"},eq:1,then:[V,[[T,"step 2: email"],[I,"",{v:{$:"email"},x:["email","!"],ph:"email",type:"email"}]],{g:12}]},
+  {if:{$:"step"},eq:2,then:[V,[[T,"done!"],[T,"thanks for signing up"]],{g:12}]},
+  [H,[[B,"back",{c:["step","-"],dis:{$:"step"},eq:0}],[B,"next",{c:["step","+"]}]],{g:8,jc:"flex-end"}]
+],{g:16}]}`,
+    react: `function Wizard() {
+  const [step, setStep] = useState(0);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',gap:4}}>
+        {[0,1,2].map(i => (
+          <div key={i} className={'step'+(i<=step?' done':'')} />
+        ))}
+      </div>
+      {step === 0 && (
+        <div>
+          <h3>step 1: name</h3>
+          <input value={name} onChange={e=>setName(e.target.value)}
+            placeholder="your name" />
+        </div>
+      )}
+      {step === 1 && (
+        <div>
+          <h3>step 2: email</h3>
+          <input type="email" value={email}
+            onChange={e=>setEmail(e.target.value)} placeholder="email" />
+        </div>
+      )}
+      {step === 2 && <div><h3>done!</h3><p>thanks for signing up</p></div>}
+      <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
+        <button disabled={step===0} onClick={()=>setStep(s=>s-1)}>back</button>
+        <button onClick={()=>setStep(s=>Math.min(2,s+1))}>next</button>
+      </div>
+    </div>
+  );
+}`
   }
 };
 
