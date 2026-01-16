@@ -129,6 +129,23 @@ state ref: {$:"key"} | in map: $item $index $item.prop
 example: {s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:"n"}],[B,"+",{c:"n"}]],{g:8}]],{g:8}]}
 ```
 
+### when to use tooey
+
+The reference above is **411 tokens**. Since React is in LLM training data (no context needed), tooey only becomes more efficient when generating multiple components:
+
+| Components | tooey (w/ ref) | React | Winner |
+|------------|----------------|-------|--------|
+| 1 | 462 | 102 | React |
+| 2 | 552 | 305 | React |
+| 3 | 737 | 516 | React |
+| 4 | 846 | 785 | React |
+| **5** | **975** | **1060** | **tooey** |
+| 9 | 1627 | 1982 | tooey (+355) |
+
+**Break-even: 5 components.** For UIs with 5+ components, tooey saves tokens.
+
+For single components, just use React. For dashboards, forms, multi-step wizards, or any UI with multiple interactive elements, tooey wins.
+
 ## license
 
 mit
