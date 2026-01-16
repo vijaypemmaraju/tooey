@@ -5560,7 +5560,7 @@
 		}
 	],
 	"packageName": "@tooey/ui",
-	"packageVersion": "1.2.0",
+	"packageVersion": "1.3.0",
 	"symbolIdMap": {
 		"0": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",

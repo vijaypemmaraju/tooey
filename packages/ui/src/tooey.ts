@@ -1056,12 +1056,12 @@ function createElement(
 
   // handle content
   if (content !== undefined) {
-    if (Array.isArray(content) && content.length > 0 && (Array.isArray(content[0]) || isIfNode(content[0]) || isMapNode(content[0]))) {
+    if (Array.isArray(content) && content.length > 0 && (Array.isArray(content[0]) || isIfNode(content[0]) || isMapNode(content[0]) || isErrorBoundaryNode(content[0]))) {
       (content as NodeSpec[]).forEach(childSpec => {
         const child = createElement(childSpec, ctx, itemContext);
         if (child) el.appendChild(child);
       });
-    } else if (isIfNode(content) || isMapNode(content)) {
+    } else if (isIfNode(content) || isMapNode(content) || isErrorBoundaryNode(content)) {
       const child = createElement(content as NodeSpec, ctx, itemContext);
       if (child) el.appendChild(child);
     } else if (isStateRef(content)) {

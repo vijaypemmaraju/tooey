@@ -278,7 +278,7 @@ const init = () => {
           [L, '', { href: 'https://github.com/vijaypemmaraju/tooey', fg: 'var(--text-secondary)', p: 8, id: 'github-link' }]], { g: 8, m: 'auto 0 0 0' }]
       ], { w: 240, h: '100vh', p: 24, bg: 'var(--bg-secondary)', pos: 'fix', t: 0, l: 0, z: 1000, s: { borderRight: '1px solid var(--border)', overflowY: 'auto', display: 'flex', flexDirection: 'column', transition: 'transform 0.3s ease' }, id: 'sidebar' }],
       // content
-      [D, [[D, '', { id: 'page-content' }]],
+      [D, [{ boundary: true, child: [D, '', { id: 'page-content' }], fallback: Card({}, [[T, 'error', { fg: 'var(--error)', fw: 600 }]]), onError: (e) => console.error(e) }],
         { m: '0 0 0 240px', p: 32, mw: 900, s: { minHeight: '100vh' }, id: 'main-content' }]
     ], { w: '100%' }]
   };
