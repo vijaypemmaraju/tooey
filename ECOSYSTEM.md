@@ -1,53 +1,102 @@
-# Tooey Ecosystem Design
+# tooey ecosystem design
 
-Design document for making tooey extensible while preserving token efficiency.
+design document for making tooey extensible while preserving token efficiency.
 
-## Design Principles
+## design principles
 
-1. **Functions over registration** - Custom components are just functions, no registry
-2. **Composition over configuration** - Build complex from simple primitives
-3. **Short names stay short** - Extensions follow abbreviation patterns
-4. **Tree-shakeable** - Everything importable individually
-5. **Zero overhead** - Extensions don't bloat base library
-6. **LLM-friendly** - Patterns that AI can learn and generate efficiently
+1. **functions over registration** - custom components are just functions, no registry
+2. **composition over configuration** - build complex from simple primitives
+3. **short names stay short** - extensions follow abbreviation patterns
+4. **tree-shakeable** - everything importable individually
+5. **zero overhead** - extensions don't bloat base library
+6. **llm-friendly** - patterns that ai can learn and generate efficiently
 
 ---
 
-## 1. Custom Components (Function Components)
+## implementation progress
 
-No registration needed. A component is just a function that returns a `NodeSpec`.
+| phase | description | status |
+|-------|-------------|--------|
+| phase 0 | monorepo setup | ✅ complete |
+| phase 1 | function components | ✅ complete |
+| phase 2 | theming | ⬜ not started |
+| phase 3 | plugins | ⬜ not started |
+| phase 4 | computed & async | ⬜ not started |
 
-### API
+### phase 0: monorepo setup ✅
+
+- [x] install pnpm and create workspace config
+- [x] create packages/ directory structure
+- [x] move @tooey/ui to packages/ui/
+- [x] create shared tsconfig.base.json
+- [x] update ci/cd for monorepo
+- [x] scaffold @tooey/components package
+- [x] test cross-package imports
+
+### phase 1: function components ✅
+
+- [x] detect function as first element in NodeSpec
+- [x] call function with (props, children)
+- [x] recursively render returned spec
+- [x] update types (Component, FunctionNodeSpec)
+- [x] add tests (10 tests covering all use cases)
+- [x] update documentation (readme.md, api.md)
+
+### phase 2: theming ⬜
+
+- [ ] add optional theme parameter to render
+- [ ] resolve `$token` values in props
+- [ ] export createTooey factory
+
+### phase 3: plugins ⬜
+
+- [ ] add plugins option to render
+- [ ] implement lifecycle hooks
+- [ ] implement extend for instance methods
+
+### phase 4: computed & async ⬜
+
+- [ ] export computed helper
+- [ ] export async$ helper
+- [ ] update effect tracking
+
+---
+
+## 1. custom components (function components)
+
+no registration needed. a component is just a function that returns a `NodeSpec`.
+
+### api
 
 ```typescript
 type Component<P = {}> = (props?: P, children?: NodeSpec[]) => NodeSpec;
 ```
 
-### Example
+### example
 
 ```javascript
-// Define a Card component
+// define a Card component
 const Card = (props = {}, children = []) => [
   V,
   children,
   { bg: '#fff', p: 16, r: 8, sh: '0 2px 4px rgba(0,0,0,0.1)', ...props }
 ];
 
-// Usage in spec (token-efficient)
+// usage in spec (token-efficient)
 { r: [Card, [[T, 'Hello']], { bg: '#f0f0f0' }] }
 
-// Or with helper
+// or with helper
 { r: Card({ bg: '#f0f0f0' }, [[T, 'Hello']]) }
 ```
 
-### Component with State
+### component with state
 
 ```javascript
-// Components can define their own state keys
+// components can define their own state keys
 const Counter = (props = {}) => ({
-  // State contribution (merged with parent spec.s)
+  // state contribution (merged with parent spec.s)
   s: { count: props.initial || 0 },
-  // Component tree
+  // component tree
   r: [H, [
     [B, '-', { c: 'count-' }],
     [T, { $: 'count' }],
@@ -55,19 +104,20 @@ const Counter = (props = {}) => ({
   ], { g: 8, ...props }]
 });
 
-// Usage - returns TooeySpec, can be spread or rendered directly
+// usage - returns TooeySpec, can be spread or rendered directly
 render(el, Counter({ initial: 5 }))
 ```
 
-### Implementation Changes
+### implementation (complete)
 
 ```typescript
-// In createElement, detect function components
+// in createElement, detect function components
 function createElement(spec, ctx, itemContext) {
-  // If first element is a function, call it
+  // if first element is a function, call it
   if (Array.isArray(spec) && typeof spec[0] === 'function') {
     const [Comp, content, props] = spec;
-    const resolved = Comp(props, Array.isArray(content) ? content : [content]);
+    const children = Array.isArray(content) ? content : undefined;
+    const resolved = Comp(props, children);
     return createElement(resolved, ctx, itemContext);
   }
   // ... existing logic
@@ -76,11 +126,11 @@ function createElement(spec, ctx, itemContext) {
 
 ---
 
-## 2. Component Libraries (Packages)
+## 2. component libraries (packages)
 
-Third-party packages export components following naming conventions.
+third-party packages export components following naming conventions.
 
-### Package Structure
+### package structure
 
 ```
 @tooey/components/
@@ -94,18 +144,18 @@ Third-party packages export components following naming conventions.
 └── README.md
 ```
 
-### Naming Convention
+### naming convention
 
-| Full Name | Abbrev | Rule |
+| full name | abbrev | rule |
 |-----------|--------|------|
-| Card | `Cd` | First + last consonant |
-| Modal | `Mdl` | Consonant cluster |
-| Tabs | `Tbs` | Plural → add 's' |
-| Alert | `Al` | First 2 letters |
-| Dropdown | `Dd` | First letter + key consonant |
-| Tooltip | `Tt` | Double first letter |
+| Card | `Cd` | first + last consonant |
+| Modal | `Mdl` | consonant cluster |
+| Tabs | `Tbs` | plural → add 's' |
+| Alert | `Al` | first 2 letters |
+| Dropdown | `Dd` | first letter + key consonant |
+| Tooltip | `Tt` | double first letter |
 
-### Usage
+### usage
 
 ```javascript
 import { Cd, Mdl, Al } from '@tooey/components';
@@ -115,40 +165,40 @@ import { Cd, Mdl, Al } from '@tooey/components';
 
 ---
 
-## 3. Theming
+## 3. theming
 
-### Option A: Theme Objects (Zero Overhead)
+### option a: theme objects (zero overhead)
 
 ```javascript
-// Define theme
+// define theme
 const theme = {
   card: { bg: '#fff', r: 8, sh: '0 2px 4px rgba(0,0,0,0.1)' },
   btn: { bg: '#007bff', fg: '#fff', r: 4, p: '8 16' },
   input: { bw: 1, bc: '#ccc', r: 4, p: 8 }
 };
 
-// Apply via spread
+// apply via spread
 [V, [...], { ...theme.card, p: 24 }]
 ```
 
-### Option B: Theme Provider (Runtime)
+### option b: theme provider (runtime)
 
 ```javascript
-// New API
+// new api
 const { render, theme } = createTooey({
   colors: { primary: '#007bff', danger: '#dc3545' },
   spacing: { sm: 8, md: 16, lg: 24 },
   radius: { sm: 4, md: 8, lg: 16 }
 });
 
-// Usage with $ prefix for theme values
+// usage with $ prefix for theme values
 [B, 'Save', { bg: '$primary', p: '$md', r: '$sm' }]
 ```
 
-### Implementation
+### implementation
 
 ```typescript
-// Theme resolution in applyStyles
+// theme resolution in applyStyles
 function applyStyles(el, props, theme) {
   Object.entries(props).forEach(([key, val]) => {
     if (typeof val === 'string' && val.startsWith('$')) {
@@ -161,36 +211,36 @@ function applyStyles(el, props, theme) {
 
 ---
 
-## 4. Plugin System
+## 4. plugin system
 
-Lightweight hooks for cross-cutting concerns.
+lightweight hooks for cross-cutting concerns.
 
-### Plugin Interface
+### plugin interface
 
 ```typescript
 interface TooeyPlugin {
   name: string;
 
-  // Lifecycle hooks
+  // lifecycle hooks
   onInit?(instance: TooeyInstance): void;
   onDestroy?(instance: TooeyInstance): void;
 
-  // Render hooks
+  // render hooks
   beforeRender?(spec: NodeSpec, ctx: RenderContext): NodeSpec;
   afterRender?(el: HTMLElement, spec: NodeSpec): void;
 
-  // State hooks
+  // state hooks
   onStateChange?(key: string, oldVal: unknown, newVal: unknown): void;
 
-  // Extend instance
+  // extend instance
   extend?: Record<string, Function>;
 }
 ```
 
-### Example Plugins
+### example plugins
 
 ```javascript
-// Router plugin
+// router plugin
 const routerPlugin = {
   name: 'router',
   onInit(instance) {
@@ -207,7 +257,7 @@ const routerPlugin = {
   }
 };
 
-// Logger plugin
+// logger plugin
 const loggerPlugin = {
   name: 'logger',
   onStateChange(key, oldVal, newVal) {
@@ -215,21 +265,21 @@ const loggerPlugin = {
   }
 };
 
-// Usage
+// usage
 const app = render(el, spec, { plugins: [routerPlugin, loggerPlugin] });
 app.navigate('/about');
 ```
 
 ---
 
-## 5. Slots & Composition
+## 5. slots & composition
 
-For complex component composition.
+for complex component composition.
 
-### Slot API
+### slot api
 
 ```javascript
-// Component with slots
+// component with slots
 const Layout = (props, children) => {
   const { header, footer, ...rest } = props;
   return [V, [
@@ -239,7 +289,7 @@ const Layout = (props, children) => {
   ], { h: '100vh', ...rest }];
 };
 
-// Usage
+// usage
 [Layout, [
   [T, 'Main content']
 ], {
@@ -250,14 +300,14 @@ const Layout = (props, children) => {
 
 ---
 
-## 6. State Modules
+## 6. state modules
 
-Reusable state patterns.
+reusable state patterns.
 
-### API
+### api
 
 ```javascript
-// Define a state module
+// define a state module
 const formState = (fields) => ({
   s: {
     values: Object.fromEntries(fields.map(f => [f, ''])),
@@ -272,7 +322,7 @@ const formState = (fields) => ({
   }
 });
 
-// Usage
+// usage
 const form = formState(['email', 'password']);
 render(el, {
   s: { ...form.s, otherState: 123 },
@@ -285,18 +335,18 @@ render(el, {
 
 ---
 
-## 7. Computed State
+## 7. computed state
 
-Derived values that update automatically.
+derived values that update automatically.
 
-### API
+### api
 
 ```typescript
-// New export
+// new export
 function computed<T>(fn: () => T): Signal<T>;
 ```
 
-### Usage
+### usage
 
 ```javascript
 import { signal, computed, render } from '@tooey/ui';
@@ -309,14 +359,14 @@ const total = computed(() => items().reduce((sum, i) => sum + i.price, 0));
 
 ---
 
-## 8. Async State
+## 8. async state
 
-Handle loading states elegantly.
+handle loading states elegantly.
 
-### API
+### api
 
 ```javascript
-// New helper
+// new helper
 function async$(promise, { loading, error }) {
   return {
     s: { data: null, loading: true, error: null },
@@ -334,7 +384,7 @@ function async$(promise, { loading, error }) {
 }
 ```
 
-### Usage
+### usage
 
 ```javascript
 const userSpec = async$(fetch('/api/user').then(r => r.json()), {
@@ -353,11 +403,11 @@ render(el, {
 
 ---
 
-## 9. Type-Safe Props
+## 9. type-safe props
 
-TypeScript support for custom components.
+typescript support for custom components.
 
-### Example
+### example
 
 ```typescript
 interface CardProps extends Props {
@@ -384,16 +434,16 @@ const Card: Component<CardProps> = (props = {}, children = []) => {
 
 ---
 
-## 10. Monorepo Structure
+## 10. monorepo structure
 
-Using pnpm workspaces for efficient package management.
+using pnpm workspaces for efficient package management.
 
-### Directory Structure
+### directory structure
 
 ```
 tooey/
 ├── packages/
-│   ├── ui/                    # @tooey/ui - Core library
+│   ├── ui/                    # @tooey/ui - core library
 │   │   ├── src/
 │   │   │   └── tooey.ts
 │   │   ├── tests/
@@ -402,7 +452,7 @@ tooey/
 │   │   ├── tsconfig.json
 │   │   └── README.md
 │   │
-│   ├── components/            # @tooey/components - Component library
+│   ├── components/            # @tooey/components - component library
 │   │   ├── src/
 │   │   │   ├── Card.ts
 │   │   │   ├── Modal.ts
@@ -412,25 +462,25 @@ tooey/
 │   │   ├── package.json
 │   │   └── README.md
 │   │
-│   ├── forms/                 # @tooey/forms - Form utilities
-│   ├── router/                # @tooey/router - Client-side routing
-│   ├── themes/                # @tooey/themes - Pre-built themes
-│   └── devtools/              # @tooey/devtools - Browser extension
+│   ├── forms/                 # @tooey/forms - form utilities
+│   ├── router/                # @tooey/router - client-side routing
+│   ├── themes/                # @tooey/themes - pre-built themes
+│   └── devtools/              # @tooey/devtools - browser extension
 │
-├── examples/                  # Shared examples
-├── docs/                      # Documentation site
+├── examples/                  # shared examples
+├── docs/                      # documentation site
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml
 │       └── publish.yml
 ├── pnpm-workspace.yaml
-├── package.json               # Root package.json (workspace scripts)
-├── tsconfig.base.json         # Shared TypeScript config
-├── vitest.workspace.ts        # Shared test config
+├── package.json               # root package.json (workspace scripts)
+├── tsconfig.base.json         # shared typescript config
+├── vitest.workspace.ts        # shared test config
 └── README.md
 ```
 
-### Root package.json
+### root package.json
 
 ```json
 {
@@ -457,7 +507,7 @@ packages:
   - 'packages/*'
 ```
 
-### Package Dependencies
+### package dependencies
 
 ```
 @tooey/ui          (no dependencies)
@@ -470,7 +520,7 @@ packages:
 @tooey/devtools    (depends on @tooey/ui, @tooey/components)
 ```
 
-### Shared Configuration
+### shared configuration
 
 **tsconfig.base.json** (root)
 ```json
@@ -490,7 +540,7 @@ packages:
 }
 ```
 
-**Package tsconfig.json** (extends base)
+**package tsconfig.json** (extends base)
 ```json
 {
   "extends": "../../tsconfig.base.json",
@@ -502,9 +552,9 @@ packages:
 }
 ```
 
-### CI/CD Updates
+### ci/cd updates
 
-Single workflow handles all packages:
+single workflow handles all packages:
 
 ```yaml
 # .github/workflows/ci.yml
@@ -512,7 +562,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
       - run: pnpm install
       - run: pnpm -r typecheck
       - run: pnpm -r lint
@@ -520,7 +570,7 @@ jobs:
       - run: pnpm -r test
 ```
 
-Publish workflow uses changesets or manual version bumps:
+publish workflow uses changesets or manual version bumps:
 
 ```yaml
 # .github/workflows/publish.yml
@@ -528,7 +578,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
       - run: pnpm install
       - run: pnpm -r build
       - run: pnpm -r test
@@ -537,48 +587,14 @@ jobs:
 
 ---
 
-## Implementation Priority
+## token efficiency analysis
 
-### Phase 0: Monorepo Setup
-- [ ] Install pnpm and create workspace config
-- [ ] Create packages/ directory structure
-- [ ] Move @tooey/ui to packages/ui/
-- [ ] Create shared tsconfig.base.json
-- [ ] Update CI/CD for monorepo
-- [ ] Scaffold @tooey/components package
-- [ ] Test cross-package imports
-
-### Phase 1: Function Components (Minor version)
-- [ ] Detect function as first element in NodeSpec
-- [ ] Call function with (props, children)
-- [ ] Recursively render returned spec
-- [ ] Update types
-
-### Phase 2: Theming (Minor version)
-- [ ] Add optional theme parameter to render
-- [ ] Resolve `$token` values in props
-- [ ] Export createTooey factory
-
-### Phase 3: Plugins (Minor version)
-- [ ] Add plugins option to render
-- [ ] Implement lifecycle hooks
-- [ ] Implement extend for instance methods
-
-### Phase 4: Computed & Async (Minor version)
-- [ ] Export computed helper
-- [ ] Export async$ helper
-- [ ] Update effect tracking
-
----
-
-## Token Efficiency Analysis
-
-| Pattern | Tokens | Notes |
+| pattern | tokens | notes |
 |---------|--------|-------|
-| `[Card, [...], {}]` | ~5 | Same as built-in |
-| `Card({}, [...])` | ~6 | Slightly more |
-| `{ ...theme.card }` | ~4 | Very efficient |
-| `{ bg: '$primary' }` | ~5 | Same as hardcoded |
-| `[Cd, [...]]` | ~3 | Abbreviated |
+| `[Card, [...], {}]` | ~5 | same as built-in |
+| `Card({}, [...])` | ~6 | slightly more |
+| `{ ...theme.card }` | ~4 | very efficient |
+| `{ bg: '$primary' }` | ~5 | same as hardcoded |
+| `[Cd, [...]]` | ~3 | abbreviated |
 
-All patterns maintain token efficiency comparable to core components.
+all patterns maintain token efficiency comparable to core components.
