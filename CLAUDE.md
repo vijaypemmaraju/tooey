@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-project guide for tooey - token-efficient ui library for llm output
+project guide for @tooey/ui - token-efficient ui library for llm output
 
 ## overview
 

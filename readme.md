@@ -12,8 +12,14 @@ token-efficient ui library for llm output
 
 ## install
 
+```bash
+npm install @tooey/ui
+```
+
+or via CDN:
+
 ```html
-<script src="https://unpkg.com/tooey/dist/tooey.js"></script>
+<script src="https://unpkg.com/@tooey/ui/dist/tooey.js"></script>
 ```
 
 ## usage
@@ -131,7 +137,7 @@ tooey includes several security features to protect against common vulnerabiliti
 
 1. **content security policy**: add csp headers to your deployment:
 ```
-Content-Security-Policy: default-src 'self'; script-src 'self' https://unpkg.com
+Content-Security-Policy: default-src 'self'; script-src 'self' https://unpkg.com/@tooey/ui
 ```
 
 2. **user input**: always validate user input before passing to tooey specs

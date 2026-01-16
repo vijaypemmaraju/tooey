@@ -1,6 +1,6 @@
-# tooey API Reference
+# @tooey/ui API Reference
 
-Complete API documentation for tooey - the token-efficient UI library for LLMs.
+Complete API documentation for @tooey/ui - the token-efficient UI library for LLMs.
 
 ## Table of Contents
 
