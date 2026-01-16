@@ -10,7 +10,10 @@ import {
   Tb, Th, Tbd, Tr, Td, Tc,
   Ul, Ol, Li,
   M, L,
-  $
+  $,
+  Component,
+  Props,
+  NodeSpec
 } from '../src/tooey';
 
 describe('tooey', () => {
@@ -1057,6 +1060,156 @@ describe('tooey', () => {
         const el = container.querySelector('div')!;
         expect(el.style.alignItems).toBe('stretch');
       });
+    });
+  });
+
+  describe('function components', () => {
+    it('renders a simple function component', () => {
+      const Card: Component = (props, children) => [V, children, { bg: '#fff', p: 16, ...props }];
+
+      render(container, {
+        r: [Card, [[T, 'Hello']], { bg: '#f0f0f0' }]
+      });
+
+      const div = container.querySelector('div')!;
+      expect(div.style.background).toBe('rgb(240, 240, 240)');
+      expect(div.style.padding).toBe('16px');
+      expect(div.textContent).toBe('Hello');
+    });
+
+    it('renders nested function components', () => {
+      const Badge: Component = (props) => [T, props?.v as string || '', { bg: '#007bff', fg: '#fff', p: 4, r: 4, ...props }];
+      const Card: Component = (props, children) => [V, children, { bg: '#fff', p: 16, ...props }];
+
+      render(container, {
+        r: [Card, [[Badge, '', { v: 'New' }]], {}]
+      });
+
+      const card = container.querySelector('div')!;
+      const badge = card.querySelector('span')!;
+      expect(badge.textContent).toBe('New');
+      expect(badge.style.background).toBe('rgb(0, 123, 255)');
+    });
+
+    it('function component receives props', () => {
+      interface ButtonProps extends Props {
+        variant?: 'primary' | 'secondary';
+      }
+      const Button: Component<ButtonProps> = (props) => {
+        const bg = props?.variant === 'primary' ? '#007bff' : '#6c757d';
+        return [B, props?.v as string || 'Click', { bg, fg: '#fff', ...props }];
+      };
+
+      render(container, {
+        r: [Button, '', { variant: 'primary', v: 'Submit' }]
+      });
+
+      const button = container.querySelector('button')!;
+      expect(button.textContent).toBe('Submit');
+      expect(button.style.background).toBe('rgb(0, 123, 255)');
+    });
+
+    it('function component receives children', () => {
+      const List: Component = (_props, children) => [Ul, children, {}];
+
+      render(container, {
+        r: [List, [
+          [Li, 'Item 1'],
+          [Li, 'Item 2'],
+          [Li, 'Item 3']
+        ], {}]
+      });
+
+      const ul = container.querySelector('ul')!;
+      const items = ul.querySelectorAll('li');
+      expect(items.length).toBe(3);
+      expect(items[0].textContent).toBe('Item 1');
+      expect(items[2].textContent).toBe('Item 3');
+    });
+
+    it('function component without children renders correctly', () => {
+      const Divider: Component = () => [D, '', { h: 1, bg: '#ccc', w: '100%' }];
+
+      render(container, {
+        r: [Divider]
+      });
+
+      const div = container.querySelector('div')!;
+      expect(div.style.height).toBe('1px');
+      expect(div.style.background).toBe('rgb(204, 204, 204)');
+    });
+
+    it('function component works with state', () => {
+      const Counter: Component = (props) => [V, [
+        [T, { $: 'count' }],
+        [B, '+', { c: 'count+' }]
+      ], props];
+
+      const app = render(container, {
+        s: { count: 0 },
+        r: [Counter, '', { g: 8 }]
+      });
+
+      expect(container.textContent).toContain('0');
+      app.set('count', 5);
+      expect(container.textContent).toContain('5');
+    });
+
+    it('function component works inside conditionals', () => {
+      const Alert: Component = (props) => [D, props?.v as string || '', { bg: '#f8d7da', p: 12, r: 4, ...props }];
+
+      render(container, {
+        s: { showAlert: true },
+        r: [V, [
+          { '?': 'showAlert', t: [Alert, '', { v: 'Error!' }] }
+        ]]
+      });
+
+      expect(container.textContent).toContain('Error!');
+    });
+
+    it('function component works inside maps', () => {
+      const ListItem: Component = (props) => [Li, props?.v as string || '', { p: 8, ...props }];
+
+      render(container, {
+        s: { items: ['a', 'b', 'c'] },
+        r: [Ul, [
+          { m: 'items', a: [ListItem, '', { v: '$item' }] }
+        ]]
+      });
+
+      const items = container.querySelectorAll('li');
+      expect(items.length).toBe(3);
+      expect(items[0].textContent).toBe('a');
+      expect(items[1].textContent).toBe('b');
+      expect(items[2].textContent).toBe('c');
+    });
+
+    it('deeply nested function components work', () => {
+      const Inner: Component = () => [T, 'inner'];
+      const Middle: Component = (_props, children) => [D, children || [[Inner]], {}];
+      const Outer: Component = (_props, children) => [V, children || [[Middle]], {}];
+
+      render(container, {
+        r: [Outer]
+      });
+
+      expect(container.textContent).toBe('inner');
+    });
+
+    it('function component can return control flow nodes', () => {
+      const ConditionalContent: Component = (props: any) => ({
+        '?': props?.condition || 'show',
+        t: [T, 'yes'],
+        e: [T, 'no']
+      }) as NodeSpec;
+
+      render(container, {
+        s: { show: true },
+        r: [ConditionalContent, '', { condition: 'show' }] as any
+      });
+
+      expect(container.textContent).toBe('yes');
     });
   });
 });

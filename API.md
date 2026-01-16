@@ -1,35 +1,36 @@
-# @tooey/ui API Reference
+# @tooey/ui api reference
 
-Complete API documentation for @tooey/ui - the token-efficient UI library for LLMs.
+complete api documentation for @tooey/ui - the token-efficient ui library for llms.
 
-## Table of Contents
+## table of contents
 
-- [Core Functions](#core-functions)
-- [Components](#components)
-- [Props Reference](#props-reference)
-- [Events](#events)
-- [State Operations](#state-operations)
-- [Control Flow](#control-flow)
-- [Error Boundaries](#error-boundaries)
-- [Types](#types)
+- [core functions](#core-functions)
+- [components](#components)
+- [props reference](#props-reference)
+- [events](#events)
+- [state operations](#state-operations)
+- [control flow](#control-flow)
+- [function components](#function-components)
+- [error boundaries](#error-boundaries)
+- [types](#types)
 
-## Core Functions
+## core functions
 
 ### `render(container, spec)`
 
-Renders a tooey specification to the DOM.
+renders a tooey specification to the dom.
 
 ```typescript
 function render(container: HTMLElement, spec: TooeySpec): TooeyInstance
 ```
 
-**Parameters:**
-- `container` - The DOM element to render into
-- `spec` - The tooey specification object
+**parameters:**
+- `container` - the dom element to render into
+- `spec` - the tooey specification object
 
-**Returns:** `TooeyInstance` with methods to interact with the rendered UI
+**returns:** `TooeyInstance` with methods to interact with the rendered ui
 
-**Example:**
+**example:**
 ```javascript
 const app = tooey.render(document.getElementById('app'), {
   s: { count: 0 },
@@ -39,137 +40,137 @@ const app = tooey.render(document.getElementById('app'), {
 
 ### `TooeyInstance`
 
-The object returned by `render()`.
+the object returned by `render()`.
 
 ```typescript
 interface TooeyInstance {
-  state: StateStore;      // Internal state store
-  el: HTMLElement | null; // Root DOM element
-  destroy(): void;        // Cleanup and remove UI
-  update(spec): void;     // Update state or re-render
-  get(key: string): unknown;    // Read state value
-  set(key: string, value): void; // Write state value
+  state: StateStore;      // internal state store
+  el: HTMLElement | null; // root dom element
+  destroy(): void;        // cleanup and remove ui
+  update(spec): void;     // update state or re-render
+  get(key: string): unknown;    // read state value
+  set(key: string, value): void; // write state value
 }
 ```
 
-**Methods:**
+**methods:**
 
-- `get(key)` - Get the current value of a state key
-- `set(key, value)` - Set a state value (triggers reactive updates)
-- `destroy()` - Clean up event listeners and remove DOM elements
-- `update(spec)` - Update state values or re-render with new root
+- `get(key)` - get the current value of a state key
+- `set(key, value)` - set a state value (triggers reactive updates)
+- `destroy()` - clean up event listeners and remove dom elements
+- `update(spec)` - update state values or re-render with new root
 
 ### `signal(initial)`
 
-Creates a reactive signal (for advanced use cases).
+creates a reactive signal (for advanced use cases).
 
 ```typescript
 function signal<T>(initial: T): Signal<T>
 ```
 
-**Example:**
+**example:**
 ```javascript
 const count = tooey.signal(0);
-count();        // Read: 0
-count.set(5);   // Write
-count.set(n => n + 1); // Update with function
+count();        // read: 0
+count.set(5);   // write
+count.set(n => n + 1); // update with function
 ```
 
 ### `effect(fn, ctx?)`
 
-Runs a function that automatically re-runs when its signal dependencies change.
+runs a function that automatically re-runs when its signal dependencies change.
 
 ```typescript
 function effect(fn: () => void, ctx?: RenderContext): () => void
 ```
 
-**Returns:** Cleanup function to stop the effect
+**returns:** cleanup function to stop the effect
 
 ### `batch(fn)`
 
-Batches multiple state updates to trigger a single re-render.
+batches multiple state updates to trigger a single re-render.
 
 ```typescript
 function batch(fn: () => void): void
 ```
 
-**Example:**
+**example:**
 ```javascript
 tooey.batch(() => {
   app.set('a', 1);
   app.set('b', 2);
   app.set('c', 3);
-}); // Only one re-render
+}); // only one re-render
 ```
 
 ### `$(name)`
 
-Helper to create a state reference.
+helper to create a state reference.
 
 ```typescript
-function $(name: string): StateRef  // Returns { $: name }
+function $(name: string): StateRef  // returns { $: name }
 ```
 
-## Components
+## components
 
-### Layout Components
+### layout components
 
-| Code | Element | Description |
+| code | element | description |
 |------|---------|-------------|
-| `V` | `<div>` | Vertical stack (flex-direction: column) |
-| `H` | `<div>` | Horizontal stack (flex-direction: row) |
-| `D` | `<div>` | Plain div |
-| `G` | `<div>` | Grid container |
+| `V` | `<div>` | vertical stack (flex-direction: column) |
+| `H` | `<div>` | horizontal stack (flex-direction: row) |
+| `D` | `<div>` | plain div |
+| `G` | `<div>` | grid container |
 
-### Text & Buttons
+### text & buttons
 
-| Code | Element | Description |
+| code | element | description |
 |------|---------|-------------|
-| `T` | `<span>` | Text/inline element |
-| `B` | `<button>` | Button |
+| `T` | `<span>` | text/inline element |
+| `B` | `<button>` | button |
 
-### Form Elements
+### form elements
 
-| Code | Element | Description |
+| code | element | description |
 |------|---------|-------------|
-| `I` | `<input>` | Text input (default type="text") |
-| `Ta` | `<textarea>` | Multi-line text input |
-| `S` | `<select>` | Dropdown select |
-| `C` | `<input>` | Checkbox (type="checkbox") |
-| `R` | `<input>` | Radio button (type="radio") |
+| `I` | `<input>` | text input (default type="text") |
+| `Ta` | `<textarea>` | multi-line text input |
+| `S` | `<select>` | dropdown select |
+| `C` | `<input>` | checkbox (type="checkbox") |
+| `R` | `<input>` | radio button (type="radio") |
 
-### Table Elements
+### table elements
 
-| Code | Element | Description |
+| code | element | description |
 |------|---------|-------------|
-| `Tb` | `<table>` | Table |
-| `Th` | `<thead>` | Table header |
-| `Tbd` | `<tbody>` | Table body |
-| `Tr` | `<tr>` | Table row |
-| `Td` | `<td>` | Table cell |
-| `Tc` | `<th>` | Table header cell |
+| `Tb` | `<table>` | table |
+| `Th` | `<thead>` | table header |
+| `Tbd` | `<tbody>` | table body |
+| `Tr` | `<tr>` | table row |
+| `Td` | `<td>` | table cell |
+| `Tc` | `<th>` | table header cell |
 
-### List Elements
+### list elements
 
-| Code | Element | Description |
+| code | element | description |
 |------|---------|-------------|
-| `Ul` | `<ul>` | Unordered list |
-| `Ol` | `<ol>` | Ordered list |
-| `Li` | `<li>` | List item |
+| `Ul` | `<ul>` | unordered list |
+| `Ol` | `<ol>` | ordered list |
+| `Li` | `<li>` | list item |
 
-### Media & Links
+### media & links
 
-| Code | Element | Description |
+| code | element | description |
 |------|---------|-------------|
-| `M` | `<img>` | Image |
-| `L` | `<a>` | Link/anchor |
-| `Sv` | `<svg>` | SVG container |
+| `M` | `<img>` | image |
+| `L` | `<a>` | link/anchor |
+| `Sv` | `<svg>` | svg container |
 
-## Props Reference
+## props reference
 
-### Spacing & Sizing
+### spacing & sizing
 
-| Prop | CSS Property | Example |
+| prop | css property | example |
 |------|--------------|---------|
 | `g` | gap | `{ g: 8 }` or `{ g: '1rem' }` |
 | `p` | padding | `{ p: 16 }` |
@@ -179,26 +180,26 @@ function $(name: string): StateRef  // Returns { $: name }
 | `mw` | max-width | `{ mw: 600 }` |
 | `mh` | max-height | `{ mh: 400 }` |
 
-### Colors
+### colors
 
-| Prop | CSS Property | Example |
+| prop | css property | example |
 |------|--------------|---------|
 | `bg` | background | `{ bg: '#f0f0f0' }` |
 | `fg` | color | `{ fg: 'blue' }` |
 | `o` | opacity | `{ o: 0.5 }` |
 
-### Borders
+### borders
 
-| Prop | CSS Property | Example |
+| prop | css property | example |
 |------|--------------|---------|
 | `r` | border-radius | `{ r: 8 }` |
 | `bw` | border-width | `{ bw: 1 }` |
 | `bc` | border-color | `{ bc: 'gray' }` |
 | `bs` | border-style | `{ bs: 'solid' }` |
 
-### Positioning
+### positioning
 
-| Prop | CSS Property | Values |
+| prop | css property | values |
 |------|--------------|--------|
 | `pos` | position | `'rel'`, `'abs'`, `'fix'`, `'sticky'` |
 | `z` | z-index | `{ z: 100 }` |
@@ -207,9 +208,9 @@ function $(name: string): StateRef  // Returns { $: name }
 | `b` | bottom | `{ b: 0 }` |
 | `rt` | right | `{ rt: 0 }` |
 
-### Typography
+### typography
 
-| Prop | CSS Property | Example |
+| prop | css property | example |
 |------|--------------|---------|
 | `fs` | font-size | `{ fs: 16 }` |
 | `fw` | font-weight | `{ fw: 700 }` |
@@ -219,9 +220,9 @@ function $(name: string): StateRef  // Returns { $: name }
 | `lh` | line-height | `{ lh: 1.5 }` |
 | `ls` | letter-spacing | `{ ls: 1 }` |
 
-### Layout
+### layout
 
-| Prop | CSS Property | Shortcuts |
+| prop | css property | shortcuts |
 |------|--------------|-----------|
 | `ai` | align-items | `c`=center, `fs`=flex-start, `fe`=flex-end, `st`=stretch |
 | `jc` | justify-content | `c`=center, `sb`=space-between, `sa`=space-around, `se`=space-evenly |
@@ -229,9 +230,9 @@ function $(name: string): StateRef  // Returns { $: name }
 | `cols` | grid-template-columns | `{ cols: 3 }` or `{ cols: '1fr 2fr' }` |
 | `rows` | grid-template-rows | `{ rows: 2 }` |
 
-### Miscellaneous
+### miscellaneous
 
-| Prop | CSS Property | Example |
+| prop | css property | example |
 |------|--------------|---------|
 | `cur` | cursor | `{ cur: 'pointer' }` |
 | `ov` | overflow | `{ ov: 'hidden' }` |
@@ -241,122 +242,212 @@ function $(name: string): StateRef  // Returns { $: name }
 | `tr` | transform | `{ tr: 'rotate(45deg)' }` |
 | `s` | (custom styles) | `{ s: { display: 'inline-block' } }` |
 
-### Element-Specific
+### element-specific
 
-| Prop | Applies To | Description |
+| prop | applies to | description |
 |------|------------|-------------|
-| `v` | `I`, `Ta`, `S` | Value binding (state ref) |
-| `ph` | `I`, `Ta` | Placeholder text |
-| `type` | `I` | Input type (text, email, password, etc.) |
-| `href` | `L` | Link URL (validated for security) |
-| `src` | `M` | Image source URL (validated for security) |
-| `alt` | `M` | Image alt text |
-| `dis` | `B`, `I` | Disabled state |
-| `ch` | `C`, `R` | Checked state binding |
-| `ro` | `I`, `Ta` | Read-only |
-| `opts` | `S` | Select options `[{ v: 'value', l: 'label' }]` |
-| `rw` | `Ta` | Textarea rows |
-| `sp` | `Td`, `Tc` | Column span |
-| `rsp` | `Td`, `Tc` | Row span |
-| `cls` | any | CSS class name |
-| `id` | any | Element ID |
+| `v` | `I`, `Ta`, `S` | value binding (state ref) |
+| `ph` | `I`, `Ta` | placeholder text |
+| `type` | `I` | input type (text, email, password, etc.) |
+| `href` | `L` | link url (validated for security) |
+| `src` | `M` | image source url (validated for security) |
+| `alt` | `M` | image alt text |
+| `dis` | `B`, `I` | disabled state |
+| `ch` | `C`, `R` | checked state binding |
+| `ro` | `I`, `Ta` | read-only |
+| `opts` | `S` | select options `[{ v: 'value', l: 'label' }]` |
+| `rw` | `Ta` | textarea rows |
+| `sp` | `Td`, `Tc` | column span |
+| `rsp` | `Td`, `Tc` | row span |
+| `cls` | any | css class name |
+| `id` | any | element id |
 
-## Events
+## events
 
-| Prop | Event | Description |
+| prop | event | description |
 |------|-------|-------------|
-| `c` | click | Click handler |
-| `x` | input/change | Input value change |
-| `f` | focus | Focus gained |
-| `bl` | blur | Focus lost |
-| `k` | keydown | Key pressed |
-| `ku` | keyup | Key released |
-| `kp` | keypress | Key press |
-| `e` | mouseenter | Mouse entered |
-| `lv` | mouseleave | Mouse left |
-| `sub` | submit | Form submit |
+| `c` | click | click handler |
+| `x` | input/change | input value change |
+| `f` | focus | focus gained |
+| `bl` | blur | focus lost |
+| `k` | keydown | key pressed |
+| `ku` | keyup | key released |
+| `kp` | keypress | key press |
+| `e` | mouseenter | mouse entered |
+| `lv` | mouseleave | mouse left |
+| `sub` | submit | form submit |
 
-### Event Handler Formats
+### event handler formats
 
 ```javascript
-// Function
+// function
 { c: () => console.log('clicked') }
 
-// Array form: [stateKey, operation, value?]
-{ c: ['count', '+'] }        // Increment
-{ c: ['count', '-'] }        // Decrement
-{ c: ['count', '!', 10] }    // Set to 10
-{ c: ['flag', '~'] }         // Toggle
+// array form: [stateKey, operation, value?]
+{ c: ['count', '+'] }        // increment
+{ c: ['count', '-'] }        // decrement
+{ c: ['count', '!', 10] }    // set to 10
+{ c: ['flag', '~'] }         // toggle
 
-// String shorthand
-{ c: 'count+' }   // Increment
-{ c: 'count-' }   // Decrement
-{ c: 'count~' }   // Toggle
-{ c: 'count!5' }  // Set to 5
-{ c: 'count' }    // For +/- buttons: infers op; for inputs: set
+// string shorthand
+{ c: 'count+' }   // increment
+{ c: 'count-' }   // decrement
+{ c: 'count~' }   // toggle
+{ c: 'count!5' }  // set to 5
+{ c: 'count' }    // for +/- buttons: infers op; for inputs: set
 ```
 
-## State Operations
+## state operations
 
-| Op | Description | Example |
+| op | description | example |
 |----|-------------|---------|
-| `+` | Increment | `['n', '+']` or `['n', '+', 5]` |
-| `-` | Decrement | `['n', '-']` |
-| `!` | Set value | `['val', '!', 'new']` |
-| `~` | Toggle boolean | `['flag', '~']` |
-| `<` | Append to array | `['items', '<', newItem]` |
-| `>` | Prepend to array | `['items', '>', newItem]` |
-| `X` | Remove from array | `['items', 'X', index]` or `['items', 'X', value]` |
-| `.` | Set object property | `['obj', '.', ['key', 'value']]` |
+| `+` | increment | `['n', '+']` or `['n', '+', 5]` |
+| `-` | decrement | `['n', '-']` |
+| `!` | set value | `['val', '!', 'new']` |
+| `~` | toggle boolean | `['flag', '~']` |
+| `<` | append to array | `['items', '<', newItem]` |
+| `>` | prepend to array | `['items', '>', newItem]` |
+| `X` | remove from array | `['items', 'X', index]` or `['items', 'X', value]` |
+| `.` | set object property | `['obj', '.', ['key', 'value']]` |
 
-## Control Flow
+## control flow
 
-### Conditional Rendering
+### conditional rendering
 
 ```javascript
-// Long form
+// long form
 { if: 'show', then: [T, 'Visible'], else: [T, 'Hidden'] }
 
-// Short form (saves tokens)
+// short form (saves tokens)
 { '?': 'show', t: [T, 'Visible'], e: [T, 'Hidden'] }
 
-// Equality check
+// equality check
 { '?': 'tab', is: 'home', t: [T, 'Home content'] }
 
-// With state ref
+// with state ref
 { '?': { $: 'tab' }, is: 'settings', t: [T, 'Settings'] }
 ```
 
-### List Rendering
+### list rendering
 
 ```javascript
-// Long form
+// long form
 { map: 'items', as: [Li, '$item'] }
 
-// Short form
+// short form
 { m: 'items', a: [Li, '$item'] }
 
-// With index
+// with index
 { m: 'items', a: [Li, '$index: $item'] }
 
-// Object properties
+// object properties
 { m: 'users', a: [Li, '$item.name'] }
 ```
 
-### Special Variables in Templates
+### special variables in templates
 
-| Variable | Description |
+| variable | description |
 |----------|-------------|
-| `$item` | Current item in map iteration |
-| `$index` | Current index in map iteration |
-| `$item.prop` | Property of current item object |
+| `$item` | current item in map iteration |
+| `$index` | current index in map iteration |
+| `$item.prop` | property of current item object |
 
-## Error Boundaries
+## function components
 
-Error boundaries catch errors during rendering and display fallback UI.
+create reusable components using functions. function components receive props and children, and return a `NodeSpec`.
+
+### signature
+
+```typescript
+type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
+```
+
+### basic example
 
 ```javascript
-// Error boundary node
+import { Component, V, T, H, B } from '@tooey/ui';
+
+// simple component with children
+const Card = (props, children) => [V, children, { bg: '#fff', p: 16, r: 8, ...props }];
+
+// usage
+render(container, {
+  s: {},
+  r: [Card, [[T, 'Card content'], [T, 'More content']], { bg: '#f0f0f0' }]
+});
+```
+
+### component with props
+
+```javascript
+// component with typed props
+const Alert = ({ type = 'info', message }) =>
+  [V, [[T, message]], { bg: type === 'error' ? '#fee' : '#eef', p: 12, r: 4 }];
+
+// usage
+render(container, {
+  s: {},
+  r: [Alert, '', { type: 'error', message: 'Something went wrong!' }]
+});
+```
+
+### nested components
+
+function components can be nested:
+
+```javascript
+const Button = (props) => [B, props?.label || 'Click', { bg: '#007bff', fg: '#fff', p: 8, r: 4, ...props }];
+
+const ButtonGroup = (props, children) => [H, children, { g: 8, ...props }];
+
+render(container, {
+  s: { count: 0 },
+  r: [ButtonGroup, [
+    [Button, '', { label: '-', c: 'count-' }],
+    [T, { $: 'count' }],
+    [Button, '', { label: '+', c: 'count+' }]
+  ]]
+});
+```
+
+### with state and control flow
+
+function components work with state references and control flow:
+
+```javascript
+const Counter = (props) => [V, [
+  [T, { $: props?.stateKey || 'count' }],
+  [H, [[B, '-', { c: `${props?.stateKey || 'count'}-` }], [B, '+', { c: `${props?.stateKey || 'count'}+` }]], { g: 8 }]
+], { g: 8 }];
+
+const ConditionalDisplay = ({ condition }) => ({
+  '?': condition,
+  t: [T, 'Condition is true'],
+  e: [T, 'Condition is false']
+});
+
+render(container, {
+  s: { count: 0, show: true },
+  r: [V, [
+    [Counter, '', { stateKey: 'count' }],
+    [ConditionalDisplay, '', { condition: 'show' }]
+  ], { g: 16 }]
+});
+```
+
+### notes
+
+- function components are detected by `typeof first === 'function'`
+- props are passed as the first argument, children as the second
+- components can return any valid `NodeSpec` (tuples, IfNode, MapNode)
+- components are evaluated at render time, not during spec definition
+
+## error boundaries
+
+error boundaries catch errors during rendering and display fallback ui.
+
+```javascript
+// error boundary node
 {
   boundary: true,
   child: [V, [[T, 'Risky content']]],
@@ -365,7 +456,7 @@ Error boundaries catch errors during rendering and display fallback UI.
 }
 ```
 
-### ErrorBoundaryNode Interface
+### ErrorBoundaryNode interface
 
 ```typescript
 interface ErrorBoundaryNode {
@@ -382,30 +473,40 @@ interface ErrorInfo {
 }
 ```
 
-## Types
+## types
 
 ### TooeySpec
 
-The main specification object passed to `render()`.
+the main specification object passed to `render()`.
 
 ```typescript
 interface TooeySpec {
-  s?: Record<string, StateValue>;  // Initial state
-  r: NodeSpec;                      // Root node
+  s?: Record<string, StateValue>;  // initial state
+  r: NodeSpec;                      // root node
 }
 ```
 
 ### NodeSpec
 
-A node specification (component).
+a node specification (component). supports built-in components, function components, and control flow nodes.
 
 ```typescript
-type NodeSpec = [ComponentType, Content?, Props?] | IfNode | MapNode;
+type BuiltinNodeSpec = [ComponentType, Content?, Props?];
+type FunctionNodeSpec = [Component, Content?, Props?];
+type NodeSpec = BuiltinNodeSpec | FunctionNodeSpec | IfNode | MapNode;
+```
+
+### Component
+
+a function component that returns a NodeSpec.
+
+```typescript
+type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
 ```
 
 ### StateRef
 
-Reference to a state value.
+reference to a state value.
 
 ```typescript
 type StateRef = { $: string };
@@ -413,11 +514,11 @@ type StateRef = { $: string };
 
 ### Props
 
-Component properties (see Props Reference above).
+component properties (see props reference above).
 
 ### IfNode
 
-Conditional rendering node.
+conditional rendering node.
 
 ```typescript
 interface IfNode {
@@ -430,7 +531,7 @@ interface IfNode {
 
 ### MapNode
 
-List rendering node.
+list rendering node.
 
 ```typescript
 interface MapNode {
@@ -440,17 +541,17 @@ interface MapNode {
 }
 ```
 
-## Browser Support
+## browser support
 
-tooey targets ES2020 and works in all modern browsers:
+tooey targets es2020 and works in all modern browsers:
 
-- Chrome 80+
-- Firefox 74+
-- Safari 14+
-- Edge 80+
+- chrome 80+
+- firefox 74+
+- safari 14+
+- edge 80+
 
-## Bundle Size
+## bundle size
 
-- UMD bundle: ~11 KB minified
-- ESM bundle: ~10 KB minified
-- Zero production dependencies
+- umd bundle: ~11 kb minified
+- esm bundle: ~10 kb minified
+- zero production dependencies

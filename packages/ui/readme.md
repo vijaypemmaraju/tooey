@@ -106,6 +106,32 @@ sub submit
 {?: "step", is: 0, t: [T, "step 1"]}
 ```
 
+## function components
+
+create reusable components with functions:
+
+```javascript
+import { Component, V, T, H, B } from '@tooey/ui';
+
+// simple component
+const Card = (props, children) => [V, children, { bg: '#fff', p: 16, r: 8, ...props }];
+
+// component with props
+const Alert = ({ type = 'info', message }) =>
+  [V, [[T, message]], { bg: type === 'error' ? '#fee' : '#eef', p: 12 }];
+
+// usage
+render(container, {
+  s: {},
+  r: [V, [
+    [Card, [[T, 'Hello']]],
+    [Alert, '', { type: 'error', message: 'Error!' }]
+  ]]
+});
+```
+
+components receive `(props, children)` and return a `NodeSpec`.
+
 ## api
 
 ```javascript
@@ -160,6 +186,7 @@ events: c(click) x(input) f(focus) bl(blur) k(keydown) e(mouseenter) lv(mouselea
 state ops: "key+"(inc) "key-"(dec) "key~"(toggle) "key!val"(set) or ["key","op",val?] where op=+/-/!/~/</>/X/.
 control: {?:"key",t:[...],e:[...]} {?:"key",is:val,t:[...]} {m:"arr",a:[...]}
 state ref: {$:"key"} | in map: $item $index $item.prop
+function components: const Comp=(props,children)=>[V,children,{...props}] | use: [Comp,content,props]
 example: {s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:"n"}],[B,"+",{c:"n"}]],{g:8}]],{g:8}]}
 ```
 
