@@ -871,4 +871,192 @@ describe('tooey', () => {
       expect(instance.get('hovered')).toBe(false);
     });
   });
+
+  describe('token efficiency features', () => {
+    describe('short form control flow', () => {
+      it('supports ? t e for if/then/else', () => {
+        const instance = render(container, {
+          s: { show: true },
+          r: [V, [
+            { '?': 'show', t: [T, 'visible'], e: [T, 'hidden'] }
+          ]]
+        });
+        expect(container.textContent).toBe('visible');
+        instance.set('show', false);
+        expect(container.textContent).toBe('hidden');
+      });
+
+      it('supports m a for map/as', () => {
+        render(container, {
+          s: { items: ['x', 'y', 'z'] },
+          r: [Ul, [
+            { m: 'items', a: [Li, '$item'] }
+          ]]
+        });
+        const lis = container.querySelectorAll('li');
+        expect(lis.length).toBe(3);
+        expect(lis[0].textContent).toBe('x');
+      });
+
+      it('supports is for equality check', () => {
+        const instance = render(container, {
+          s: { step: 0 },
+          r: [V, [
+            { '?': 'step', is: 0, t: [T, 'step0'] },
+            { '?': 'step', is: 1, t: [T, 'step1'] },
+            { '?': 'step', is: 2, t: [T, 'step2'] }
+          ]]
+        });
+        expect(container.textContent).toBe('step0');
+        instance.set('step', 1);
+        expect(container.textContent).toBe('step1');
+        instance.set('step', 2);
+        expect(container.textContent).toBe('step2');
+      });
+
+      it('supports state ref with is for equality', () => {
+        const instance = render(container, {
+          s: { tab: 'home' },
+          r: [V, [
+            { '?': { $: 'tab' }, is: 'home', t: [T, 'home content'] },
+            { '?': { $: 'tab' }, is: 'settings', t: [T, 'settings content'] }
+          ]]
+        });
+        expect(container.textContent).toBe('home content');
+        instance.set('tab', 'settings');
+        expect(container.textContent).toBe('settings content');
+      });
+    });
+
+    describe('string event shorthand', () => {
+      it('supports "state+" for increment', () => {
+        const instance = render(container, {
+          s: { n: 0 },
+          r: [B, 'inc', { c: 'n+' }]
+        });
+        container.querySelector('button')!.click();
+        expect(instance.get('n')).toBe(1);
+      });
+
+      it('supports "state-" for decrement', () => {
+        const instance = render(container, {
+          s: { n: 5 },
+          r: [B, 'dec', { c: 'n-' }]
+        });
+        container.querySelector('button')!.click();
+        expect(instance.get('n')).toBe(4);
+      });
+
+      it('supports "state~" for toggle', () => {
+        const instance = render(container, {
+          s: { open: false },
+          r: [B, 'toggle', { c: 'open~' }]
+        });
+        container.querySelector('button')!.click();
+        expect(instance.get('open')).toBe(true);
+        container.querySelector('button')!.click();
+        expect(instance.get('open')).toBe(false);
+      });
+
+      it('supports "state!value" for set', () => {
+        const instance = render(container, {
+          s: { tab: 0 },
+          r: [H, [
+            [B, 'tab0', { c: 'tab!0' }],
+            [B, 'tab1', { c: 'tab!1' }],
+            [B, 'tab2', { c: 'tab!2' }]
+          ]]
+        });
+        const buttons = container.querySelectorAll('button');
+        buttons[1].click();
+        expect(instance.get('tab')).toBe(1);
+        buttons[2].click();
+        expect(instance.get('tab')).toBe(2);
+        buttons[0].click();
+        expect(instance.get('tab')).toBe(0);
+      });
+
+      it('supports plain state key for inputs (defaults to set)', () => {
+        const instance = render(container, {
+          s: { txt: '' },
+          r: [I, '', { v: { $: 'txt' }, x: 'txt' }]
+        });
+        const input = container.querySelector('input')!;
+        input.value = 'hello';
+        input.dispatchEvent(new Event('input'));
+        expect(instance.get('txt')).toBe('hello');
+      });
+    });
+
+    describe('implicit event operation from button text', () => {
+      it('infers increment from + button text', () => {
+        const instance = render(container, {
+          s: { n: 0 },
+          r: [B, '+', { c: 'n' }]
+        });
+        container.querySelector('button')!.click();
+        expect(instance.get('n')).toBe(1);
+      });
+
+      it('infers decrement from - button text', () => {
+        const instance = render(container, {
+          s: { n: 10 },
+          r: [B, '-', { c: 'n' }]
+        });
+        container.querySelector('button')!.click();
+        expect(instance.get('n')).toBe(9);
+      });
+
+      it('defaults to toggle for other button text', () => {
+        const instance = render(container, {
+          s: { flag: false },
+          r: [B, 'toggle', { c: 'flag' }]
+        });
+        container.querySelector('button')!.click();
+        expect(instance.get('flag')).toBe(true);
+      });
+    });
+
+    describe('style shortcuts', () => {
+      it('expands c to center for ai', () => {
+        render(container, {
+          r: [V, '', { ai: 'c' }]
+        });
+        const el = container.querySelector('div')!;
+        expect(el.style.alignItems).toBe('center');
+      });
+
+      it('expands sb to space-between for jc', () => {
+        render(container, {
+          r: [H, '', { jc: 'sb' }]
+        });
+        const el = container.querySelector('div')!;
+        expect(el.style.justifyContent).toBe('space-between');
+      });
+
+      it('expands fe to flex-end for jc', () => {
+        render(container, {
+          r: [H, '', { jc: 'fe' }]
+        });
+        const el = container.querySelector('div')!;
+        expect(el.style.justifyContent).toBe('flex-end');
+      });
+
+      it('expands fs to flex-start for ai', () => {
+        render(container, {
+          r: [V, '', { ai: 'fs' }]
+        });
+        const el = container.querySelector('div')!;
+        expect(el.style.alignItems).toBe('flex-start');
+      });
+
+      it('expands st to stretch for ai', () => {
+        render(container, {
+          r: [V, '', { ai: 'st' }]
+        });
+        const el = container.querySelector('div')!;
+        expect(el.style.alignItems).toBe('stretch');
+      });
+    });
+  });
 });

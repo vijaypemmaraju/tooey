@@ -7,7 +7,7 @@
 token-efficient ui library for llm output
 
 ```
-~36% fewer tokens than react | ~9kb minified | 0 deps
+~39% fewer tokens than react | ~10kb minified | 0 deps
 ```
 
 ## install
@@ -21,7 +21,7 @@ token-efficient ui library for llm output
 ```javascript
 tooey.render(document.getElementById('app'), {
   s: {n: 0},
-  r: [V,[[T,{$:"n"}],[B,"+",{c:["n","+"]}]],{g:8}]
+  r: [V,[[T,{$:"n"}],[H,[[B,"-",{c:"n"}],[B,"+",{c:"n"}]],{g:8}]],{g:8}]
 });
 ```
 
@@ -47,6 +47,8 @@ type      fs fw ff ta td lh ls
 layout    ai jc flw cols rows
 misc      cur ov sh tr pe us
 element   v ph type href src alt dis ch ro opts rw sp rsp cls id
+
+layout shortcuts: c=center sb=space-between fe=flex-end fs=flex-start st=stretch
 ```
 
 ## events
@@ -65,6 +67,7 @@ sub submit
 ## state ops
 
 ```javascript
+// array form
 ["state", "+"]         // increment
 ["state", "-"]         // decrement
 ["state", "!", val]    // set
@@ -73,13 +76,28 @@ sub submit
 ["state", ">", item]   // prepend
 ["state", "X", idx]    // remove
 ["state", ".", [k,v]]  // set prop
+
+// string shorthand (for events)
+"state+"               // increment
+"state-"               // decrement
+"state~"               // toggle
+"state!val"            // set value
+"state"                // for inputs: set, for +/- buttons: infers op
 ```
 
 ## control flow
 
 ```javascript
+// long form
 {if: "show", then: [T, "yes"], else: [T, "no"]}
 {map: "items", as: [Li, "$item"]}
+
+// short form (saves tokens)
+{?: "show", t: [T, "yes"], e: [T, "no"]}
+{m: "items", a: [Li, "$item"]}
+
+// equality check
+{?: "step", is: 0, t: [T, "step 1"]}
 ```
 
 ## api

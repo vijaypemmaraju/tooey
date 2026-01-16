@@ -16,14 +16,18 @@
  *   positioning: pos (position), z (z-index), t (top), l (left), rt (right)
  *   typography: fs (font-size), fw (font-weight), ff (font-family), ta, td, lh, ls
  *   layout: ai (align-items), jc (justify-content), flw (flex-wrap), cols, rows
+ *     shortcuts: c=center, sb=space-between, fe=flex-end, fs=flex-start, st=stretch
  *   misc: cur (cursor), ov (overflow), pe (pointer-events), us (user-select), sh, tr
  *   element-specific: v (value), ph (placeholder), type, href, src, alt, dis, ch, ro, opts
  *
  * events: c (click), x (input/change), f (focus), bl (blur), k (keydown), ku, kp, e, lv, sub
+ *   shorthand: "state+" (increment), "state-" (decrement), "state~" (toggle), "state!val" (set)
  *
  * state operations: + (increment), - (decrement), ! (set), ~ (toggle), < (append), > (prepend), X (remove), . (set prop)
  *
- * control flow: {if: state, then: [...], else: [...]} | {map: state, as: [...]}
+ * control flow (short form): {?: cond, t: [...], e: [...]} | {m: state, a: [...]}
+ * control flow (long form): {if: state, then: [...], else: [...]} | {map: state, as: [...]}
+ * equality check: {?: "state", is: 0, t: [...]} or {?: {$:"state"}, is: 0, t: [...]}
  */
 
 // ============ types ============
@@ -38,7 +42,7 @@ interface Signal<T> {
 }
 
 type Op = '+' | '-' | '!' | '~' | '<' | '>' | 'X' | '.';
-type EventHandler = [string, Op, unknown?] | (() => void);
+type EventHandler = [string, Op, unknown?] | (() => void) | string;
 
 interface Props {
   // spacing/sizing
@@ -128,14 +132,26 @@ type ComponentType =
 type StateRef = { $: string };
 
 interface IfNode {
-  if: StateRef | string;
-  then: NodeSpec | NodeSpec[];
+  // Long form
+  if?: StateRef | string;
+  then?: NodeSpec | NodeSpec[];
   else?: NodeSpec | NodeSpec[];
+  // Short form
+  '?'?: StateRef | string;
+  t?: NodeSpec | NodeSpec[];
+  e?: NodeSpec | NodeSpec[];
+  // Equality check (works with both forms)
+  eq?: unknown;
+  is?: unknown;
 }
 
 interface MapNode {
-  map: StateRef | string;
-  as: NodeSpec;
+  // Long form
+  map?: StateRef | string;
+  as?: NodeSpec;
+  // Short form
+  m?: StateRef | string;
+  a?: NodeSpec;
   key?: string;
 }
 
@@ -284,11 +300,11 @@ function isStateRef(v: unknown): v is StateRef {
 }
 
 function isIfNode(v: unknown): v is IfNode {
-  return typeof v === 'object' && v !== null && !Array.isArray(v) && 'if' in v;
+  return typeof v === 'object' && v !== null && !Array.isArray(v) && ('if' in v || '?' in v);
 }
 
 function isMapNode(v: unknown): v is MapNode {
-  return typeof v === 'object' && v !== null && !Array.isArray(v) && 'map' in v;
+  return typeof v === 'object' && v !== null && !Array.isArray(v) && ('map' in v || 'm' in v);
 }
 
 function resolveValue(content: unknown, state: StateStore): unknown {
@@ -309,6 +325,51 @@ function resolveCssValue(val: number | string | undefined): string | undefined {
   return val;
 }
 
+// Style value shortcuts for common layout values
+const styleShortcuts: Record<string, string> = {
+  'c': 'center',
+  'sb': 'space-between',
+  'sa': 'space-around',
+  'se': 'space-evenly',
+  'fe': 'flex-end',
+  'fs': 'flex-start',
+  'st': 'stretch',
+  'bl': 'baseline',
+};
+
+function expandStyleValue(val: string | undefined): string | undefined {
+  if (val === undefined) return undefined;
+  return styleShortcuts[val] || val;
+}
+
+// Parse string-based event handler shorthand
+// Format: "stateName+" | "stateName-" | "stateName~" | "stateName!value"
+function parseEventShorthand(str: string): EventHandler | null {
+  if (typeof str !== 'string' || str.length < 2) return null;
+
+  const lastChar = str[str.length - 1];
+
+  // Simple ops: +, -, ~
+  if (lastChar === '+' || lastChar === '-' || lastChar === '~') {
+    return [str.slice(0, -1), lastChar as Op];
+  }
+
+  // Set operation with value: "state!value"
+  const bangIdx = str.indexOf('!');
+  if (bangIdx > 0) {
+    const stateKey = str.slice(0, bangIdx);
+    const valStr = str.slice(bangIdx + 1);
+    // Try to parse as number or boolean
+    let val: unknown = valStr;
+    if (valStr === 'true') val = true;
+    else if (valStr === 'false') val = false;
+    else if (!isNaN(Number(valStr)) && valStr !== '') val = Number(valStr);
+    return [stateKey, '!', val];
+  }
+
+  return null;
+}
+
 // XSS protection - escape HTML entities
 function escapeHtml(str: string): string {
   const div = document.createElement('div');
@@ -320,12 +381,35 @@ function createHandler(
   handler: EventHandler,
   state: StateStore,
   event?: Event,
-  itemContext?: { item: unknown, index: number }
+  itemContext?: { item: unknown, index: number },
+  buttonText?: string
 ): () => void {
   if (typeof handler === 'function') {
     return handler;
   }
-  const [stateKey, op, val] = handler;
+
+  // Handle string shorthand: "state+", "state-", "state~", "state!value"
+  let normalizedHandler: [string, Op, unknown?];
+  if (typeof handler === 'string') {
+    const parsed = parseEventShorthand(handler);
+    if (parsed) {
+      normalizedHandler = parsed;
+    } else {
+      // Plain state key - infer operation from button text if available
+      if (buttonText === '+') {
+        normalizedHandler = [handler, '+'];
+      } else if (buttonText === '-') {
+        normalizedHandler = [handler, '-'];
+      } else {
+        // Default to toggle for plain state key
+        normalizedHandler = [handler, '~'];
+      }
+    }
+  } else {
+    normalizedHandler = handler;
+  }
+
+  const [stateKey, op, val] = normalizedHandler;
   return () => {
     const sig = state[stateKey];
     if (!sig) {
@@ -396,9 +480,9 @@ function applyStyles(el: HTMLElement, props: Props): void {
   if (props.lh !== undefined) style.lineHeight = typeof props.lh === 'number' ? String(props.lh) : props.lh;
   if (props.ls !== undefined) style.letterSpacing = resolveCssValue(props.ls)!;
 
-  if (props.ai !== undefined) style.alignItems = props.ai;
-  if (props.jc !== undefined) style.justifyContent = props.jc;
-  if (props.flw !== undefined) style.flexWrap = props.flw;
+  if (props.ai !== undefined) style.alignItems = expandStyleValue(props.ai)!;
+  if (props.jc !== undefined) style.justifyContent = expandStyleValue(props.jc)!;
+  if (props.flw !== undefined) style.flexWrap = expandStyleValue(props.flw)!
 
   if (props.cur !== undefined) style.cursor = props.cur;
   if (props.ov !== undefined) style.overflow = props.ov;
@@ -423,13 +507,19 @@ function createElement(
 ): HTMLElement | null {
   const { state } = ctx;
 
-  // handle reactive if node
+  // handle reactive if node (supports both long and short form)
   if (isIfNode(spec)) {
     const placeholder = document.createElement('div');
     placeholder.style.display = 'contents';
 
     let currentEl: HTMLElement | null = null;
     let childCtx: RenderContext | null = null;
+
+    // Normalize short form to long form
+    const ifCond = spec.if ?? spec['?'];
+    const thenBranch = spec.then ?? spec.t;
+    const elseBranch = spec.else ?? spec.e;
+    const eqValue = spec.eq ?? spec.is;
 
     const updateIf = () => {
       // cleanup previous render
@@ -442,11 +532,19 @@ function createElement(
         currentEl = null;
       }
 
-      const condition = typeof spec.if === 'string'
-        ? state[spec.if]?.()
-        : resolveValue(spec.if, state);
+      let rawValue = typeof ifCond === 'string'
+        ? state[ifCond]?.()
+        : resolveValue(ifCond, state);
 
-      const branch = condition ? spec.then : spec.else;
+      // Handle equality check (eq or is)
+      let condition: boolean;
+      if (eqValue !== undefined) {
+        condition = rawValue === eqValue;
+      } else {
+        condition = Boolean(rawValue);
+      }
+
+      const branch = condition ? thenBranch : elseBranch;
       if (!branch) return;
 
       childCtx = { cleanups: [], state };
@@ -466,12 +564,16 @@ function createElement(
     return placeholder;
   }
 
-  // handle reactive map node
+  // handle reactive map node (supports both long and short form)
   if (isMapNode(spec)) {
     const placeholder = document.createElement('div');
     placeholder.style.display = 'contents';
 
     let childCtx: RenderContext | null = null;
+
+    // Normalize short form to long form
+    const mapSource = spec.map ?? spec.m;
+    const asTemplate = spec.as ?? spec.a;
 
     const updateMap = () => {
       // cleanup previous render
@@ -481,16 +583,16 @@ function createElement(
       }
       placeholder.innerHTML = '';
 
-      const arr = (typeof spec.map === 'string'
-        ? state[spec.map]?.()
-        : resolveValue(spec.map, state)) as unknown[];
+      const arr = (typeof mapSource === 'string'
+        ? state[mapSource]?.()
+        : resolveValue(mapSource, state)) as unknown[];
 
-      if (!Array.isArray(arr)) return;
+      if (!Array.isArray(arr) || !asTemplate) return;
 
       childCtx = { cleanups: [], state };
 
       arr.forEach((item, index) => {
-        const el = createElement(spec.as, childCtx!, { item, index });
+        const el = createElement(asTemplate, childCtx!, { item, index });
         if (el) placeholder.appendChild(el);
       });
     };
@@ -703,8 +805,13 @@ function createElement(
     ctx.cleanups.push(() => el.removeEventListener(event, handler));
   };
 
+  // Get button text for implicit operation inference
+  const buttonText = type === 'B' && (typeof content === 'string' || typeof content === 'number')
+    ? String(content)
+    : undefined;
+
   if (props.c) {
-    addEventListener('click', (e) => createHandler(props.c!, state, e, itemContext)());
+    addEventListener('click', (e) => createHandler(props.c!, state, e, itemContext, buttonText)());
   }
   if (props.x) {
     const handler = props.x;
@@ -712,7 +819,21 @@ function createElement(
       if (typeof handler === 'function') {
         handler();
       } else {
-        const [stateKey, op] = handler;
+        // Normalize string shorthand to array form
+        let stateKey: string;
+        let op: Op;
+        if (typeof handler === 'string') {
+          const parsed = parseEventShorthand(handler);
+          if (parsed) {
+            [stateKey, op] = parsed;
+          } else {
+            // Plain state key defaults to set (!) for input
+            stateKey = handler;
+            op = '!';
+          }
+        } else {
+          [stateKey, op] = handler;
+        }
         const sig = state[stateKey];
         if (sig) {
           const target = e.target as HTMLInputElement;
