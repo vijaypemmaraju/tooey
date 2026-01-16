@@ -146,30 +146,30 @@ type ComponentType =
   | 'Ul' | 'Ol' | 'Li'
   | 'M' | 'L' | 'Sv';
 
-// Function component type - returns a NodeSpec
+// function component type - returns a NodeSpec
 type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
 
 type StateRef = { $: string };
 
 interface IfNode {
-  // Long form
+  // long form
   if?: StateRef | string;
   then?: NodeSpec | NodeSpec[];
   else?: NodeSpec | NodeSpec[];
-  // Short form
+  // short form
   '?'?: StateRef | string;
   t?: NodeSpec | NodeSpec[];
   e?: NodeSpec | NodeSpec[];
-  // Equality check (works with both forms)
+  // equality check (works with both forms)
   eq?: unknown;
   is?: unknown;
 }
 
 interface MapNode {
-  // Long form
+  // long form
   map?: StateRef | string;
   as?: NodeSpec;
-  // Short form
+  // short form
   m?: StateRef | string;
   a?: NodeSpec;
   key?: string;
@@ -381,8 +381,8 @@ function resolveCssValue(val: number | string | undefined): string | undefined {
 function resolveThemeValue(token: string, theme: Theme | undefined): ThemeValue | undefined {
   if (!theme) return undefined;
 
-  // Try direct category lookup: $primary -> colors.primary, $md -> spacing.md, etc.
-  // Check in order of most common usage
+  // try direct category lookup: $primary -> colors.primary, $md -> spacing.md, etc.
+  // check in order of most common usage
   const categories: (keyof Theme)[] = ['colors', 'spacing', 'radius', 'fonts'];
 
   for (const category of categories) {
@@ -392,7 +392,7 @@ function resolveThemeValue(token: string, theme: Theme | undefined): ThemeValue 
     }
   }
 
-  // Check any custom categories
+  // check any custom categories
   for (const [key, cat] of Object.entries(theme)) {
     if (cat && !categories.includes(key as keyof Theme) && token in cat) {
       return cat[token];
@@ -402,7 +402,7 @@ function resolveThemeValue(token: string, theme: Theme | undefined): ThemeValue 
   return undefined;
 }
 
-// Style value shortcuts for common layout values
+// style value shortcuts for common layout values
 const styleShortcuts: Record<string, string> = {
   'c': 'center',
   'sb': 'space-between',
@@ -419,24 +419,24 @@ function expandStyleValue(val: string | undefined): string | undefined {
   return styleShortcuts[val] || val;
 }
 
-// Parse string-based event handler shorthand
-// Format: "stateName+" | "stateName-" | "stateName~" | "stateName!value"
+// parse string-based event handler shorthand
+// format: "stateName+" | "stateName-" | "stateName~" | "stateName!value"
 function parseEventShorthand(str: string): [string, Op, unknown?] | null {
   if (typeof str !== 'string' || str.length < 2) return null;
 
   const lastChar = str[str.length - 1];
 
-  // Simple ops: +, -, ~
+  // simple ops: +, -, ~
   if (lastChar === '+' || lastChar === '-' || lastChar === '~') {
     return [str.slice(0, -1), lastChar as Op];
   }
 
-  // Set operation with value: "state!value"
+  // set operation with value: "state!value"
   const bangIdx = str.indexOf('!');
   if (bangIdx > 0) {
     const stateKey = str.slice(0, bangIdx);
     const valStr = str.slice(bangIdx + 1);
-    // Try to parse as number or boolean
+    // try to parse as number or boolean
     let val: unknown = valStr;
     if (valStr === 'true') val = true;
     else if (valStr === 'false') val = false;
@@ -447,20 +447,20 @@ function parseEventShorthand(str: string): [string, Op, unknown?] | null {
   return null;
 }
 
-// XSS protection - escape HTML entities (kept for future use, textContent provides protection now)
+// xss protection - escape html entities (kept for future use, textContent provides protection now)
 function _escapeHtml(str: string): string {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
 }
 
-// URL validation - prevent dangerous protocols
+// url validation - prevent dangerous protocols
 const SAFE_URL_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:', 'ftp:'];
 
 function isValidUrl(url: string): boolean {
   if (!url || typeof url !== 'string') return false;
 
-  // Allow relative URLs and anchors
+  // allow relative urls and anchors
   if (url.startsWith('/') || url.startsWith('#') || url.startsWith('.')) {
     return true;
   }
@@ -469,7 +469,7 @@ function isValidUrl(url: string): boolean {
     const parsed = new URL(url, window.location.href);
     return SAFE_URL_PROTOCOLS.includes(parsed.protocol);
   } catch {
-    // If URL parsing fails, check for dangerous patterns directly
+    // if url parsing fails, check for dangerous patterns directly
     const lowerUrl = url.toLowerCase().trim();
     const dangerousPatterns = ['javascript:', 'data:', 'vbscript:'];
     return !dangerousPatterns.some(pattern => lowerUrl.startsWith(pattern));
@@ -498,20 +498,20 @@ function createHandler(
     return handler;
   }
 
-  // Handle string shorthand: "state+", "state-", "state~", "state!value"
+  // handle string shorthand: "state+", "state-", "state~", "state!value"
   let normalizedHandler: [string, Op, unknown?];
   if (typeof handler === 'string') {
     const parsed = parseEventShorthand(handler);
     if (parsed) {
       normalizedHandler = parsed;
     } else {
-      // Plain state key - infer operation from button text if available
+      // plain state key - infer operation from button text if available
       if (buttonText === '+') {
         normalizedHandler = [handler, '+'];
       } else if (buttonText === '-') {
         normalizedHandler = [handler, '-'];
       } else {
-        // Default to toggle for plain state key
+        // default to toggle for plain state key
         normalizedHandler = [handler, '~'];
       }
     }
@@ -527,7 +527,7 @@ function createHandler(
       return;
     }
     let actualVal = val;
-    // Resolve $item and $index in event handler values
+    // resolve $item and $index in event handler values
     if (itemContext && typeof actualVal === 'string') {
       if (actualVal === '$index') {
         actualVal = itemContext.index;
@@ -563,13 +563,13 @@ function resolveStyleValue(val: string | number | undefined, theme: Theme | unde
 function applyStyles(el: HTMLElement, props: Props, theme?: Theme): void {
   const style = el.style;
 
-  // Helper to resolve and apply CSS value with theme token support
+  // helper to resolve and apply css value with theme token support
   const resolve = (val: string | number | undefined): string | undefined => {
     const resolved = resolveStyleValue(val, theme);
     return resolveCssValue(resolved as string | number | undefined);
   };
 
-  // Helper for string values that support theme tokens
+  // helper for string values that support theme tokens
   const resolveStr = (val: string | undefined): string | undefined => {
     if (val === undefined) return undefined;
     const resolved = resolveStyleValue(val, theme);
@@ -695,7 +695,7 @@ function createElement(
     let currentEl: HTMLElement | null = null;
     let childCtx: RenderContext | null = null;
 
-    // Normalize short form to long form
+    // normalize short form to long form
     const ifCond = spec.if ?? spec['?'];
     const thenBranch = spec.then ?? spec.t;
     const elseBranch = spec.else ?? spec.e;
@@ -716,7 +716,7 @@ function createElement(
         ? state[ifCond]?.()
         : resolveValue(ifCond, state);
 
-      // Handle equality check (eq or is)
+      // handle equality check (eq or is)
       let condition: boolean;
       if (eqValue !== undefined) {
         condition = rawValue === eqValue;
@@ -751,7 +751,7 @@ function createElement(
 
     let childCtx: RenderContext | null = null;
 
-    // Normalize short form to long form
+    // normalize short form to long form
     const mapSource = spec.map ?? spec.m;
     const asTemplate = spec.as ?? spec.a;
 
@@ -790,7 +790,7 @@ function createElement(
   // handle function components
   const [first, content, props = {}] = spec as [ComponentType | Component, Content?, Props?];
   if (typeof first === 'function') {
-    // Function component: call it with (props, children)
+    // function component: call it with (props, children)
     const children = Array.isArray(content) && content.length > 0 && (Array.isArray(content[0]) || isIfNode(content[0]) || isMapNode(content[0]) || typeof content[0] === 'function')
       ? content as NodeSpec[]
       : undefined;
@@ -960,7 +960,7 @@ function createElement(
         textContent = textContent.replace(/\$item/g, String(itemContext.item));
         textContent = textContent.replace(/\$index/g, String(itemContext.index));
       }
-      // XSS protection for static content
+      // xss protection for static content
       if (type === 'I') {
         (el as HTMLInputElement).value = textContent;
       } else if (type === 'Ta') {
@@ -1002,7 +1002,7 @@ function createElement(
     ctx.cleanups.push(() => el.removeEventListener(event, handler));
   };
 
-  // Get button text for implicit operation inference
+  // get button text for implicit operation inference
   const buttonText = type === 'B' && (typeof content === 'string' || typeof content === 'number')
     ? String(content)
     : undefined;
@@ -1016,7 +1016,7 @@ function createElement(
       if (typeof handler === 'function') {
         handler();
       } else {
-        // Normalize string shorthand to array form
+        // normalize string shorthand to array form
         let stateKey: string;
         let op: Op;
         if (typeof handler === 'string') {
@@ -1024,7 +1024,7 @@ function createElement(
           if (parsed) {
             [stateKey, op] = parsed;
           } else {
-            // Plain state key defaults to set (!) for input
+            // plain state key defaults to set (!) for input
             stateKey = handler;
             op = '!';
           }
