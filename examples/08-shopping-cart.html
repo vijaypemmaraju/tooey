@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>shopping cart - tooey</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; padding: 24px; }
+    @media (min-width: 600px) { body { padding: 48px; } }
+    a { color: #0af; text-decoration: none; }
+    h1 { font-size: 14px; font-weight: 400; color: #fff; margin-bottom: 4px; }
+    .tag { font-size: 12px; margin-bottom: 32px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 32px; }
+    @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+    .col h2 { font-size: 11px; font-weight: 400; color: #666; margin-bottom: 8px; }
+    pre { font-size: 10px; background: #111; padding: 12px; overflow-x: auto; margin-bottom: 16px; border-radius: 4px; white-space: pre-wrap; word-break: break-word; }
+    .tooey pre { color: #4f8; }
+    .react pre { color: #f97; }
+    .demo { background: #111; padding: 16px; border-radius: 4px; }
+    .demo button { font-family: inherit; font-size: 13px; background: #222; color: #fff; border: 1px solid #333; padding: 4px 10px; cursor: pointer; border-radius: 4px; }
+    .demo button:hover { background: #333; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #1a1a1a; font-size: 13px; }
+    .cart-item .name { color: #ccc; flex: 1; }
+    .cart-item .qty { display: flex; align-items: center; gap: 8px; }
+    .cart-item .price { color: #0af; min-width: 60px; text-align: right; }
+    .total { margin-top: 16px; padding-top: 16px; border-top: 1px solid #333; display: flex; justify-content: space-between; font-size: 14px; }
+    .total .label { color: #888; }
+    .total .amount { color: #4f8; font-weight: 600; }
+    .back { font-size: 12px; margin-bottom: 24px; display: block; }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back">&larr; back</a>
+  <h1>shopping cart</h1>
+  <p class="tag">-29% fewer tokens vs React</p>
+
+  <div class="grid">
+    <div class="col tooey">
+      <h2>tooey (197 tokens)</h2>
+      <pre>{s:{items:[{n:"widget",p:25,q:1},{n:"gadget",p:35,q:2}]},r:[V,[
+  {map:"items",as:[H,[
+    [T,"$item.n",{fg:"#ccc"}],
+    [H,[[B,"-",{c:dec}],[T,"$item.q"],[B,"+",{c:inc}]],{g:8,ai:"center"}],
+    [T,"$item.price",{fg:"#0af"}]
+  ],{jc:"space-between",ai:"center",p:"8px 0",s:{borderBottom:'1px solid #1a1a1a'}}]},
+  [H,[[T,"total:"],[T,{$:"total"},{fg:"#4f8",fw:600}]],{jc:"space-between",p:"16px 0"}]
+],{g:0}]}</pre>
+      <div class="demo" id="tooey-app"></div>
+    </div>
+    <div class="col react">
+      <h2>react (279 tokens)</h2>
+      <pre style="color:#f97;">function Cart() {
+  const [items, setItems] = useState([
+    {n:"widget",p:25,q:1},
+    {n:"gadget",p:35,q:2}
+  ]);
+  const updateQty = (i, delta) => {
+    setItems(items.map((item, j) =>
+      j === i ? {...item, q: Math.max(0, item.q + delta)} : item
+    ).filter(item => item.q > 0));
+  };
+  const total = items.reduce((s,i) => s + i.p * i.q, 0);
+  return (
+    &lt;div&gt;
+      {items.map((item, i) =&gt; (
+        &lt;div key={i} className="cart-item"&gt;
+          &lt;span className="name"&gt;{item.n}&lt;/span&gt;
+          &lt;div className="qty"&gt;
+            &lt;button onClick={()=&gt;updateQty(i,-1)}&gt;-&lt;/button&gt;
+            &lt;span&gt;{item.q}&lt;/span&gt;
+            &lt;button onClick={()=&gt;updateQty(i,1)}&gt;+&lt;/button&gt;
+          &lt;/div&gt;
+          &lt;span className="price"&gt;${item.p * item.q}&lt;/span&gt;
+        &lt;/div&gt;
+      ))}
+      &lt;div className="total"&gt;
+        &lt;span&gt;total:&lt;/span&gt;
+        &lt;span&gt;${total}&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+      <div class="demo" id="react-app"></div>
+    </div>
+  </div>
+
+  <script src="../dist/tooey.js"></script>
+  <script>
+    // tooey demo with computed total
+    const{signal}=tooey;
+    const items = signal([
+      {n:"widget",p:25,q:1},
+      {n:"gadget",p:35,q:2}
+    ]);
+
+    function renderTooey() {
+      const el = document.getElementById('tooey-app');
+      el.innerHTML = '';
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'display:flex;flex-direction:column;gap:0';
+
+      items().forEach((item, i) => {
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+
+        const name = document.createElement('span');
+        name.className = 'name';
+        name.textContent = item.n;
+        row.appendChild(name);
+
+        const qty = document.createElement('div');
+        qty.className = 'qty';
+
+        const dec = document.createElement('button');
+        dec.textContent = '-';
+        dec.onclick = () => {
+          const arr = items();
+          if (arr[i].q > 1) {
+            arr[i].q--;
+            items.set([...arr]);
+          } else {
+            items.set(arr.filter((_, j) => j !== i));
+          }
+        };
+        qty.appendChild(dec);
+
+        const qtyText = document.createElement('span');
+        qtyText.textContent = item.q;
+        qtyText.style.color = '#ccc';
+        qty.appendChild(qtyText);
+
+        const inc = document.createElement('button');
+        inc.textContent = '+';
+        inc.onclick = () => {
+          const arr = items();
+          arr[i].q++;
+          items.set([...arr]);
+        };
+        qty.appendChild(inc);
+
+        row.appendChild(qty);
+
+        const price = document.createElement('span');
+        price.className = 'price';
+        price.textContent = '$' + (item.p * item.q);
+        row.appendChild(price);
+
+        wrap.appendChild(row);
+      });
+
+      const total = items().reduce((s, i) => s + i.p * i.q, 0);
+      const totalRow = document.createElement('div');
+      totalRow.className = 'total';
+      const label = document.createElement('span');
+      label.className = 'label';
+      label.textContent = 'total:';
+      totalRow.appendChild(label);
+      const amount = document.createElement('span');
+      amount.className = 'amount';
+      amount.textContent = '$' + total;
+      totalRow.appendChild(amount);
+      wrap.appendChild(totalRow);
+
+      el.appendChild(wrap);
+    }
+    items.sub(renderTooey);
+    renderTooey();
+
+    // react-style demo (vanilla JS)
+    (function() {
+      const el = document.getElementById('react-app');
+      let itemsData = [
+        {n:"widget",p:25,q:1},
+        {n:"gadget",p:35,q:2}
+      ];
+
+      function render() {
+        el.innerHTML = '';
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex;flex-direction:column;gap:0';
+
+        itemsData.forEach((item, i) => {
+          const row = document.createElement('div');
+          row.className = 'cart-item';
+
+          const name = document.createElement('span');
+          name.className = 'name';
+          name.textContent = item.n;
+          row.appendChild(name);
+
+          const qty = document.createElement('div');
+          qty.className = 'qty';
+
+          const dec = document.createElement('button');
+          dec.textContent = '-';
+          dec.onclick = () => {
+            if (itemsData[i].q > 1) {
+              itemsData[i].q--;
+            } else {
+              itemsData = itemsData.filter((_, j) => j !== i);
+            }
+            render();
+          };
+          qty.appendChild(dec);
+
+          const qtyText = document.createElement('span');
+          qtyText.textContent = item.q;
+          qtyText.style.color = '#ccc';
+          qty.appendChild(qtyText);
+
+          const inc = document.createElement('button');
+          inc.textContent = '+';
+          inc.onclick = () => { itemsData[i].q++; render(); };
+          qty.appendChild(inc);
+
+          row.appendChild(qty);
+
+          const price = document.createElement('span');
+          price.className = 'price';
+          price.textContent = '$' + (item.p * item.q);
+          row.appendChild(price);
+
+          wrap.appendChild(row);
+        });
+
+        const total = itemsData.reduce((s, i) => s + i.p * i.q, 0);
+        const totalRow = document.createElement('div');
+        totalRow.className = 'total';
+        const label = document.createElement('span');
+        label.className = 'label';
+        label.textContent = 'total:';
+        totalRow.appendChild(label);
+        const amount = document.createElement('span');
+        amount.className = 'amount';
+        amount.textContent = '$' + total;
+        totalRow.appendChild(amount);
+        wrap.appendChild(totalRow);
+
+        el.appendChild(wrap);
+      }
+      render();
+    })();
+  </script>
+</body>
+</html>

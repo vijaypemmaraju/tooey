@@ -7,7 +7,7 @@
 token-efficient ui library for llm output
 
 ```
-~45% fewer tokens than react | ~9kb minified | 0 deps
+~36% fewer tokens than react | ~9kb minified | 0 deps
 ```
 
 ## install
@@ -93,7 +93,7 @@ app.destroy()            // cleanup
 
 ## examples
 
-[/examples](./examples) - counter, todo, form, converter, table
+[/examples](./examples) - counter, todo, form, converter, table, tabs, modal, cart, wizard
 
 ## license
 
