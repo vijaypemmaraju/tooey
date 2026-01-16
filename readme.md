@@ -7,7 +7,54 @@
 token-efficient ui library ecosystem for llms
 
 ```
-~39% fewer tokens than react | ~10kb minified | 0 deps
+~41% fewer tokens than react | ~10kb minified | 0 deps
+```
+
+## benchmarks
+
+comprehensive benchmarks comparing tooey vs react are available in [`packages/ui/benchmarks/BENCHMARK_RESULTS.md`](./packages/ui/benchmarks/BENCHMARK_RESULTS.md).
+
+### token efficiency
+
+tokens counted using gpt-4 tokenizer. lower is better for llm cost and context.
+
+| component | tooey | react | savings |
+|-----------|-------|-------|---------|
+| counter | 51 | 102 | **50%** |
+| todo list | 87 | 194 | **55%** |
+| form | 131 | 240 | **45%** |
+| tabs | 96 | 116 | **17%** |
+| modal | 127 | 178 | **29%** |
+| data table | 83 | 120 | **31%** |
+| shopping cart | 140 | 282 | **50%** |
+| wizard | 216 | 356 | **39%** |
+| **total** | **931** | **1588** | **41%** |
+
+### runtime performance
+
+benchmarks run in jsdom environment.
+
+| benchmark | result |
+|-----------|--------|
+| render 1000 items | ~20ms |
+| 10,000 state updates | ~69ms (6.9μs/update) |
+| signal with 100 subscribers | ~10ms for 10k updates |
+
+### bundle size
+
+| library | minified | gzipped |
+|---------|----------|---------|
+| tooey | ~10 KB | ~4 KB |
+| react + reactdom | ~140 KB | ~45 KB |
+| preact | ~10 KB | ~4 KB |
+| vue 3 | ~40 KB | ~16 KB |
+
+run benchmarks locally:
+
+```bash
+cd packages/ui
+pnpm benchmark           # full benchmark with report
+pnpm benchmark:test      # performance tests via vitest
 ```
 
 ## packages
@@ -36,7 +83,7 @@ render(document.getElementById('app'), {
 
 - [api reference](./API.md)
 - [ecosystem design](./ECOSYSTEM.md)
-- [examples](./examples)
+- [examples](./packages/ui/examples)
 
 ## development
 
