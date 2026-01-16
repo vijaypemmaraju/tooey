@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   render,
+  createTooey,
   signal,
   effect,
   batch,
@@ -13,7 +14,8 @@ import {
   $,
   Component,
   Props,
-  NodeSpec
+  NodeSpec,
+  Theme
 } from '../src/tooey';
 
 describe('tooey', () => {
@@ -1210,6 +1212,224 @@ describe('tooey', () => {
       });
 
       expect(container.textContent).toBe('yes');
+    });
+  });
+
+  describe('theming', () => {
+    // Note: use unique token names across categories to avoid ambiguity
+    const theme: Theme = {
+      colors: {
+        primary: '#007bff',
+        danger: '#dc3545',
+        success: '#28a745'
+      },
+      spacing: {
+        sm: 8,
+        md: 16,
+        lg: 24
+      },
+      radius: {
+        rSm: 4,
+        rMd: 8,
+        rLg: 16
+      },
+      fonts: {
+        mono: 'Consolas, monospace'
+      }
+    };
+
+    describe('render with theme option', () => {
+      it('resolves $token for bg color', () => {
+        render(container, {
+          r: [D, '', { bg: '$primary' }]
+        }, { theme });
+
+        const el = container.querySelector('div')!;
+        expect(el.style.background).toBe('rgb(0, 123, 255)');
+      });
+
+      it('resolves $token for fg color', () => {
+        render(container, {
+          r: [T, 'text', { fg: '$danger' }]
+        }, { theme });
+
+        const el = container.querySelector('span')!;
+        expect(el.style.color).toBe('rgb(220, 53, 69)');
+      });
+
+      it('resolves $token for spacing (padding)', () => {
+        render(container, {
+          r: [D, '', { p: '$md' }]
+        }, { theme });
+
+        const el = container.querySelector('div')!;
+        expect(el.style.padding).toBe('16px');
+      });
+
+      it('resolves $token for spacing (gap)', () => {
+        render(container, {
+          r: [V, [], { g: '$sm' }]
+        }, { theme });
+
+        const el = container.querySelector('div')!;
+        expect(el.style.gap).toBe('8px');
+      });
+
+      it('resolves $token for radius', () => {
+        render(container, {
+          r: [D, '', { r: '$rLg' }]
+        }, { theme });
+
+        const el = container.querySelector('div')!;
+        expect(el.style.borderRadius).toBe('16px');
+      });
+
+      it('resolves $token for font-family', () => {
+        render(container, {
+          r: [T, 'code', { ff: '$mono' }]
+        }, { theme });
+
+        const el = container.querySelector('span')!;
+        expect(el.style.fontFamily).toBe('Consolas, monospace');
+      });
+
+      it('resolves multiple theme tokens in one spec', () => {
+        render(container, {
+          r: [B, 'Submit', { bg: '$primary', p: '$md', r: '$rSm' }]
+        }, { theme });
+
+        const el = container.querySelector('button')!;
+        expect(el.style.background).toBe('rgb(0, 123, 255)');
+        expect(el.style.padding).toBe('16px');
+        expect(el.style.borderRadius).toBe('4px');
+      });
+
+      it('resolves theme tokens in custom s prop', () => {
+        render(container, {
+          r: [D, '', { s: { borderLeftColor: '$success' } }]
+        }, { theme });
+
+        const el = container.querySelector('div')!;
+        // Browser normalizes hex to RGB
+        expect(el.style.borderLeftColor).toBe('rgb(40, 167, 69)');
+      });
+
+      it('preserves non-token values', () => {
+        render(container, {
+          r: [D, '', { bg: 'red', p: 10 }]
+        }, { theme });
+
+        const el = container.querySelector('div')!;
+        expect(el.style.background).toBe('red');
+        expect(el.style.padding).toBe('10px');
+      });
+
+      it('warns for unknown theme token', () => {
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        render(container, {
+          r: [D, '', { bg: '$unknown' }]
+        }, { theme });
+
+        expect(warnSpy).toHaveBeenCalledWith('[tooey] unknown theme token: "$unknown"');
+        warnSpy.mockRestore();
+      });
+
+      it('works without theme option', () => {
+        render(container, {
+          r: [D, '', { bg: 'blue', p: 20 }]
+        });
+
+        const el = container.querySelector('div')!;
+        expect(el.style.background).toBe('blue');
+        expect(el.style.padding).toBe('20px');
+      });
+    });
+
+    describe('createTooey factory', () => {
+      it('creates a themed render function', () => {
+        const tooey = createTooey(theme);
+
+        tooey.render(container, {
+          r: [D, '', { bg: '$primary', p: '$lg' }]
+        });
+
+        const el = container.querySelector('div')!;
+        expect(el.style.background).toBe('rgb(0, 123, 255)');
+        expect(el.style.padding).toBe('24px');
+      });
+
+      it('exposes the theme', () => {
+        const tooey = createTooey(theme);
+        expect(tooey.theme).toBe(theme);
+        expect(tooey.theme.colors?.primary).toBe('#007bff');
+      });
+
+      it('themed render returns TooeyInstance', () => {
+        const tooey = createTooey(theme);
+
+        const instance = tooey.render(container, {
+          s: { count: 0 },
+          r: [T, { $: 'count' }]
+        });
+
+        expect(instance.get('count')).toBe(0);
+        instance.set('count', 5);
+        expect(instance.get('count')).toBe(5);
+        expect(container.textContent).toBe('5');
+      });
+
+      it('themed render works with state and events', () => {
+        const tooey = createTooey(theme);
+
+        const instance = tooey.render(container, {
+          s: { active: false },
+          r: [B, 'Toggle', {
+            bg: '$primary',
+            c: 'active~'
+          }]
+        });
+
+        const btn = container.querySelector('button')!;
+        expect(btn.style.background).toBe('rgb(0, 123, 255)');
+        btn.click();
+        expect(instance.get('active')).toBe(true);
+      });
+
+      it('themed render works with function components', () => {
+        const tooey = createTooey(theme);
+
+        const Card: Component = (props, children) => [
+          V, children, { bg: '$primary', p: '$md', r: '$rSm', ...props }
+        ];
+
+        tooey.render(container, {
+          r: [Card, [[T, 'Hello']], {}]
+        });
+
+        const div = container.querySelector('div')!;
+        expect(div.style.background).toBe('rgb(0, 123, 255)');
+        expect(div.style.padding).toBe('16px');
+        expect(div.style.borderRadius).toBe('4px');
+      });
+    });
+
+    describe('custom theme categories', () => {
+      it('resolves tokens from custom categories', () => {
+        const customTheme: Theme = {
+          shadows: {
+            sm: '0 1px 2px rgba(0,0,0,0.1)',
+            lg: '0 4px 8px rgba(0,0,0,0.2)'
+          }
+        };
+
+        render(container, {
+          r: [D, '', { sh: '$lg' }]
+        }, { theme: customTheme });
+
+        const el = container.querySelector('div')!;
+        expect(el.style.boxShadow).toBe('0 4px 8px rgba(0,0,0,0.2)');
+      });
     });
   });
 });

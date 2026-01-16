@@ -83,6 +83,11 @@ short keys: `g` (gap), `p` (padding), `bg` (background), `fg` (color), etc.
 
 ## conventions
 
+### style
+- **use lowercase throughout** - all documentation, commit messages, comments, and markdown files should use lowercase
+- this includes headings, sentences, and code comments
+- only exceptions: proper nouns in documentation, constant values in code
+
 ### typescript
 - strict mode enabled
 - all functions should have explicit types

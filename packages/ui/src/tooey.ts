@@ -35,6 +35,23 @@
 type StateValue = unknown;
 type StateStore = Record<string, Signal<StateValue>>;
 
+// ============ theming ============
+
+type ThemeValue = string | number;
+type ThemeCategory = Record<string, ThemeValue>;
+
+interface Theme {
+  colors?: ThemeCategory;
+  spacing?: ThemeCategory;
+  radius?: ThemeCategory;
+  fonts?: ThemeCategory;
+  [key: string]: ThemeCategory | undefined;
+}
+
+interface RenderOptions {
+  theme?: Theme;
+}
+
 interface Signal<T> {
   (): T;
   set(v: T | ((prev: T) => T)): void;
@@ -182,6 +199,7 @@ type ErrorHandler = (error: ErrorInfo) => void;
 interface RenderContext {
   cleanups: Array<() => void>;
   state: StateStore;
+  theme?: Theme;
   onError?: ErrorHandler;
 }
 
@@ -360,6 +378,30 @@ function resolveCssValue(val: number | string | undefined): string | undefined {
   return val;
 }
 
+function resolveThemeValue(token: string, theme: Theme | undefined): ThemeValue | undefined {
+  if (!theme) return undefined;
+
+  // Try direct category lookup: $primary -> colors.primary, $md -> spacing.md, etc.
+  // Check in order of most common usage
+  const categories: (keyof Theme)[] = ['colors', 'spacing', 'radius', 'fonts'];
+
+  for (const category of categories) {
+    const cat = theme[category];
+    if (cat && token in cat) {
+      return cat[token];
+    }
+  }
+
+  // Check any custom categories
+  for (const [key, cat] of Object.entries(theme)) {
+    if (cat && !categories.includes(key as keyof Theme) && token in cat) {
+      return cat[token];
+    }
+  }
+
+  return undefined;
+}
+
 // Style value shortcuts for common layout values
 const styleShortcuts: Record<string, string> = {
   'c': 'center',
@@ -506,24 +548,49 @@ function createHandler(
 
 // ============ styles ============
 
-function applyStyles(el: HTMLElement, props: Props): void {
+function resolveStyleValue(val: string | number | undefined, theme: Theme | undefined): string | number | undefined {
+  if (val === undefined) return undefined;
+  if (typeof val === 'string' && val.startsWith('$')) {
+    const token = val.slice(1);
+    const themeVal = resolveThemeValue(token, theme);
+    if (themeVal !== undefined) return themeVal;
+    console.warn(`[tooey] unknown theme token: "${val}"`);
+    return undefined;
+  }
+  return val;
+}
+
+function applyStyles(el: HTMLElement, props: Props, theme?: Theme): void {
   const style = el.style;
 
-  if (props.g !== undefined) style.gap = resolveCssValue(props.g)!;
-  if (props.p !== undefined) style.padding = resolveCssValue(props.p)!;
-  if (props.m !== undefined) style.margin = resolveCssValue(props.m)!;
-  if (props.w !== undefined) style.width = resolveCssValue(props.w)!;
-  if (props.h !== undefined) style.height = resolveCssValue(props.h)!;
-  if (props.mw !== undefined) style.maxWidth = resolveCssValue(props.mw)!;
-  if (props.mh !== undefined) style.maxHeight = resolveCssValue(props.mh)!;
+  // Helper to resolve and apply CSS value with theme token support
+  const resolve = (val: string | number | undefined): string | undefined => {
+    const resolved = resolveStyleValue(val, theme);
+    return resolveCssValue(resolved as string | number | undefined);
+  };
 
-  if (props.bg !== undefined) style.background = props.bg;
-  if (props.fg !== undefined) style.color = props.fg;
+  // Helper for string values that support theme tokens
+  const resolveStr = (val: string | undefined): string | undefined => {
+    if (val === undefined) return undefined;
+    const resolved = resolveStyleValue(val, theme);
+    return resolved !== undefined ? String(resolved) : undefined;
+  };
+
+  if (props.g !== undefined) { const v = resolve(props.g); if (v) style.gap = v; }
+  if (props.p !== undefined) { const v = resolve(props.p); if (v) style.padding = v; }
+  if (props.m !== undefined) { const v = resolve(props.m); if (v) style.margin = v; }
+  if (props.w !== undefined) { const v = resolve(props.w); if (v) style.width = v; }
+  if (props.h !== undefined) { const v = resolve(props.h); if (v) style.height = v; }
+  if (props.mw !== undefined) { const v = resolve(props.mw); if (v) style.maxWidth = v; }
+  if (props.mh !== undefined) { const v = resolve(props.mh); if (v) style.maxHeight = v; }
+
+  if (props.bg !== undefined) { const v = resolveStr(props.bg); if (v) style.background = v; }
+  if (props.fg !== undefined) { const v = resolveStr(props.fg); if (v) style.color = v; }
   if (props.o !== undefined) style.opacity = String(props.o);
 
-  if (props.r !== undefined) style.borderRadius = resolveCssValue(props.r)!;
-  if (props.bw !== undefined) style.borderWidth = resolveCssValue(props.bw)!;
-  if (props.bc !== undefined) style.borderColor = props.bc;
+  if (props.r !== undefined) { const v = resolve(props.r); if (v) style.borderRadius = v; }
+  if (props.bw !== undefined) { const v = resolve(props.bw); if (v) style.borderWidth = v; }
+  if (props.bc !== undefined) { const v = resolveStr(props.bc); if (v) style.borderColor = v; }
   if (props.bs !== undefined) style.borderStyle = props.bs;
 
   if (props.pos !== undefined) {
@@ -533,20 +600,21 @@ function applyStyles(el: HTMLElement, props: Props): void {
     style.position = posMap[props.pos] || props.pos;
   }
   if (props.z !== undefined) style.zIndex = String(props.z);
-  if (props.t !== undefined) style.top = resolveCssValue(props.t)!;
-  if (props.l !== undefined) style.left = resolveCssValue(props.l)!;
+  if (props.t !== undefined) { const v = resolve(props.t); if (v) style.top = v; }
+  if (props.l !== undefined) { const v = resolve(props.l); if (v) style.left = v; }
   if (typeof props.b === 'number' || (typeof props.b === 'string' && !Array.isArray(props.b))) {
-    style.bottom = resolveCssValue(props.b as number | string)!;
+    const v = resolve(props.b as number | string);
+    if (v) style.bottom = v;
   }
-  if (props.rt !== undefined) style.right = resolveCssValue(props.rt)!;
+  if (props.rt !== undefined) { const v = resolve(props.rt); if (v) style.right = v; }
 
-  if (props.fs !== undefined) style.fontSize = resolveCssValue(props.fs)!;
+  if (props.fs !== undefined) { const v = resolve(props.fs); if (v) style.fontSize = v; }
   if (props.fw !== undefined) style.fontWeight = String(props.fw);
-  if (props.ff !== undefined) style.fontFamily = props.ff;
+  if (props.ff !== undefined) { const v = resolveStr(props.ff); if (v) style.fontFamily = v; }
   if (props.ta !== undefined) style.textAlign = props.ta;
   if (props.td !== undefined) style.textDecoration = props.td;
   if (props.lh !== undefined) style.lineHeight = typeof props.lh === 'number' ? String(props.lh) : props.lh;
-  if (props.ls !== undefined) style.letterSpacing = resolveCssValue(props.ls)!;
+  if (props.ls !== undefined) { const v = resolve(props.ls); if (v) style.letterSpacing = v; }
 
   if (props.ai !== undefined) style.alignItems = expandStyleValue(props.ai)!;
   if (props.jc !== undefined) style.justifyContent = expandStyleValue(props.jc)!;
@@ -556,12 +624,15 @@ function applyStyles(el: HTMLElement, props: Props): void {
   if (props.ov !== undefined) style.overflow = props.ov;
   if (props.pe !== undefined) style.pointerEvents = props.pe;
   if (props.us !== undefined) style.userSelect = props.us;
-  if (props.sh !== undefined) style.boxShadow = props.sh;
+  if (props.sh !== undefined) { const v = resolveStr(props.sh); if (v) style.boxShadow = v; }
   if (props.tr !== undefined) style.transform = props.tr;
 
   if (props.s) {
     Object.entries(props.s).forEach(([key, val]) => {
-      (style as unknown as Record<string, string>)[key] = String(val);
+      const resolved = resolveStyleValue(val as string | number | undefined, theme);
+      if (resolved !== undefined) {
+        (style as unknown as Record<string, string>)[key] = String(resolved);
+      }
     });
   }
 }
@@ -851,7 +922,7 @@ function createElement(
   if (props.id) el.id = props.id;
   if (props.dis) (el as HTMLButtonElement).disabled = true;
 
-  applyStyles(el, props);
+  applyStyles(el, props, ctx.theme);
 
   // handle content
   if (content !== undefined) {
@@ -1011,13 +1082,15 @@ interface TooeyInstance {
   set(key: string, value: unknown): void;
 }
 
-function render(container: HTMLElement, spec: TooeySpec): TooeyInstance {
+function render(container: HTMLElement, spec: TooeySpec, options?: RenderOptions): TooeyInstance {
   if (!container) {
     throw new Error('[tooey] render requires a valid container element');
   }
   if (!spec || !spec.r) {
     throw new Error('[tooey] render requires a spec with a root node (r)');
   }
+
+  const theme = options?.theme;
 
   const state: StateStore = {};
   if (spec.s) {
@@ -1026,7 +1099,7 @@ function render(container: HTMLElement, spec: TooeySpec): TooeyInstance {
     });
   }
 
-  const ctx: RenderContext = { cleanups: [], state };
+  const ctx: RenderContext = { cleanups: [], state, theme };
 
   container.innerHTML = '';
   const el = createElement(spec.r, ctx);
@@ -1074,6 +1147,20 @@ function render(container: HTMLElement, spec: TooeySpec): TooeyInstance {
   return instance;
 }
 
+// ============ factory function ============
+
+interface TooeyFactory {
+  render: (container: HTMLElement, spec: TooeySpec) => TooeyInstance;
+  theme: Theme;
+}
+
+function createTooey(theme: Theme): TooeyFactory {
+  return {
+    render: (container: HTMLElement, spec: TooeySpec) => render(container, spec, { theme }),
+    theme
+  };
+}
+
 // ============ convenience helpers ============
 
 function $(name: string): StateRef {
@@ -1107,6 +1194,7 @@ const Sv = 'Sv' as const;
 
 export {
   render,
+  createTooey,
   signal,
   effect,
   batch,
@@ -1122,10 +1210,13 @@ export {
   Props,
   StateRef,
   TooeyInstance,
+  TooeyFactory,
   IfNode,
   MapNode,
   ErrorBoundaryNode,
   ErrorInfo,
   ErrorHandler,
-  Component
+  Component,
+  Theme,
+  RenderOptions
 };

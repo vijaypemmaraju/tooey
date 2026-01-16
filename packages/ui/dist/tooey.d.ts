@@ -31,6 +31,18 @@
  */
 type StateValue = unknown;
 type StateStore = Record<string, Signal<StateValue>>;
+type ThemeValue = string | number;
+type ThemeCategory = Record<string, ThemeValue>;
+interface Theme {
+    colors?: ThemeCategory;
+    spacing?: ThemeCategory;
+    radius?: ThemeCategory;
+    fonts?: ThemeCategory;
+    [key: string]: ThemeCategory | undefined;
+}
+interface RenderOptions {
+    theme?: Theme;
+}
 interface Signal<T> {
     (): T;
     set(v: T | ((prev: T) => T)): void;
@@ -108,6 +120,7 @@ interface Props {
     s?: Record<string, unknown>;
 }
 type ComponentType = 'V' | 'H' | 'D' | 'G' | 'T' | 'B' | 'I' | 'Ta' | 'S' | 'C' | 'R' | 'Tb' | 'Th' | 'Tbd' | 'Tr' | 'Td' | 'Tc' | 'Ul' | 'Ol' | 'Li' | 'M' | 'L' | 'Sv';
+type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
 type StateRef = {
     $: string;
 };
@@ -129,7 +142,9 @@ interface MapNode {
     key?: string;
 }
 type Content = string | number | StateRef | NodeSpec[] | IfNode | MapNode;
-type NodeSpec = [ComponentType, Content?, Props?] | IfNode | MapNode;
+type FunctionNodeSpec = [Component<any>, Content?, (Props & Record<string, unknown>)?];
+type BuiltinNodeSpec = [ComponentType, Content?, Props?];
+type NodeSpec = BuiltinNodeSpec | FunctionNodeSpec | IfNode | MapNode;
 interface TooeySpec {
     s?: Record<string, StateValue>;
     r: NodeSpec;
@@ -143,6 +158,7 @@ type ErrorHandler = (error: ErrorInfo) => void;
 interface RenderContext {
     cleanups: Array<() => void>;
     state: StateStore;
+    theme?: Theme;
     onError?: ErrorHandler;
 }
 interface ErrorBoundaryNode {
@@ -162,7 +178,12 @@ interface TooeyInstance {
     get(key: string): unknown;
     set(key: string, value: unknown): void;
 }
-declare function render(container: HTMLElement, spec: TooeySpec): TooeyInstance;
+declare function render(container: HTMLElement, spec: TooeySpec, options?: RenderOptions): TooeyInstance;
+interface TooeyFactory {
+    render: (container: HTMLElement, spec: TooeySpec) => TooeyInstance;
+    theme: Theme;
+}
+declare function createTooey(theme: Theme): TooeyFactory;
 declare function $(name: string): StateRef;
 declare const V: "V";
 declare const H: "H";
@@ -187,5 +208,5 @@ declare const Li: "Li";
 declare const M: "M";
 declare const L: "L";
 declare const Sv: "Sv";
-export { render, signal, effect, batch, $, V, H, D, G, T, B, I, Ta, S, C, R, Tb, Th, Tbd, Tr, Td, Tc, Ul, Ol, Li, M, L, Sv, TooeySpec, NodeSpec, Props, StateRef, TooeyInstance, IfNode, MapNode, ErrorBoundaryNode, ErrorInfo, ErrorHandler };
+export { render, createTooey, signal, effect, batch, $, V, H, D, G, T, B, I, Ta, S, C, R, Tb, Th, Tbd, Tr, Td, Tc, Ul, Ol, Li, M, L, Sv, TooeySpec, NodeSpec, Props, StateRef, TooeyInstance, TooeyFactory, IfNode, MapNode, ErrorBoundaryNode, ErrorInfo, ErrorHandler, Component, Theme, RenderOptions };
 //# sourceMappingURL=tooey.d.ts.map
