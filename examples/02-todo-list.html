@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tooey Example: Todo List</title>
+  <title>tooey example: todo list</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, sans-serif; }
     body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; }
@@ -25,30 +25,30 @@
   </style>
 </head>
 <body>
-  <h1>Example 2: Todo List</h1>
-  <p>A todo list demonstrating arrays, append, and dynamic rendering.</p>
+  <h1>example 2: todo list</h1>
+  <p>a todo list demonstrating arrays, append, and dynamic rendering.</p>
 
   <div class="container">
-    <!-- Tooey Panel -->
+    <!-- tooey panel -->
     <div class="panel">
-      <h3>Tooey</h3>
+      <h3>tooey</h3>
       <pre class="tooey-code">{
   s: {txt:"",items:[]},
   r: [V,{g:12},[
     [H,{g:8},[
-      [I,"",{ph:"Add todo...",v:{$:"txt"},x:["txt","!"]}],
-      [B,"Add",{c:["items","<",{$:"txt"}]}]
+      [I,"",{ph:"add todo...",v:{$:"txt"},x:["txt","!"]}],
+      [B,"add",{c:["items","<",{$:"txt"}]}]
     ]],
     [V,{g:4},[/* items rendered dynamically */]]
   ]]
 }</pre>
-      <p><strong>Characters:</strong> <span class="stats">~185</span></p>
+      <p><strong>characters:</strong> <span class="stats">~185</span></p>
       <div class="demo" id="tooey-demo"></div>
     </div>
 
-    <!-- React Panel -->
+    <!-- react panel -->
     <div class="panel">
-      <h3>React Equivalent</h3>
+      <h3>react equivalent</h3>
       <pre class="react-code">function TodoList() {
   const [txt, setTxt] = useState('');
   const [items, setItems] = useState([]);
@@ -56,14 +56,14 @@
     &lt;div style={{display:'flex',flexDirection:'column',gap:12}}&gt;
       &lt;div style={{display:'flex',flexDirection:'row',gap:8}}&gt;
         &lt;input
-          placeholder="Add todo..."
+          placeholder="add todo..."
           value={txt}
           onChange={e=&gt;setTxt(e.target.value)}
         /&gt;
         &lt;button onClick={()=&gt;{
           setItems([...items, txt]);
           setTxt('');
-        }}&gt;Add&lt;/button&gt;
+        }}&gt;add&lt;/button&gt;
       &lt;/div&gt;
       &lt;div style={{display:'flex',flexDirection:'column',gap:4}}&gt;
         {items.map((item, i) =&gt; (
@@ -78,46 +78,46 @@
     &lt;/div&gt;
   );
 }</pre>
-      <p><strong>Characters:</strong> <span class="stats">~752</span></p>
+      <p><strong>characters:</strong> <span class="stats">~752</span></p>
     </div>
   </div>
 
   <div class="stats">
-    <h3>Token Efficiency</h3>
-    <p>Tooey: <span>~185 chars</span> | React: <span>~752 chars</span> | <span>75% reduction</span></p>
+    <h3>token efficiency</h3>
+    <p>tooey: <span>~185 chars</span> | react: <span>~752 chars</span> | <span>75% reduction</span></p>
   </div>
 
   <script src="../dist/tooey.js"></script>
   <script>
     const { render, signal, effect, V, H, T, B, I } = tooey;
 
-    // For dynamic lists, we need a slightly more advanced pattern
-    // This shows how you'd implement it with the current API
+    // for dynamic lists, we need a slightly more advanced pattern
+    // this shows how you'd implement it with the current api
     const container = document.getElementById('tooey-demo');
 
-    // State
+    // state
     const txt = signal('');
     const items = signal([]);
 
     function renderApp() {
       container.innerHTML = '';
 
-      // Main container
+      // main container
       const main = document.createElement('div');
       main.style.cssText = 'display:flex;flex-direction:column;gap:12px';
 
-      // Input row
+      // input row
       const inputRow = document.createElement('div');
       inputRow.style.cssText = 'display:flex;gap:8px';
 
       const input = document.createElement('input');
-      input.placeholder = 'Add todo...';
+      input.placeholder = 'add todo...';
       input.value = txt();
       input.style.cssText = 'padding:8px 12px;border:1px solid #444;border-radius:6px;background:#0f0f23;color:#eee;flex:1';
       input.addEventListener('input', e => txt.set(e.target.value));
 
       const addBtn = document.createElement('button');
-      addBtn.textContent = 'Add';
+      addBtn.textContent = 'add';
       addBtn.addEventListener('click', () => {
         if (txt()) {
           items.set([...items(), txt()]);
@@ -129,7 +129,7 @@
       inputRow.appendChild(addBtn);
       main.appendChild(inputRow);
 
-      // Items list
+      // items list
       const list = document.createElement('div');
       list.style.cssText = 'display:flex;flex-direction:column;gap:4px';
 
@@ -157,7 +157,7 @@
       container.appendChild(main);
     }
 
-    // Re-render on state changes
+    // re-render on state changes
     items.sub(renderApp);
     txt.sub(renderApp);
     renderApp();

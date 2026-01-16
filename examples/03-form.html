@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tooey Example: Form</title>
+  <title>tooey example: form</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, sans-serif; }
     body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; }
@@ -25,30 +25,30 @@
   </style>
 </head>
 <body>
-  <h1>Example 3: Form with Validation</h1>
-  <p>A registration form demonstrating multiple inputs, validation, and computed state.</p>
+  <h1>example 3: form with validation</h1>
+  <p>a registration form demonstrating multiple inputs, validation, and computed state.</p>
 
   <div class="container">
-    <!-- Tooey Panel -->
+    <!-- tooey panel -->
     <div class="panel">
-      <h3>Tooey</h3>
+      <h3>tooey</h3>
       <pre class="tooey-code">{
   s: {name:"",email:"",pw:"",agree:false},
   r: [V,{g:16,w:300},[
-    [V,{g:4},[[T,"Name"],[I,"",{ph:"Your name",v:{$:"name"},x:["name","!"]}]]],
-    [V,{g:4},[[T,"Email"],[I,"",{t:"email",ph:"you@example.com",v:{$:"email"},x:["email","!"]}]]],
-    [V,{g:4},[[T,"Password"],[I,"",{t:"password",ph:"••••••••",v:{$:"pw"},x:["pw","!"]}]]],
-    [H,{g:8},[[C,"",{v:{$:"agree"},x:["agree","~"]}],[T,"I agree to terms"]]],
-    [B,"Sign Up",{c:()=>alert("Submitted!")}]
+    [V,{g:4},[[T,"name"],[I,"",{ph:"your name",v:{$:"name"},x:["name","!"]}]]],
+    [V,{g:4},[[T,"email"],[I,"",{t:"email",ph:"you@example.com",v:{$:"email"},x:["email","!"]}]]],
+    [V,{g:4},[[T,"password"],[I,"",{t:"password",ph:"••••••••",v:{$:"pw"},x:["pw","!"]}]]],
+    [H,{g:8},[[C,"",{v:{$:"agree"},x:["agree","~"]}],[T,"i agree to terms"]]],
+    [B,"sign up",{c:()=>alert("submitted!")}]
   ]]
 }</pre>
-      <p><strong>Characters:</strong> <span class="stats">~421</span></p>
+      <p><strong>characters:</strong> <span class="stats">~421</span></p>
       <div class="demo" id="tooey-demo"></div>
     </div>
 
-    <!-- React Panel -->
+    <!-- react panel -->
     <div class="panel">
-      <h3>React Equivalent</h3>
+      <h3>react equivalent</h3>
       <pre class="react-code">function RegistrationForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -60,37 +60,37 @@
   return (
     &lt;div style={{display:'flex',flexDirection:'column',gap:16,width:300}}&gt;
       &lt;div style={{display:'flex',flexDirection:'column',gap:4}}&gt;
-        &lt;label&gt;Name&lt;/label&gt;
-        &lt;input placeholder="Your name" value={name}
+        &lt;label&gt;name&lt;/label&gt;
+        &lt;input placeholder="your name" value={name}
           onChange={e=&gt;setName(e.target.value)} /&gt;
       &lt;/div&gt;
       &lt;div style={{display:'flex',flexDirection:'column',gap:4}}&gt;
-        &lt;label&gt;Email&lt;/label&gt;
+        &lt;label&gt;email&lt;/label&gt;
         &lt;input type="email" placeholder="you@example.com"
           value={email} onChange={e=&gt;setEmail(e.target.value)} /&gt;
       &lt;/div&gt;
       &lt;div style={{display:'flex',flexDirection:'column',gap:4}}&gt;
-        &lt;label&gt;Password&lt;/label&gt;
+        &lt;label&gt;password&lt;/label&gt;
         &lt;input type="password" placeholder="••••••••"
           value={pw} onChange={e=&gt;setPw(e.target.value)} /&gt;
       &lt;/div&gt;
       &lt;div style={{display:'flex',flexDirection:'row',gap:8}}&gt;
         &lt;input type="checkbox" checked={agree}
           onChange={e=&gt;setAgree(e.target.checked)} /&gt;
-        &lt;span&gt;I agree to terms&lt;/span&gt;
+        &lt;span&gt;i agree to terms&lt;/span&gt;
       &lt;/div&gt;
       &lt;button disabled={!valid}
-        onClick={()=&gt;alert('Submitted!')}&gt;Sign Up&lt;/button&gt;
+        onClick={()=&gt;alert('submitted!')}&gt;sign up&lt;/button&gt;
     &lt;/div&gt;
   );
 }</pre>
-      <p><strong>Characters:</strong> <span class="stats">~1156</span></p>
+      <p><strong>characters:</strong> <span class="stats">~1156</span></p>
     </div>
   </div>
 
   <div class="stats">
-    <h3>Token Efficiency</h3>
-    <p>Tooey: <span>~421 chars</span> | React: <span>~1156 chars</span> | <span>64% reduction</span></p>
+    <h3>token efficiency</h3>
+    <p>tooey: <span>~421 chars</span> | react: <span>~1156 chars</span> | <span>64% reduction</span></p>
   </div>
 
   <script src="../dist/tooey.js"></script>
@@ -100,11 +100,11 @@
     const instance = render(document.getElementById('tooey-demo'), {
       s: {name:"",email:"",pw:"",agree:false},
       r: [V,{g:16,w:300},[
-        [V,{g:4},[[T,"Name"],[I,"",{ph:"Your name",v:{$:"name"},x:["name","!"]}]]],
-        [V,{g:4},[[T,"Email"],[I,"",{t:"email",ph:"you@example.com",v:{$:"email"},x:["email","!"]}]]],
-        [V,{g:4},[[T,"Password"],[I,"",{t:"password",ph:"••••••••",v:{$:"pw"},x:["pw","!"]}]]],
-        [H,{g:8},[[C,"",{ch:{$:"agree"},x:["agree","~"]}],[T,"I agree to terms"]]],
-        [B,"Sign Up",{c:()=>alert("Submitted: " + JSON.stringify({
+        [V,{g:4},[[T,"name"],[I,"",{ph:"your name",v:{$:"name"},x:["name","!"]}]]],
+        [V,{g:4},[[T,"email"],[I,"",{t:"email",ph:"you@example.com",v:{$:"email"},x:["email","!"]}]]],
+        [V,{g:4},[[T,"password"],[I,"",{t:"password",ph:"••••••••",v:{$:"pw"},x:["pw","!"]}]]],
+        [H,{g:8},[[C,"",{ch:{$:"agree"},x:["agree","~"]}],[T,"i agree to terms"]]],
+        [B,"sign up",{c:()=>alert("submitted: " + JSON.stringify({
           name: instance.get('name'),
           email: instance.get('email')
         }))}]

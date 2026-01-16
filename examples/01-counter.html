@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tooey Example: Counter</title>
+  <title>tooey example: counter</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, sans-serif; }
     body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; }
@@ -23,13 +23,13 @@
   </style>
 </head>
 <body>
-  <h1>Example 1: Counter</h1>
-  <p>A simple counter demonstrating state and click handlers.</p>
+  <h1>example 1: counter</h1>
+  <p>a simple counter demonstrating state and click handlers.</p>
 
   <div class="container">
-    <!-- Tooey Panel -->
+    <!-- tooey panel -->
     <div class="panel">
-      <h3>Tooey</h3>
+      <h3>tooey</h3>
       <pre class="tooey-code">{
   s: {n: 0},
   r: [V,{g:8},[
@@ -40,13 +40,13 @@
     ]]
   ]]
 }</pre>
-      <p><strong>Characters:</strong> <span class="stats">~89</span></p>
+      <p><strong>characters:</strong> <span class="stats">~89</span></p>
       <div class="demo" id="tooey-demo"></div>
     </div>
 
-    <!-- React Panel -->
+    <!-- react panel -->
     <div class="panel">
-      <h3>React Equivalent</h3>
+      <h3>react equivalent</h3>
       <pre class="react-code">function Counter() {
   const [n, setN] = useState(0);
   return (
@@ -59,18 +59,18 @@
     &lt;/div&gt;
   );
 }</pre>
-      <p><strong>Characters:</strong> <span class="stats">~371</span></p>
+      <p><strong>characters:</strong> <span class="stats">~371</span></p>
     </div>
   </div>
 
   <div class="stats">
-    <h3>Token Efficiency</h3>
-    <p>Tooey: <span>~89 chars</span> | React: <span>~371 chars</span> | <span>76% reduction</span></p>
+    <h3>token efficiency</h3>
+    <p>tooey: <span>~89 chars</span> | react: <span>~371 chars</span> | <span>76% reduction</span></p>
   </div>
 
   <script src="../dist/tooey.js"></script>
   <script>
-    // Using the global tooey object
+    // using the global tooey object
     const { render, V, H, T, B, $ } = tooey;
 
     render(document.getElementById('tooey-demo'), {
