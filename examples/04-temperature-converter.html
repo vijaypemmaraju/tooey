@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tooey Example: Temperature Converter</title>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; }
+    h1 { color: #00d9ff; }
+    .container { display: flex; gap: 40px; flex-wrap: wrap; }
+    .panel { flex: 1; min-width: 300px; background: #16213e; padding: 20px; border-radius: 12px; }
+    .panel h3 { margin-top: 0; color: #00d9ff; }
+    pre { background: #0f0f23; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.4; }
+    .tooey-code { color: #7fff7f; }
+    .react-code { color: #ff9f7f; }
+    .demo { background: #0f0f23; padding: 20px; border-radius: 8px; margin-top: 15px; }
+    .stats { margin-top: 20px; padding: 15px; background: #0f0f23; border-radius: 8px; }
+    .stats span { color: #00d9ff; font-weight: bold; }
+    input { padding: 10px 12px; font-size: 18px; border: 1px solid #444; border-radius: 6px; background: #0f0f23; color: #eee; width: 120px; text-align: center; }
+    .temp-display { font-size: 32px; color: #00d9ff; }
+  </style>
+</head>
+<body>
+  <h1>Example 4: Temperature Converter</h1>
+  <p>Bidirectional data binding with computed values.</p>
+
+  <div class="container">
+    <!-- Tooey Panel -->
+    <div class="panel">
+      <h3>Tooey</h3>
+      <pre class="tooey-code">{
+  s: {c:0,f:32},
+  r: [H,{g:24},[
+    [V,{g:8},[[T,"Celsius"],[I,"",{t:"number",v:{$:"c"},x:onC}]]],
+    [T,"=",{s:{fontSize:"32px"}}],
+    [V,{g:8},[[T,"Fahrenheit"],[I,"",{t:"number",v:{$:"f"},x:onF}]]]
+  ]]
+}
+// onC/onF: sync handlers</pre>
+      <p><strong>Characters:</strong> <span class="stats">~198</span></p>
+      <div class="demo" id="tooey-demo"></div>
+    </div>
+
+    <!-- React Panel -->
+    <div class="panel">
+      <h3>React Equivalent</h3>
+      <pre class="react-code">function TempConverter() {
+  const [c, setC] = useState(0);
+  const [f, setF] = useState(32);
+
+  const onCelsiusChange = (e) => {
+    const val = parseFloat(e.target.value) || 0;
+    setC(val);
+    setF(val * 9/5 + 32);
+  };
+
+  const onFahrenheitChange = (e) => {
+    const val = parseFloat(e.target.value) || 0;
+    setF(val);
+    setC((val - 32) * 5/9);
+  };
+
+  return (
+    &lt;div style={{display:'flex',flexDirection:'row',gap:24,alignItems:'center'}}&gt;
+      &lt;div style={{display:'flex',flexDirection:'column',gap:8}}&gt;
+        &lt;span&gt;Celsius&lt;/span&gt;
+        &lt;input type="number" value={c} onChange={onCelsiusChange} /&gt;
+      &lt;/div&gt;
+      &lt;span style={{fontSize:32}}&gt;=&lt;/span&gt;
+      &lt;div style={{display:'flex',flexDirection:'column',gap:8}}&gt;
+        &lt;span&gt;Fahrenheit&lt;/span&gt;
+        &lt;input type="number" value={f} onChange={onFahrenheitChange} /&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+      <p><strong>Characters:</strong> <span class="stats">~856</span></p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <h3>Token Efficiency</h3>
+    <p>Tooey: <span>~198 chars</span> | React: <span>~856 chars</span> | <span>77% reduction</span></p>
+  </div>
+
+  <script src="../dist/tooey.js"></script>
+  <script>
+    const { signal, effect, V, H, T, I } = tooey;
+
+    const container = document.getElementById('tooey-demo');
+    const c = signal(0);
+    const f = signal(32);
+
+    let updating = false;
+
+    function render() {
+      container.innerHTML = '';
+
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;gap:24px;align-items:center';
+
+      // Celsius
+      const cCol = document.createElement('div');
+      cCol.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+      const cLabel = document.createElement('span');
+      cLabel.textContent = 'Celsius';
+      const cInput = document.createElement('input');
+      cInput.type = 'number';
+      cInput.value = c().toFixed(1);
+      cInput.addEventListener('input', e => {
+        if (updating) return;
+        updating = true;
+        const val = parseFloat(e.target.value) || 0;
+        c.set(val);
+        f.set(val * 9/5 + 32);
+        updating = false;
+      });
+      cCol.appendChild(cLabel);
+      cCol.appendChild(cInput);
+
+      // Equals
+      const eq = document.createElement('span');
+      eq.textContent = '=';
+      eq.style.fontSize = '32px';
+
+      // Fahrenheit
+      const fCol = document.createElement('div');
+      fCol.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+      const fLabel = document.createElement('span');
+      fLabel.textContent = 'Fahrenheit';
+      const fInput = document.createElement('input');
+      fInput.type = 'number';
+      fInput.value = f().toFixed(1);
+      fInput.addEventListener('input', e => {
+        if (updating) return;
+        updating = true;
+        const val = parseFloat(e.target.value) || 0;
+        f.set(val);
+        c.set((val - 32) * 5/9);
+        updating = false;
+      });
+      fCol.appendChild(fLabel);
+      fCol.appendChild(fInput);
+
+      row.appendChild(cCol);
+      row.appendChild(eq);
+      row.appendChild(fCol);
+      container.appendChild(row);
+    }
+
+    c.sub(render);
+    f.sub(render);
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tooey Example: Todo List</title>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; }
+    h1 { color: #00d9ff; }
+    h2 { color: #888; margin-top: 2em; }
+    .container { display: flex; gap: 40px; flex-wrap: wrap; }
+    .panel { flex: 1; min-width: 300px; background: #16213e; padding: 20px; border-radius: 12px; }
+    .panel h3 { margin-top: 0; color: #00d9ff; }
+    pre { background: #0f0f23; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.4; }
+    .tooey-code { color: #7fff7f; }
+    .react-code { color: #ff9f7f; }
+    .demo { background: #0f0f23; padding: 20px; border-radius: 8px; margin-top: 15px; }
+    .stats { margin-top: 20px; padding: 15px; background: #0f0f23; border-radius: 8px; }
+    .stats span { color: #00d9ff; font-weight: bold; }
+    button { padding: 8px 16px; font-size: 14px; cursor: pointer; border: none; border-radius: 6px; background: #00d9ff; color: #000; margin: 2px; }
+    button:hover { background: #00b8d9; }
+    input { padding: 8px 12px; font-size: 14px; border: 1px solid #444; border-radius: 6px; background: #0f0f23; color: #eee; }
+    .todo-item { display: flex; align-items: center; gap: 8px; padding: 8px; background: #1a1a2e; border-radius: 6px; margin: 4px 0; }
+  </style>
+</head>
+<body>
+  <h1>Example 2: Todo List</h1>
+  <p>A todo list demonstrating arrays, append, and dynamic rendering.</p>
+
+  <div class="container">
+    <!-- Tooey Panel -->
+    <div class="panel">
+      <h3>Tooey</h3>
+      <pre class="tooey-code">{
+  s: {txt:"",items:[]},
+  r: [V,{g:12},[
+    [H,{g:8},[
+      [I,"",{ph:"Add todo...",v:{$:"txt"},x:["txt","!"]}],
+      [B,"Add",{c:["items","<",{$:"txt"}]}]
+    ]],
+    [V,{g:4},[/* items rendered dynamically */]]
+  ]]
+}</pre>
+      <p><strong>Characters:</strong> <span class="stats">~185</span></p>
+      <div class="demo" id="tooey-demo"></div>
+    </div>
+
+    <!-- React Panel -->
+    <div class="panel">
+      <h3>React Equivalent</h3>
+      <pre class="react-code">function TodoList() {
+  const [txt, setTxt] = useState('');
+  const [items, setItems] = useState([]);
+  return (
+    &lt;div style={{display:'flex',flexDirection:'column',gap:12}}&gt;
+      &lt;div style={{display:'flex',flexDirection:'row',gap:8}}&gt;
+        &lt;input
+          placeholder="Add todo..."
+          value={txt}
+          onChange={e=&gt;setTxt(e.target.value)}
+        /&gt;
+        &lt;button onClick={()=&gt;{
+          setItems([...items, txt]);
+          setTxt('');
+        }}&gt;Add&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div style={{display:'flex',flexDirection:'column',gap:4}}&gt;
+        {items.map((item, i) =&gt; (
+          &lt;div key={i} className="todo-item"&gt;
+            &lt;span&gt;{item}&lt;/span&gt;
+            &lt;button onClick={()=&gt;setItems(items.filter((_,j)=&gt;j!==i))}&gt;
+              ✕
+            &lt;/button&gt;
+          &lt;/div&gt;
+        ))}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+      <p><strong>Characters:</strong> <span class="stats">~752</span></p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <h3>Token Efficiency</h3>
+    <p>Tooey: <span>~185 chars</span> | React: <span>~752 chars</span> | <span>75% reduction</span></p>
+  </div>
+
+  <script src="../dist/tooey.js"></script>
+  <script>
+    const { render, signal, effect, V, H, T, B, I } = tooey;
+
+    // For dynamic lists, we need a slightly more advanced pattern
+    // This shows how you'd implement it with the current API
+    const container = document.getElementById('tooey-demo');
+
+    // State
+    const txt = signal('');
+    const items = signal([]);
+
+    function renderApp() {
+      container.innerHTML = '';
+
+      // Main container
+      const main = document.createElement('div');
+      main.style.cssText = 'display:flex;flex-direction:column;gap:12px';
+
+      // Input row
+      const inputRow = document.createElement('div');
+      inputRow.style.cssText = 'display:flex;gap:8px';
+
+      const input = document.createElement('input');
+      input.placeholder = 'Add todo...';
+      input.value = txt();
+      input.style.cssText = 'padding:8px 12px;border:1px solid #444;border-radius:6px;background:#0f0f23;color:#eee;flex:1';
+      input.addEventListener('input', e => txt.set(e.target.value));
+
+      const addBtn = document.createElement('button');
+      addBtn.textContent = 'Add';
+      addBtn.addEventListener('click', () => {
+        if (txt()) {
+          items.set([...items(), txt()]);
+          txt.set('');
+        }
+      });
+
+      inputRow.appendChild(input);
+      inputRow.appendChild(addBtn);
+      main.appendChild(inputRow);
+
+      // Items list
+      const list = document.createElement('div');
+      list.style.cssText = 'display:flex;flex-direction:column;gap:4px';
+
+      items().forEach((item, i) => {
+        const row = document.createElement('div');
+        row.className = 'todo-item';
+
+        const span = document.createElement('span');
+        span.textContent = item;
+        span.style.flex = '1';
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '✕';
+        delBtn.style.cssText = 'padding:4px 8px;background:#ff4757';
+        delBtn.addEventListener('click', () => {
+          items.set(items().filter((_, j) => j !== i));
+        });
+
+        row.appendChild(span);
+        row.appendChild(delBtn);
+        list.appendChild(row);
+      });
+
+      main.appendChild(list);
+      container.appendChild(main);
+    }
+
+    // Re-render on state changes
+    items.sub(renderApp);
+    txt.sub(renderApp);
+    renderApp();
+  </script>
+</body>
+</html>

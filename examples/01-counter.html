@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tooey Example: Counter</title>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; }
+    h1 { color: #00d9ff; }
+    h2 { color: #888; margin-top: 2em; }
+    .container { display: flex; gap: 40px; flex-wrap: wrap; }
+    .panel { flex: 1; min-width: 300px; background: #16213e; padding: 20px; border-radius: 12px; }
+    .panel h3 { margin-top: 0; color: #00d9ff; }
+    pre { background: #0f0f23; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 14px; }
+    .tooey-code { color: #7fff7f; }
+    .react-code { color: #ff9f7f; }
+    .demo { background: #0f0f23; padding: 20px; border-radius: 8px; margin-top: 15px; }
+    .stats { margin-top: 20px; padding: 15px; background: #0f0f23; border-radius: 8px; }
+    .stats span { color: #00d9ff; font-weight: bold; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 6px; background: #00d9ff; color: #000; }
+    button:hover { background: #00b8d9; }
+  </style>
+</head>
+<body>
+  <h1>Example 1: Counter</h1>
+  <p>A simple counter demonstrating state and click handlers.</p>
+
+  <div class="container">
+    <!-- Tooey Panel -->
+    <div class="panel">
+      <h3>Tooey</h3>
+      <pre class="tooey-code">{
+  s: {n: 0},
+  r: [V,{g:8},[
+    [T,{$:"n"}],
+    [H,{g:8},[
+      [B,"-",{c:["n","-"]}],
+      [B,"+",{c:["n","+"]}]
+    ]]
+  ]]
+}</pre>
+      <p><strong>Characters:</strong> <span class="stats">~89</span></p>
+      <div class="demo" id="tooey-demo"></div>
+    </div>
+
+    <!-- React Panel -->
+    <div class="panel">
+      <h3>React Equivalent</h3>
+      <pre class="react-code">function Counter() {
+  const [n, setN] = useState(0);
+  return (
+    &lt;div style={{display:'flex',flexDirection:'column',gap:8}}&gt;
+      &lt;span&gt;{n}&lt;/span&gt;
+      &lt;div style={{display:'flex',flexDirection:'row',gap:8}}&gt;
+        &lt;button onClick={()=&gt;setN(n=&gt;n-1)}&gt;-&lt;/button&gt;
+        &lt;button onClick={()=&gt;setN(n=&gt;n+1)}&gt;+&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+      <p><strong>Characters:</strong> <span class="stats">~371</span></p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <h3>Token Efficiency</h3>
+    <p>Tooey: <span>~89 chars</span> | React: <span>~371 chars</span> | <span>76% reduction</span></p>
+  </div>
+
+  <script src="../dist/tooey.js"></script>
+  <script>
+    // Using the global tooey object
+    const { render, V, H, T, B, $ } = tooey;
+
+    render(document.getElementById('tooey-demo'), {
+      s: {n: 0},
+      r: [V,{g:8},[
+        [T,{$:"n"}],
+        [H,{g:8},[
+          [B,"-",{c:["n","-"]}],
+          [B,"+",{c:["n","+"]}]
+        ]]
+      ]]
+    });
+  </script>
+</body>
+</html>
