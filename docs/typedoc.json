@@ -1,0 +1,10 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["../packages/ui/src/tooey.ts"],
+  "tsconfig": "../packages/ui/tsconfig.json",
+  "json": "dist/api.json",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "includeVersion": true,
+  "readme": "none"
+}
