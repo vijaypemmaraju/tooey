@@ -264,6 +264,10 @@ const init = () => {
   const spec: TooeySpec = {
     s: {},
     r: [H, [
+      // mobile menu button (hidden on desktop)
+      [B, '', { id: 'menu-btn', pos: 'fix', t: 16, l: 16, z: 1001, bg: 'var(--bg-secondary)', p: 10, r: 8, s: { border: '1px solid var(--border)', display: 'none' } }],
+      // sidebar overlay (for mobile)
+      [D, '', { id: 'sidebar-overlay', pos: 'fix', t: 0, l: 0, w: '100vw', h: '100vh', z: 999, bg: 'rgba(0,0,0,0.5)', s: { display: 'none' } }],
       // sidebar
       [V, [
         [H, [[D, '', { w: 32, h: 32, r: 8, bg: 'var(--accent)', s: { flexShrink: '0' } }], [T, 'tooey', { fs: 18, fw: 700, fg: 'var(--text)' }]], { g: 8, ai: 'c', m: '0 0 24px 0' }],
@@ -272,10 +276,10 @@ const init = () => {
         [V, navItems.map(item => [B, item.label, { bg: 'transparent', fg: 'var(--text-secondary)', p: '8px 12px', r: 4, w: '100%', ta: 'left', fs: 13, cur: 'pointer', s: { border: 'none' }, cls: 'nav-btn' }]), { g: 2 }],
         [H, [[B, '', { bg: 'transparent', fg: 'var(--text-secondary)', p: 8, r: 4, cur: 'pointer', s: { border: 'none' }, id: 'theme-btn' }],
           [L, '', { href: 'https://github.com/vijaypemmaraju/tooey', fg: 'var(--text-secondary)', p: 8, id: 'github-link' }]], { g: 8, m: 'auto 0 0 0' }]
-      ], { w: 240, h: '100vh', p: 24, bg: 'var(--bg-secondary)', pos: 'fix', t: 0, l: 0, s: { borderRight: '1px solid var(--border)', overflowY: 'auto', display: 'flex', flexDirection: 'column' } }],
+      ], { w: 240, h: '100vh', p: 24, bg: 'var(--bg-secondary)', pos: 'fix', t: 0, l: 0, z: 1000, s: { borderRight: '1px solid var(--border)', overflowY: 'auto', display: 'flex', flexDirection: 'column', transition: 'transform 0.3s ease' }, id: 'sidebar' }],
       // content
-      [D, [[{ boundary: true, child: [D, '', { id: 'page-content' }], fallback: Card({}, [[T, 'error', { fg: 'var(--error)', fw: 600 }]]), onError: (e) => console.error(e) }]],
-        { m: '0 0 0 240px', p: 32, mw: 900, s: { minHeight: '100vh' } }]
+      [D, [[D, '', { id: 'page-content' }]],
+        { m: '0 0 0 240px', p: 32, mw: 900, s: { minHeight: '100vh' }, id: 'main-content' }]
     ], { w: '100%' }]
   };
 
@@ -286,14 +290,63 @@ const init = () => {
   const searchInput = document.getElementById('search') as HTMLInputElement;
   const themeBtn = document.getElementById('theme-btn')!;
   const githubLink = document.getElementById('github-link')!;
+  const menuBtn = document.getElementById('menu-btn')!;
+  const sidebar = document.getElementById('sidebar')!;
+  const sidebarOverlay = document.getElementById('sidebar-overlay')!;
+  const mainContent = document.getElementById('main-content')!;
 
   // icons
   const sunIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>';
   const moonIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>';
   const ghIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.386-1.332-1.755-1.332-1.755-1.089-.744.083-.729.083-.729 1.205.085 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>';
+  const menuIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>';
+  const closeIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>';
 
   themeBtn.innerHTML = isDark() ? sunIcon : moonIcon;
   githubLink.innerHTML = ghIcon;
+  menuBtn.innerHTML = menuIcon;
+
+  // mobile responsive handling
+  let isMobile = window.innerWidth <= 768;
+  let sidebarOpen = false;
+
+  const updateMobileLayout = () => {
+    isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      menuBtn.style.display = 'block';
+      sidebar.style.transform = sidebarOpen ? 'translateX(0)' : 'translateX(-100%)';
+      sidebarOverlay.style.display = sidebarOpen ? 'block' : 'none';
+      mainContent.style.marginLeft = '0';
+      mainContent.style.padding = '16px';
+      mainContent.style.paddingTop = '60px';
+    } else {
+      menuBtn.style.display = 'none';
+      sidebar.style.transform = 'translateX(0)';
+      sidebarOverlay.style.display = 'none';
+      mainContent.style.marginLeft = '240px';
+      mainContent.style.padding = '32px';
+      sidebarOpen = false;
+    }
+  };
+
+  const toggleSidebar = () => {
+    sidebarOpen = !sidebarOpen;
+    menuBtn.innerHTML = sidebarOpen ? closeIcon : menuIcon;
+    updateMobileLayout();
+  };
+
+  const closeSidebar = () => {
+    if (sidebarOpen) {
+      sidebarOpen = false;
+      menuBtn.innerHTML = menuIcon;
+      updateMobileLayout();
+    }
+  };
+
+  menuBtn.addEventListener('click', toggleSidebar);
+  sidebarOverlay.addEventListener('click', closeSidebar);
+  window.addEventListener('resize', updateMobileLayout);
+  updateMobileLayout();
 
   // events
   searchInput?.addEventListener('input', (e) => {
@@ -314,7 +367,10 @@ const init = () => {
   });
 
   document.querySelectorAll('.nav-btn').forEach((btn, i) => {
-    btn.addEventListener('click', () => navigateTo(navItems[i].page));
+    btn.addEventListener('click', () => {
+      navigateTo(navItems[i].page);
+      closeSidebar();
+    });
   });
 
   themeBtn.addEventListener('click', () => {
