@@ -6,44 +6,86 @@
   <title>counter - tooey</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; padding: 48px; }
+    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; padding: 24px; }
+    @media (min-width: 600px) { body { padding: 48px; } }
     a { color: #0af; text-decoration: none; }
-    h1 { font-size: 12px; font-weight: 400; color: #fff; margin-bottom: 4px; }
-    .tag { font-size: 11px; margin-bottom: 32px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px; }
-    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
-    .col label { font-size: 10px; color: #666; display: block; margin-bottom: 8px; }
-    pre { font-size: 11px; background: #111; padding: 12px; overflow-x: auto; margin-bottom: 16px; }
+    h1 { font-size: 14px; font-weight: 400; color: #fff; margin-bottom: 4px; }
+    .tag { font-size: 12px; margin-bottom: 32px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 32px; }
+    @media (min-width: 700px) { .grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+    .col h2 { font-size: 11px; font-weight: 400; color: #666; margin-bottom: 8px; }
+    pre { font-size: 11px; background: #111; padding: 12px; overflow-x: auto; margin-bottom: 16px; border-radius: 4px; }
     .tooey pre { color: #4f8; }
     .react pre { color: #f97; }
-    .demo { background: #111; padding: 16px; }
-    .demo button { font-family: inherit; font-size: 12px; background: #222; color: #fff; border: 1px solid #333; padding: 6px 12px; cursor: pointer; }
+    .demo { background: #111; padding: 16px; border-radius: 4px; }
+    .demo button { font-family: inherit; font-size: 14px; background: #222; color: #fff; border: 1px solid #333; padding: 8px 16px; cursor: pointer; border-radius: 4px; }
     .demo button:hover { background: #333; }
-    .demo span { color: #0af; }
-    .back { font-size: 11px; margin-bottom: 24px; display: block; }
+    .demo span { color: #0af; font-size: 18px; }
+    .back { font-size: 12px; margin-bottom: 24px; display: block; }
   </style>
 </head>
 <body>
   <a href="index.html" class="back">&larr; back</a>
   <h1>counter</h1>
-  <p class="tag">-76% vs react</p>
+  <p class="tag">-76% fewer characters vs React</p>
 
   <div class="grid">
     <div class="col tooey">
-      <label>tooey (89 chars)</label>
+      <h2>tooey (89 chars)</h2>
       <pre>{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:["n","-"]}],[B,"+",{c:["n","+"]}]],{g:8}]],{g:8}]}</pre>
-      <div class="demo" id="app"></div>
+      <div class="demo" id="tooey-app"></div>
     </div>
     <div class="col react">
-      <label>react (371 chars)</label>
-      <pre>function Counter(){const[n,setN]=useState(0);return(&lt;div style={{display:'flex',flexDirection:'column',gap:8}}&gt;&lt;span&gt;{n}&lt;/span&gt;&lt;div style={{display:'flex',gap:8}}&gt;&lt;button onClick={()=&gt;setN(n-1)}&gt;-&lt;/button&gt;&lt;button onClick={()=&gt;setN(n+1)}&gt;+&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;)}</pre>
+      <h2>react (371 chars)</h2>
+      <pre>function Counter() {
+  const [n, setN] = useState(0);
+  return (
+    &lt;div style={{display:'flex',flexDirection:'column',gap:8}}&gt;
+      &lt;span&gt;{n}&lt;/span&gt;
+      &lt;div style={{display:'flex',gap:8}}&gt;
+        &lt;button onClick={()=&gt;setN(n-1)}&gt;-&lt;/button&gt;
+        &lt;button onClick={()=&gt;setN(n+1)}&gt;+&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}</pre>
+      <div class="demo" id="react-app"></div>
     </div>
   </div>
 
   <script src="../dist/tooey.js"></script>
   <script>
+    // tooey demo
     const{render,V,H,T,B}=tooey;
-    render(document.getElementById('app'),{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:["n","-"]}],[B,"+",{c:["n","+"]}]],{g:8}]],{g:8}]});
+    render(document.getElementById('tooey-app'),{
+      s:{n:0},
+      r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:["n","-"]}],[B,"+",{c:["n","+"]}]],{g:8}]],{g:8}]
+    });
+
+    // react-style demo (vanilla JS for comparison)
+    (function() {
+      const app = document.getElementById('react-app');
+      let n = 0;
+      function render() {
+        app.innerHTML = '';
+        const col = document.createElement('div');
+        col.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+        const span = document.createElement('span');
+        span.textContent = n;
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;gap:8px';
+        const dec = document.createElement('button');
+        dec.textContent = '-';
+        dec.onclick = () => { n--; render(); };
+        const inc = document.createElement('button');
+        inc.textContent = '+';
+        inc.onclick = () => { n++; render(); };
+        row.append(dec, inc);
+        col.append(span, row);
+        app.appendChild(col);
+      }
+      render();
+    })();
   </script>
 </body>
 </html>

@@ -3,67 +3,132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>todo - tooey</title>
+  <title>todo list - tooey</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; padding: 48px; }
+    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; padding: 24px; }
+    @media (min-width: 600px) { body { padding: 48px; } }
     a { color: #0af; text-decoration: none; }
-    h1 { font-size: 12px; font-weight: 400; color: #fff; margin-bottom: 4px; }
-    .tag { font-size: 11px; margin-bottom: 32px; }
-    pre { font-size: 11px; color: #4f8; background: #111; padding: 12px; overflow-x: auto; margin-bottom: 16px; }
-    .demo { background: #111; padding: 16px; }
-    .demo input { font-family: inherit; font-size: 12px; background: #0a0a0f; color: #fff; border: 1px solid #333; padding: 6px 10px; flex: 1; }
-    .demo button { font-family: inherit; font-size: 12px; background: #222; color: #fff; border: 1px solid #333; padding: 6px 12px; cursor: pointer; }
+    h1 { font-size: 14px; font-weight: 400; color: #fff; margin-bottom: 4px; }
+    .tag { font-size: 12px; margin-bottom: 32px; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 32px; }
+    @media (min-width: 700px) { .grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+    .col h2 { font-size: 11px; font-weight: 400; color: #666; margin-bottom: 8px; }
+    pre { font-size: 11px; background: #111; padding: 12px; overflow-x: auto; margin-bottom: 16px; border-radius: 4px; }
+    .tooey pre { color: #4f8; }
+    .react pre { color: #f97; }
+    .demo { background: #111; padding: 16px; border-radius: 4px; max-width: 400px; }
+    .demo input { font-family: inherit; font-size: 13px; background: #0a0a0f; color: #fff; border: 1px solid #333; padding: 8px 12px; flex: 1; border-radius: 4px; min-width: 0; }
+    .demo button { font-family: inherit; font-size: 13px; background: #222; color: #fff; border: 1px solid #333; padding: 8px 12px; cursor: pointer; border-radius: 4px; }
     .demo button:hover { background: #333; }
-    .item { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid #1a1a1a; }
+    .item { display: flex; gap: 8px; padding: 8px 0; border-bottom: 1px solid #1a1a1a; align-items: center; }
     .item span { flex: 1; color: #ccc; }
-    .item button { background: transparent; border: none; color: #666; padding: 2px 6px; }
+    .item button { background: transparent; border: none; color: #666; padding: 4px 8px; font-size: 14px; }
     .item button:hover { color: #f55; }
-    .back { font-size: 11px; margin-bottom: 24px; display: block; }
+    .back { font-size: 12px; margin-bottom: 24px; display: block; }
   </style>
 </head>
 <body>
   <a href="index.html" class="back">&larr; back</a>
   <h1>todo list</h1>
-  <p class="tag">-75% vs react</p>
+  <p class="tag">-75% fewer characters vs React</p>
 
-  <pre>{s:{txt:"",items:[]},r:[V,{g:8},[[H,{g:8},[[I,"",{v:{$:"txt"},x:["txt","!"],ph:"add..."}],[B,"+",{c:()=>{...}}]]],{map:"items",as:[H,{g:8},[[T,"$item"],[B,"x",{c:["items","X","$index"]}]]]}]]}</pre>
-
-  <div class="demo" id="app"></div>
+  <div class="grid">
+    <div class="col tooey">
+      <h2>tooey</h2>
+      <pre>{s:{txt:"",items:[]},r:[V,[
+  [H,[[I,"",{v:{$:"txt"},x:["txt","!"],ph:"add..."}],[B,"+",{c:add}]],{g:8}],
+  {map:"items",as:[H,[[T,"$item"],[B,"x",{c:del}]],{g:8}]}
+],{g:12}]}</pre>
+      <div class="demo" id="tooey-app"></div>
+    </div>
+    <div class="col react">
+      <h2>react</h2>
+      <pre style="color:#f97;">function TodoList() {
+  const [txt, setTxt] = useState('');
+  const [items, setItems] = useState([]);
+  const add = () => {
+    if (txt) {
+      setItems([...items, txt]);
+      setTxt('');
+    }
+  };
+  return (
+    &lt;div style={{display:'flex',flexDirection:'column',gap:12}}&gt;
+      &lt;div style={{display:'flex',gap:8}}&gt;
+        &lt;input value={txt} onChange={e=&gt;setTxt(e.target.value)}
+          placeholder="add..." /&gt;
+        &lt;button onClick={add}&gt;+&lt;/button&gt;
+      &lt;/div&gt;
+      {items.map((item, i) =&gt; (
+        &lt;div key={i} style={{display:'flex',gap:8}}&gt;
+          &lt;span&gt;{item}&lt;/span&gt;
+          &lt;button onClick={()=&gt;setItems(items.filter((_,j)=&gt;j!==i))}&gt;x&lt;/button&gt;
+        &lt;/div&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}</pre>
+      <div class="demo" id="react-app"></div>
+    </div>
+  </div>
 
   <script src="../dist/tooey.js"></script>
   <script>
-    const{render,signal,V,H,T,B,I}=tooey;
-    const txt=signal(''),items=signal([]);
-    const app=document.getElementById('app');
+    // tooey demo
+    const{render,V,H,T,B,I}=tooey;
+    const app = render(document.getElementById('tooey-app'),{
+      s:{txt:"",items:[]},
+      r:[V,[
+        [H,[[I,"",{v:{$:"txt"},x:["txt","!"],ph:"add..."}],[B,"+",{c:()=>{
+          const txt = app.get('txt');
+          if(txt){
+            app.set('items',[...app.get('items'),txt]);
+            app.set('txt','');
+          }
+        }}]],{g:8}],
+        {map:"items",as:[H,[[T,"$item"],[B,"x",{c:["items","X","$index"]}]],{g:8}]}
+      ],{g:12}]
+    });
 
-    function draw(){
-      app.innerHTML='';
-      const row=document.createElement('div');
-      row.style.cssText='display:flex;gap:8px;margin-bottom:12px';
-      const inp=document.createElement('input');
-      inp.placeholder='add...';
-      inp.value=txt();
-      inp.oninput=e=>txt.set(e.target.value);
-      inp.onkeydown=e=>{if(e.key==='Enter'&&txt()){items.set([...items(),txt()]);txt.set('')}};
-      const btn=document.createElement('button');
-      btn.textContent='+';
-      btn.onclick=()=>{if(txt()){items.set([...items(),txt()]);txt.set('')}};
-      row.append(inp,btn);
-      app.appendChild(row);
-      items().forEach((item,i)=>{
-        const r=document.createElement('div');
-        r.className='item';
-        const s=document.createElement('span');
-        s.textContent=item;
-        const d=document.createElement('button');
-        d.textContent='×';
-        d.onclick=()=>items.set(items().filter((_,j)=>j!==i));
-        r.append(s,d);
-        app.appendChild(r);
-      });
-    }
-    txt.sub(draw);items.sub(draw);draw();
+    // react-style demo (vanilla JS)
+    (function() {
+      const el = document.getElementById('react-app');
+      let txt = '', items = [];
+      function render() {
+        el.innerHTML = '';
+        const col = document.createElement('div');
+        col.style.cssText = 'display:flex;flex-direction:column;gap:12px';
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;gap:8px';
+        const inp = document.createElement('input');
+        inp.placeholder = 'add...';
+        inp.value = txt;
+        inp.oninput = e => { txt = e.target.value; };
+        inp.onkeydown = e => { if(e.key==='Enter') add(); };
+        const btn = document.createElement('button');
+        btn.textContent = '+';
+        btn.onclick = add;
+        row.append(inp, btn);
+        col.appendChild(row);
+        items.forEach((item, i) => {
+          const r = document.createElement('div');
+          r.className = 'item';
+          const s = document.createElement('span');
+          s.textContent = item;
+          const d = document.createElement('button');
+          d.textContent = 'x';
+          d.onclick = () => { items = items.filter((_, j) => j !== i); render(); };
+          r.append(s, d);
+          col.appendChild(r);
+        });
+        el.appendChild(col);
+      }
+      function add() {
+        if(txt) { items.push(txt); txt = ''; render(); }
+      }
+      render();
+    })();
   </script>
 </body>
 </html>

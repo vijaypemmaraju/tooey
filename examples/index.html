@@ -6,59 +6,115 @@
   <title>tooey</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; min-height: 100vh; padding: 48px; }
+    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; min-height: 100vh; padding: 32px; }
+    @media (min-width: 600px) { body { padding: 48px; } }
     a { color: #0af; text-decoration: none; }
     a:hover { text-decoration: underline; }
-    .logo { width: 32px; height: 32px; margin-bottom: 24px; }
-    h1 { font-size: 14px; font-weight: 400; color: #fff; margin-bottom: 4px; }
-    .tag { font-size: 12px; margin-bottom: 48px; }
-    .stats { display: flex; gap: 32px; margin-bottom: 48px; font-size: 12px; }
-    .stat span { color: #0af; }
-    .examples { display: flex; flex-direction: column; gap: 8px; margin-bottom: 48px; }
-    .example { display: flex; gap: 16px; font-size: 12px; }
-    .example .name { color: #fff; min-width: 120px; }
-    .example .pct { color: #4f8; min-width: 40px; }
-    pre { font-size: 11px; color: #4f8; background: #111; padding: 16px; overflow-x: auto; margin-bottom: 48px; }
-    .ref { font-size: 11px; line-height: 1.8; }
-    .ref span { color: #0af; }
+
+    header { margin-bottom: 48px; }
+    .logo { width: 32px; height: 32px; margin-bottom: 16px; display: block; }
+    h1 { font-size: 16px; font-weight: 400; color: #fff; margin-bottom: 4px; }
+    .tag { font-size: 12px; }
+
+    section { margin-bottom: 40px; }
+    section h2 { font-size: 11px; font-weight: 400; color: #666; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
+
+    .stats { display: flex; flex-wrap: wrap; gap: 16px 32px; }
+    .stat { font-size: 13px; }
+    .stat span { color: #0af; font-weight: 500; }
+
+    .examples { display: flex; flex-direction: column; gap: 12px; }
+    .example { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; align-items: baseline; }
+    .example .name { color: #fff; min-width: 100px; }
+    .example .pct { color: #4f8; min-width: 50px; }
+    .example .desc { color: #666; }
+
+    .code { margin-bottom: 40px; }
+    .code h2 { font-size: 11px; font-weight: 400; color: #666; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    pre { font-size: 11px; color: #4f8; background: #111; padding: 16px; overflow-x: auto; border-radius: 4px; }
+
+    .ref { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .ref-group { font-size: 12px; line-height: 1.8; }
+    .ref-group .label { color: #0af; display: block; margin-bottom: 4px; }
+    .ref-group .items { color: #666; }
   </style>
 </head>
 <body>
-  <svg class="logo" viewBox="0 0 64 64" fill="none">
-    <path d="M12 16L24 32L12 48" stroke="#0af" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M52 16L40 32L52 48" stroke="#0af" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="32" cy="32" r="4" fill="#0af"/>
-  </svg>
+  <header>
+    <svg class="logo" viewBox="0 0 64 64" fill="none">
+      <path d="M12 16L24 32L12 48" stroke="#0af" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M52 16L40 32L52 48" stroke="#0af" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="32" cy="32" r="4" fill="#0af"/>
+    </svg>
+    <h1>tooey</h1>
+    <p class="tag">token-efficient ui for llm output</p>
+  </header>
 
-  <h1>tooey</h1>
-  <p class="tag">token-efficient ui for llm output</p>
+  <section>
+    <h2>Stats</h2>
+    <div class="stats">
+      <div class="stat"><span>~75%</span> fewer chars than React</div>
+      <div class="stat"><span>~9kb</span> minified</div>
+      <div class="stat"><span>0</span> dependencies</div>
+    </div>
+  </section>
 
-  <div class="stats">
-    <div class="stat"><span>~75%</span> fewer chars</div>
-    <div class="stat"><span>~9kb</span> minified</div>
-    <div class="stat"><span>0</span> deps</div>
+  <section>
+    <h2>Examples</h2>
+    <div class="examples">
+      <div class="example">
+        <a href="01-counter.html" class="name">counter</a>
+        <span class="pct">-76%</span>
+        <span class="desc">increment / decrement</span>
+      </div>
+      <div class="example">
+        <a href="02-todo-list.html" class="name">todo list</a>
+        <span class="pct">-75%</span>
+        <span class="desc">add / remove items</span>
+      </div>
+      <div class="example">
+        <a href="03-form.html" class="name">form</a>
+        <span class="pct">-64%</span>
+        <span class="desc">inputs, validation</span>
+      </div>
+      <div class="example">
+        <a href="04-temperature-converter.html" class="name">converter</a>
+        <span class="pct">-77%</span>
+        <span class="desc">bidirectional binding</span>
+      </div>
+      <div class="example">
+        <a href="05-data-table.html" class="name">data table</a>
+        <span class="pct">-80%</span>
+        <span class="desc">sort, filter</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="code">
+    <h2>Quick Start</h2>
+    <pre>{s:{n:0},r:[V,[[T,{$:"n"}],[B,"+",{c:["n","+"]}]],{g:8}]}</pre>
   </div>
 
-  <div class="examples">
-    <div class="example"><a href="01-counter.html" class="name">counter</a><span class="pct">-76%</span><span>increment/decrement</span></div>
-    <div class="example"><a href="02-todo-list.html" class="name">todo list</a><span class="pct">-75%</span><span>add/remove items</span></div>
-    <div class="example"><a href="03-form.html" class="name">form</a><span class="pct">-64%</span><span>inputs, validation</span></div>
-    <div class="example"><a href="04-temperature-converter.html" class="name">converter</a><span class="pct">-77%</span><span>bidirectional binding</span></div>
-    <div class="example"><a href="05-data-table.html" class="name">data table</a><span class="pct">-80%</span><span>sort, filter</span></div>
-  </div>
-
-  <pre>{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:["n","-"]}],[B,"+",{c:["n","+"]}]],{g:8}]],{g:8}]}</pre>
-
-  <div class="ref">
-    <span>layout</span> V H D G
-    <span>text</span> T B
-    <span>input</span> I Ta S C R
-    <span>table</span> Tb Th Tbd Tr Td Tc
-    <span>list</span> Ul Ol Li
-    <span>media</span> M L Sv<br>
-    <span>style</span> g p m w h bg fg r fs fw ai jc
-    <span>event</span> c x f bl k e lv
-    <span>state</span> + - ! ~ &lt; &gt; X .
-  </div>
+  <section>
+    <h2>Reference</h2>
+    <div class="ref">
+      <div class="ref-group">
+        <span class="label">components</span>
+        <span class="items">V H D G &middot; T B &middot; I Ta S C R &middot; Tb Th Tbd Tr Td Tc &middot; Ul Ol Li &middot; M L Sv</span>
+      </div>
+      <div class="ref-group">
+        <span class="label">style props</span>
+        <span class="items">g p m w h mw mh &middot; bg fg o &middot; r bw bc bs &middot; fs fw ff ta &middot; ai jc flw</span>
+      </div>
+      <div class="ref-group">
+        <span class="label">events</span>
+        <span class="items">c (click) &middot; x (input) &middot; f (focus) &middot; bl (blur) &middot; k (keydown) &middot; e lv (hover)</span>
+      </div>
+      <div class="ref-group">
+        <span class="label">state ops</span>
+        <span class="items">+ - (inc/dec) &middot; ! (set) &middot; ~ (toggle) &middot; &lt; &gt; (push) &middot; X (remove) &middot; . (prop)</span>
+      </div>
+    </div>
+  </section>
 </body>
 </html>
