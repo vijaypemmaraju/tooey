@@ -35,9 +35,10 @@ jobs:
 
       - name: prepare pages content
         run: |
-          mkdir -p _site
-          cp -r examples/* _site/
+          mkdir -p _site/examples
+          cp -r examples/* _site/examples/
           cp -r dist _site/dist
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=examples/"></head></html>' > _site/index.html
 
       - name: setup pages
         uses: actions/configure-pages@v4
