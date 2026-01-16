@@ -117,33 +117,33 @@ app.destroy()            // cleanup
 
 tooey includes several security features to protect against common vulnerabilities:
 
-### XSS Protection
-- All text content is escaped using `textContent` instead of `innerHTML`
-- Dynamic state values are sanitized before rendering
+### xss protection
+- all text content is escaped using `textContent` instead of `innerHTML`
+- dynamic state values are sanitized before rendering
 
-### URL Validation
+### url validation
 - `href` and `src` props are validated against safe protocols
-- Blocked protocols: `javascript:`, `data:`, `vbscript:`
-- Allowed protocols: `http:`, `https:`, `mailto:`, `tel:`, `ftp:`
-- Relative URLs and anchors are allowed
+- blocked protocols: `javascript:`, `data:`, `vbscript:`
+- allowed protocols: `http:`, `https:`, `mailto:`, `tel:`, `ftp:`
+- relative urls and anchors are allowed
 
-### Best Practices
+### best practices
 
-1. **Content Security Policy**: Add CSP headers to your deployment:
+1. **content security policy**: add csp headers to your deployment:
 ```
 Content-Security-Policy: default-src 'self'; script-src 'self' https://unpkg.com
 ```
 
-2. **User Input**: Always validate user input before passing to tooey specs
-3. **State Values**: Don't store sensitive data in state that gets rendered
+2. **user input**: always validate user input before passing to tooey specs
+3. **state values**: don't store sensitive data in state that gets rendered
 
-### Reporting Security Issues
+### reporting security issues
 
-Report security vulnerabilities via GitHub issues with the `security` label.
+report security vulnerabilities via github issues with the `security` label.
 
 ## llm reference
 
-Copy this into your system prompt for LLMs to generate tooey specs:
+copy this into your system prompt for llms to generate tooey specs:
 
 ```
 tooey: token-efficient UI lib. spec={s:{state},r:[component,content?,props?]}
