@@ -3,127 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>tooey example: data table</title>
+  <title>table - tooey</title>
   <style>
-    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
-    body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; }
-    h1 { color: #00d9ff; }
-    .container { display: flex; gap: 40px; flex-wrap: wrap; }
-    .panel { flex: 1; min-width: 300px; background: #16213e; padding: 20px; border-radius: 12px; }
-    .panel h3 { margin-top: 0; color: #00d9ff; }
-    pre { background: #0f0f23; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 12px; line-height: 1.4; }
-    .tooey-code { color: #7fff7f; }
-    .react-code { color: #ff9f7f; }
-    .demo { background: #0f0f23; padding: 20px; border-radius: 8px; margin-top: 15px; }
-    .stats { margin-top: 20px; padding: 15px; background: #0f0f23; border-radius: 8px; }
-    .stats span { color: #00d9ff; font-weight: bold; }
-    button { padding: 6px 12px; font-size: 12px; cursor: pointer; border: none; border-radius: 4px; background: #00d9ff; color: #000; margin: 2px; }
-    button:hover { background: #00b8d9; }
-    input { padding: 8px 12px; font-size: 14px; border: 1px solid #444; border-radius: 6px; background: #0f0f23; color: #eee; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #333; }
-    th { background: #1a1a2e; color: #00d9ff; cursor: pointer; }
-    th:hover { background: #2a2a4e; }
-    tr:hover td { background: #1a1a2e; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; padding: 48px; }
+    a { color: #0af; text-decoration: none; }
+    h1 { font-size: 12px; font-weight: 400; color: #fff; margin-bottom: 4px; }
+    .tag { font-size: 11px; margin-bottom: 32px; }
+    pre { font-size: 10px; color: #4f8; background: #111; padding: 10px; overflow-x: auto; margin-bottom: 8px; }
+    .demo { background: #111; padding: 12px; }
+    .demo input { font-family: inherit; font-size: 11px; background: #0a0a0f; color: #fff; border: 1px solid #333; padding: 4px 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #222; }
+    th { color: #0af; cursor: pointer; }
+    th:hover { color: #fff; }
+    td { color: #ccc; }
+    .back { font-size: 11px; margin-bottom: 24px; display: block; }
+    .cols { display: flex; gap: 32px; flex-wrap: wrap; }
+    .col { flex: 1; min-width: 280px; }
+    .col h2 { font-size: 11px; font-weight: 400; color: #666; margin-bottom: 8px; }
   </style>
 </head>
 <body>
-  <h1>example 5: sortable data table</h1>
-  <p>a sortable, filterable data table demonstrating complex state management.</p>
+  <a href="index.html" class="back">&larr; back</a>
+  <h1>data table</h1>
+  <p class="tag">-80% vs react</p>
 
-  <div class="container">
-    <!-- tooey panel -->
-    <div class="panel">
-      <h3>tooey</h3>
-      <pre class="tooey-code">{
-  s:{q:"",sort:"name",asc:true,data:[
-    {name:"alice",age:28,role:"engineer"},
-    {name:"bob",age:34,role:"designer"},
-    {name:"carol",age:25,role:"manager"}
-  ]},
-  r:[V,{g:12},[
-    [I,"",{ph:"search...",v:{$:"q"},x:["q","!"]}],
-    [D,[/* dynamic table */]]
-  ]]
-}</pre>
-      <p><strong>characters:</strong> <span class="stats">~285</span></p>
-      <div class="demo" id="tooey-demo"></div>
+  <div class="cols">
+    <div class="col">
+      <h2>tooey ~285 chars</h2>
+      <pre>{s:{q:"",sort:"name",asc:true,data:[
+  {name:"alice",age:28,role:"engineer"},
+  {name:"bob",age:34,role:"designer"},
+  {name:"carol",age:25,role:"manager"}
+]},r:[V,{g:12},[
+  [I,"",{ph:"search...",v:{$:"q"},x:["q","!"]}],
+  [D,[/* dynamic table */]]
+]]}</pre>
+      <div class="demo" id="app"></div>
     </div>
-
-    <!-- react panel -->
-    <div class="panel">
-      <h3>react equivalent</h3>
-      <pre class="react-code">function DataTable() {
+    <div class="col">
+      <h2>react ~1412 chars</h2>
+      <pre style="color:#f87;">function DataTable() {
   const [q, setQ] = useState('');
   const [sort, setSort] = useState('name');
   const [asc, setAsc] = useState(true);
-  const [data] = useState([
-    {name:"alice",age:28,role:"engineer"},
-    {name:"bob",age:34,role:"designer"},
-    {name:"carol",age:25,role:"manager"}
-  ]);
-
+  const [data] = useState([...]);
   const filtered = data
     .filter(r => Object.values(r).some(v =>
       String(v).toLowerCase().includes(q.toLowerCase())))
-    .sort((a,b) => {
-      const av = a[sort], bv = b[sort];
-      const cmp = av < bv ? -1 : av > bv ? 1 : 0;
-      return asc ? cmp : -cmp;
-    });
-
-  const toggleSort = (col) => {
-    if (sort === col) setAsc(!asc);
-    else { setSort(col); setAsc(true); }
-  };
-
+    .sort((a,b) => {...});
+  const toggleSort = (col) => {...};
   return (
     &lt;div style={{display:'flex',flexDirection:'column',gap:12}}&gt;
-      &lt;input placeholder="search..." value={q}
-        onChange={e=&gt;setQ(e.target.value)} /&gt;
-      &lt;table&gt;
-        &lt;thead&gt;
-          &lt;tr&gt;
-            &lt;th onClick={()=&gt;toggleSort('name')}&gt;
-              name {sort==='name' ? (asc?'↑':'↓') : ''}
-            &lt;/th&gt;
-            &lt;th onClick={()=&gt;toggleSort('age')}&gt;
-              age {sort==='age' ? (asc?'↑':'↓') : ''}
-            &lt;/th&gt;
-            &lt;th onClick={()=&gt;toggleSort('role')}&gt;
-              role {sort==='role' ? (asc?'↑':'↓') : ''}
-            &lt;/th&gt;
-          &lt;/tr&gt;
-        &lt;/thead&gt;
-        &lt;tbody&gt;
-          {filtered.map((row,i) =&gt; (
-            &lt;tr key={i}&gt;
-              &lt;td&gt;{row.name}&lt;/td&gt;
-              &lt;td&gt;{row.age}&lt;/td&gt;
-              &lt;td&gt;{row.role}&lt;/td&gt;
-            &lt;/tr&gt;
-          ))}
-        &lt;/tbody&gt;
-      &lt;/table&gt;
+      &lt;input placeholder="search..." .../&gt;
+      &lt;table&gt;...&lt;/table&gt;
     &lt;/div&gt;
   );
 }</pre>
-      <p><strong>characters:</strong> <span class="stats">~1412</span></p>
     </div>
-  </div>
-
-  <div class="stats">
-    <h3>token efficiency</h3>
-    <p>tooey: <span>~285 chars</span> | react: <span>~1412 chars</span> | <span>80% reduction</span></p>
   </div>
 
   <script src="../dist/tooey.js"></script>
   <script>
     const { signal } = tooey;
 
-    const container = document.getElementById('tooey-demo');
-
-    // state
+    const container = document.getElementById('app');
     const q = signal('');
     const sortCol = signal('name');
     const asc = signal(true);
@@ -137,21 +82,16 @@
 
     function render() {
       container.innerHTML = '';
-
       const main = document.createElement('div');
       main.style.cssText = 'display:flex;flex-direction:column;gap:12px';
 
-      // search input
       const input = document.createElement('input');
       input.placeholder = 'search...';
       input.value = q();
       input.addEventListener('input', e => q.set(e.target.value));
       main.appendChild(input);
 
-      // table
       const table = document.createElement('table');
-
-      // header
       const thead = document.createElement('thead');
       const headerRow = document.createElement('tr');
       ['name', 'age', 'role'].forEach(col => {
@@ -167,7 +107,6 @@
       thead.appendChild(headerRow);
       table.appendChild(thead);
 
-      // body
       const tbody = document.createElement('tbody');
       const filtered = data()
         .filter(row => Object.values(row).some(v =>
@@ -189,7 +128,6 @@
       });
       table.appendChild(tbody);
       main.appendChild(table);
-
       container.appendChild(main);
     }
 

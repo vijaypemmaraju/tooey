@@ -3,242 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>tooey - token-efficient ui library</title>
+  <title>tooey</title>
   <style>
-    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
-    body { margin: 0; padding: 40px; background: #1a1a2e; color: #eee; max-width: 1200px; margin: 0 auto; }
-    h1 { color: #00d9ff; font-size: 3em; margin-bottom: 0.2em; }
-    .tagline { color: #888; font-size: 1.4em; margin-bottom: 2em; }
-    .highlight { color: #00d9ff; }
-
-    .stats-bar {
-      display: flex; gap: 40px; margin: 40px 0; flex-wrap: wrap;
-    }
-    .stat {
-      background: #16213e; padding: 20px 30px; border-radius: 12px;
-    }
-    .stat-value { font-size: 2.5em; color: #00d9ff; font-weight: bold; }
-    .stat-label { color: #888; }
-
-    .examples {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px; margin-top: 40px;
-    }
-    .example-card {
-      background: #16213e; padding: 24px; border-radius: 12px;
-      text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .example-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 30px rgba(0, 217, 255, 0.2);
-    }
-    .example-card h3 { color: #00d9ff; margin-top: 0; }
-    .example-card p { color: #aaa; margin-bottom: 0; }
-    .example-card .savings { color: #7fff7f; font-weight: bold; margin-top: 12px; }
-
-    .code-compare {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-      margin: 40px 0;
-    }
-    @media (max-width: 800px) {
-      .code-compare { grid-template-columns: 1fr; }
-    }
-    .code-panel {
-      background: #16213e; padding: 20px; border-radius: 12px;
-    }
-    .code-panel h3 { margin-top: 0; }
-    .code-panel.tooey h3 { color: #7fff7f; }
-    .code-panel.react h3 { color: #ff9f7f; }
-    pre {
-      background: #0f0f23; padding: 15px; border-radius: 8px;
-      overflow-x: auto; font-size: 13px; line-height: 1.5;
-    }
-    .tooey pre { color: #7fff7f; }
-    .react pre { color: #ff9f7f; }
-
-    .features {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px; margin: 40px 0;
-    }
-    .feature {
-      background: #16213e; padding: 20px; border-radius: 12px;
-    }
-    .feature h4 { color: #00d9ff; margin-top: 0; }
-    .feature p { color: #aaa; margin-bottom: 0; font-size: 0.95em; }
-
-    footer {
-      margin-top: 60px; padding-top: 20px; border-top: 1px solid #333;
-      color: #666; text-align: center;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; min-height: 100vh; padding: 48px; }
+    a { color: #0af; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .logo { width: 32px; height: 32px; margin-bottom: 24px; }
+    h1 { font-size: 14px; font-weight: 400; color: #fff; margin-bottom: 4px; }
+    .tag { font-size: 12px; margin-bottom: 48px; }
+    .stats { display: flex; gap: 32px; margin-bottom: 48px; font-size: 12px; }
+    .stat span { color: #0af; }
+    .examples { display: flex; flex-direction: column; gap: 8px; margin-bottom: 48px; }
+    .example { display: flex; gap: 16px; font-size: 12px; }
+    .example .name { color: #fff; min-width: 120px; }
+    .example .pct { color: #4f8; min-width: 40px; }
+    pre { font-size: 11px; color: #4f8; background: #111; padding: 16px; overflow-x: auto; margin-bottom: 48px; }
+    .ref { font-size: 11px; line-height: 1.8; }
+    .ref span { color: #0af; }
   </style>
 </head>
 <body>
+  <svg class="logo" viewBox="0 0 64 64" fill="none">
+    <path d="M12 16L24 32L12 48" stroke="#0af" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M52 16L40 32L52 48" stroke="#0af" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="32" cy="32" r="4" fill="#0af"/>
+  </svg>
+
   <h1>tooey</h1>
-  <p class="tagline">token-efficient ui library designed for <span class="highlight">llm output</span></p>
+  <p class="tag">token-efficient ui for llm output</p>
 
-  <div class="stats-bar">
-    <div class="stat">
-      <div class="stat-value">~75%</div>
-      <div class="stat-label">fewer characters than react</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">~4kb</div>
-      <div class="stat-label">runtime size (minified)</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">0</div>
-      <div class="stat-label">dependencies</div>
-    </div>
+  <div class="stats">
+    <div class="stat"><span>~75%</span> fewer chars</div>
+    <div class="stat"><span>~9kb</span> minified</div>
+    <div class="stat"><span>0</span> deps</div>
   </div>
 
-  <h2>quick comparison</h2>
-  <div class="code-compare">
-    <div class="code-panel tooey">
-      <h3>tooey (~89 chars)</h3>
-      <pre>{
-  s: {n: 0},
-  r: [V,{g:8},[
-    [T,{$:"n"}],
-    [H,{g:8},[
-      [B,"-",{c:["n","-"]}],
-      [B,"+",{c:["n","+"]}]
-    ]]
-  ]]
-}</pre>
-    </div>
-    <div class="code-panel react">
-      <h3>react (~371 chars)</h3>
-      <pre>function Counter() {
-  const [n, setN] = useState(0);
-  return (
-    &lt;div style={{display:'flex',
-      flexDirection:'column',gap:8}}&gt;
-      &lt;span&gt;{n}&lt;/span&gt;
-      &lt;div style={{display:'flex',
-        flexDirection:'row',gap:8}}&gt;
-        &lt;button onClick={()=&gt;setN(n=&gt;n-1)}&gt;
-          -
-        &lt;/button&gt;
-        &lt;button onClick={()=&gt;setN(n=&gt;n+1)}&gt;
-          +
-        &lt;/button&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  );
-}</pre>
-    </div>
-  </div>
-
-  <h2>design principles</h2>
-  <div class="features">
-    <div class="feature">
-      <h4>mnemonic, not numeric</h4>
-      <p>single-letter codes that are guessable: V=vertical, H=horizontal, B=button, T=text</p>
-    </div>
-    <div class="feature">
-      <h4>positional arguments</h4>
-      <p>common patterns use position, not keys: [type, content, props] is always the order</p>
-    </div>
-    <div class="feature">
-      <h4>short property names</h4>
-      <p>g=gap, p=padding, c=click, v=value, w=width, h=height</p>
-    </div>
-    <div class="feature">
-      <h4>symbolic operations</h4>
-      <p>state ops use symbols: + increment, - decrement, ! set, ~ toggle</p>
-    </div>
-    <div class="feature">
-      <h4>llm-debuggable</h4>
-      <p>unlike pure numeric encoding, tooey remains readable and modifiable by llms</p>
-    </div>
-    <div class="feature">
-      <h4>zero dependencies</h4>
-      <p>tiny runtime with signals-based reactivity. no virtual dom overhead.</p>
-    </div>
-  </div>
-
-  <h2>examples</h2>
   <div class="examples">
-    <a href="01-counter.html" class="example-card">
-      <h3>counter</h3>
-      <p>simple state management with increment/decrement</p>
-      <div class="savings">76% smaller than react</div>
-    </a>
-    <a href="02-todo-list.html" class="example-card">
-      <h3>todo list</h3>
-      <p>dynamic lists with add/remove operations</p>
-      <div class="savings">75% smaller than react</div>
-    </a>
-    <a href="03-form.html" class="example-card">
-      <h3>registration form</h3>
-      <p>multiple inputs, checkboxes, validation</p>
-      <div class="savings">64% smaller than react</div>
-    </a>
-    <a href="04-temperature-converter.html" class="example-card">
-      <h3>temperature converter</h3>
-      <p>bidirectional data binding</p>
-      <div class="savings">77% smaller than react</div>
-    </a>
-    <a href="05-data-table.html" class="example-card">
-      <h3>data table</h3>
-      <p>sortable, filterable table</p>
-      <div class="savings">80% smaller than react</div>
-    </a>
-    <a href="06-showcase.html" class="example-card">
-      <h3>showcase</h3>
-      <p>all features with live react comparisons</p>
-      <div class="savings">comprehensive demo</div>
-    </a>
+    <div class="example"><a href="01-counter.html" class="name">counter</a><span class="pct">-76%</span><span>increment/decrement</span></div>
+    <div class="example"><a href="02-todo-list.html" class="name">todo list</a><span class="pct">-75%</span><span>add/remove items</span></div>
+    <div class="example"><a href="03-form.html" class="name">form</a><span class="pct">-64%</span><span>inputs, validation</span></div>
+    <div class="example"><a href="04-temperature-converter.html" class="name">converter</a><span class="pct">-77%</span><span>bidirectional binding</span></div>
+    <div class="example"><a href="05-data-table.html" class="name">data table</a><span class="pct">-80%</span><span>sort, filter</span></div>
   </div>
 
-  <h2>component reference</h2>
-  <div class="code-panel" style="background: #16213e; margin-top: 20px;">
-    <pre style="color: #eee;">
-<span style="color:#00d9ff">// layout</span>
-V = vstack    H = hstack    D = div    G = grid
+  <pre>{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:["n","-"]}],[B,"+",{c:["n","+"]}]],{g:8}]],{g:8}]}</pre>
 
-<span style="color:#00d9ff">// text & buttons</span>
-T = text (span)    B = button
-
-<span style="color:#00d9ff">// inputs</span>
-I = input    Ta = textarea    S = select    C = checkbox    R = radio
-
-<span style="color:#00d9ff">// tables</span>
-Tb = table    Th = thead    Tbd = tbody    Tr = tr    Td = td    Tc = th
-
-<span style="color:#00d9ff">// lists</span>
-Ul = ul    Ol = ol    Li = li
-
-<span style="color:#00d9ff">// media & links</span>
-M = image    L = link    Sv = svg
-
-<span style="color:#00d9ff">// common props</span>
-g = gap       p = padding    m = margin     w = width      h = height
-bg = background    fg = color    o = opacity    r = border-radius
-fs = font-size    fw = font-weight    ta = text-align
-pos = position    z = z-index    t/l/rt = top/left/right
-cur = cursor    sh = box-shadow    tr = transform
-
-<span style="color:#00d9ff">// events</span>
-c = click    x = change    f = focus    bl = blur
-k = keydown    e = mouseenter    lv = mouseleave
-
-<span style="color:#00d9ff">// state operations</span>
-["state", "+"]       // increment
-["state", "-"]       // decrement
-["state", "!", val]  // set to val
-["state", "~"]       // toggle
-["state", "<", val]  // append
-["state", "X", idx]  // remove
-
-<span style="color:#00d9ff">// control flow</span>
-{if: "state", then: [...], else: [...]}
-{map: "items", as: [Li, "$item"]}
-</pre>
+  <div class="ref">
+    <span>layout</span> V H D G
+    <span>text</span> T B
+    <span>input</span> I Ta S C R
+    <span>table</span> Tb Th Tbd Tr Td Tc
+    <span>list</span> Ul Ol Li
+    <span>media</span> M L Sv<br>
+    <span>style</span> g p m w h bg fg r fs fw ai jc
+    <span>event</span> c x f bl k e lv
+    <span>state</span> + - ! ~ &lt; &gt; X .
   </div>
-
-  <footer>
-    <p>tooey - token-efficient ui for llms</p>
-  </footer>
 </body>
 </html>
