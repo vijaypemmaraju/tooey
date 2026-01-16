@@ -48,8 +48,29 @@ interface Theme {
   [key: string]: ThemeCategory | undefined;
 }
 
+// ============ plugins ============
+
+interface TooeyPlugin {
+  name: string;
+
+  // lifecycle hooks
+  onInit?(instance: TooeyInstance): void;
+  onDestroy?(instance: TooeyInstance): void;
+
+  // render hooks
+  beforeRender?(spec: NodeSpec, ctx: RenderContext): NodeSpec;
+  afterRender?(el: HTMLElement, spec: NodeSpec): void;
+
+  // state hooks
+  onStateChange?(key: string, oldVal: unknown, newVal: unknown): void;
+
+  // extend instance with custom methods
+  extend?: Record<string, (this: TooeyInstance, ...args: unknown[]) => unknown>;
+}
+
 interface RenderOptions {
   theme?: Theme;
+  plugins?: TooeyPlugin[];
 }
 
 interface Signal<T> {
@@ -200,6 +221,7 @@ interface RenderContext {
   cleanups: Array<() => void>;
   state: StateStore;
   theme?: Theme;
+  plugins?: TooeyPlugin[];
   onError?: ErrorHandler;
 }
 
@@ -787,8 +809,23 @@ function createElement(
     return null;
   }
 
+  // apply beforeRender hooks from plugins
+  let processedSpec: NodeSpec = spec;
+  if (ctx.plugins) {
+    for (const plugin of ctx.plugins) {
+      if (plugin.beforeRender) {
+        processedSpec = plugin.beforeRender(processedSpec, ctx);
+      }
+    }
+  }
+
+  // if beforeRender transformed spec to a non-array type, recurse
+  if (!Array.isArray(processedSpec)) {
+    return createElement(processedSpec, ctx, itemContext);
+  }
+
   // handle function components
-  const [first, content, props = {}] = spec as [ComponentType | Component, Content?, Props?];
+  const [first, content, props = {}] = processedSpec as [ComponentType | Component, Content?, Props?];
   if (typeof first === 'function') {
     // function component: call it with (props, children)
     const children = Array.isArray(content) && content.length > 0 && (Array.isArray(content[0]) || isIfNode(content[0]) || isMapNode(content[0]) || typeof content[0] === 'function')
@@ -1068,6 +1105,15 @@ function createElement(
     });
   }
 
+  // apply afterRender hooks from plugins
+  if (ctx.plugins) {
+    for (const plugin of ctx.plugins) {
+      if (plugin.afterRender) {
+        plugin.afterRender(el, processedSpec);
+      }
+    }
+  }
+
   return el;
 }
 
@@ -1080,6 +1126,8 @@ interface TooeyInstance {
   update(newSpec: TooeySpec): void;
   get(key: string): unknown;
   set(key: string, value: unknown): void;
+  // allow dynamic extension by plugins
+  [key: string]: unknown;
 }
 
 function render(container: HTMLElement, spec: TooeySpec, options?: RenderOptions): TooeyInstance {
@@ -1091,15 +1139,31 @@ function render(container: HTMLElement, spec: TooeySpec, options?: RenderOptions
   }
 
   const theme = options?.theme;
+  const plugins = options?.plugins || [];
+
+  // helper to create signals with plugin state change notification
+  const createStateSignal = (key: string, initial: StateValue): Signal<StateValue> => {
+    const sig = signal(initial);
+    const originalSet = sig.set.bind(sig);
+    sig.set = (v: StateValue | ((prev: StateValue) => StateValue)) => {
+      const oldVal = sig();
+      originalSet(v);
+      const newVal = sig();
+      if (oldVal !== newVal) {
+        plugins.forEach(p => p.onStateChange?.(key, oldVal, newVal));
+      }
+    };
+    return sig;
+  };
 
   const state: StateStore = {};
   if (spec.s) {
     Object.entries(spec.s).forEach(([key, val]) => {
-      state[key] = signal(val);
+      state[key] = createStateSignal(key, val);
     });
   }
 
-  const ctx: RenderContext = { cleanups: [], state, theme };
+  const ctx: RenderContext = { cleanups: [], state, theme, plugins };
 
   container.innerHTML = '';
   const el = createElement(spec.r, ctx);
@@ -1109,6 +1173,8 @@ function render(container: HTMLElement, spec: TooeySpec, options?: RenderOptions
     state,
     el,
     destroy() {
+      // call onDestroy hooks
+      plugins.forEach(p => p.onDestroy?.(instance));
       ctx.cleanups.forEach(fn => fn());
       ctx.cleanups = [];
       container.innerHTML = '';
@@ -1120,7 +1186,7 @@ function render(container: HTMLElement, spec: TooeySpec, options?: RenderOptions
             if (state[key]) {
               state[key].set(val);
             } else {
-              state[key] = signal(val);
+              state[key] = createStateSignal(key, val);
             }
           });
         });
@@ -1144,20 +1210,44 @@ function render(container: HTMLElement, spec: TooeySpec, options?: RenderOptions
     }
   };
 
+  // apply plugin extend methods
+  plugins.forEach(plugin => {
+    if (plugin.extend) {
+      Object.entries(plugin.extend).forEach(([name, fn]) => {
+        instance[name] = fn.bind(instance);
+      });
+    }
+  });
+
+  // call onInit hooks
+  plugins.forEach(p => p.onInit?.(instance));
+
   return instance;
 }
 
 // ============ factory function ============
 
+interface CreateTooeyOptions {
+  theme?: Theme;
+  plugins?: TooeyPlugin[];
+}
+
 interface TooeyFactory {
   render: (container: HTMLElement, spec: TooeySpec) => TooeyInstance;
   theme: Theme;
+  plugins?: TooeyPlugin[];
 }
 
-function createTooey(theme: Theme): TooeyFactory {
+// createTooey supports both a Theme directly (backward compatible) or CreateTooeyOptions
+function createTooey(themeOrOptions: Theme | CreateTooeyOptions): TooeyFactory {
+  // detect if it's a theme (has colors/spacing/radius/fonts) or options (has theme/plugins keys)
+  const isOptions = themeOrOptions && ('theme' in themeOrOptions || 'plugins' in themeOrOptions);
+  const theme = isOptions ? (themeOrOptions as CreateTooeyOptions).theme : (themeOrOptions as Theme);
+  const plugins = isOptions ? (themeOrOptions as CreateTooeyOptions).plugins : undefined;
   return {
-    render: (container: HTMLElement, spec: TooeySpec) => render(container, spec, { theme }),
-    theme
+    render: (container: HTMLElement, spec: TooeySpec) => render(container, spec, { theme, plugins }),
+    theme: theme!,
+    plugins
   };
 }
 
@@ -1211,6 +1301,7 @@ export {
   StateRef,
   TooeyInstance,
   TooeyFactory,
+  CreateTooeyOptions,
   IfNode,
   MapNode,
   ErrorBoundaryNode,
@@ -1218,5 +1309,6 @@ export {
   ErrorHandler,
   Component,
   Theme,
-  RenderOptions
+  RenderOptions,
+  TooeyPlugin
 };
