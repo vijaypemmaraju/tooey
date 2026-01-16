@@ -20,7 +20,7 @@ design document for making tooey extensible while preserving token efficiency.
 | phase 0 | monorepo setup | ✅ complete |
 | phase 1 | function components | ✅ complete |
 | phase 2 | theming | ✅ complete |
-| phase 3 | plugins | ⬜ not started |
+| phase 3 | plugins | ✅ complete |
 | phase 4 | computed & async | ⬜ not started |
 
 ### phase 0: monorepo setup ✅
@@ -49,11 +49,14 @@ design document for making tooey extensible while preserving token efficiency.
 - [x] export createTooey factory
 - [x] add theming tests
 
-### phase 3: plugins ⬜
+### phase 3: plugins ✅
 
-- [ ] add plugins option to render
-- [ ] implement lifecycle hooks
-- [ ] implement extend for instance methods
+- [x] add plugins option to render
+- [x] implement lifecycle hooks (onInit, onDestroy)
+- [x] implement render hooks (beforeRender, afterRender)
+- [x] implement state change hooks (onStateChange)
+- [x] implement extend for instance methods
+- [x] add comprehensive plugin tests (22 tests)
 
 ### phase 4: computed & async ⬜
 

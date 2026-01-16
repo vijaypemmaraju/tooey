@@ -40,8 +40,18 @@ interface Theme {
     fonts?: ThemeCategory;
     [key: string]: ThemeCategory | undefined;
 }
+interface TooeyPlugin {
+    name: string;
+    onInit?(instance: TooeyInstance): void;
+    onDestroy?(instance: TooeyInstance): void;
+    beforeRender?(spec: NodeSpec, ctx: RenderContext): NodeSpec;
+    afterRender?(el: HTMLElement, spec: NodeSpec): void;
+    onStateChange?(key: string, oldVal: unknown, newVal: unknown): void;
+    extend?: Record<string, (this: TooeyInstance, ...args: unknown[]) => unknown>;
+}
 interface RenderOptions {
     theme?: Theme;
+    plugins?: TooeyPlugin[];
 }
 interface Signal<T> {
     (): T;
@@ -159,6 +169,7 @@ interface RenderContext {
     cleanups: Array<() => void>;
     state: StateStore;
     theme?: Theme;
+    plugins?: TooeyPlugin[];
     onError?: ErrorHandler;
 }
 interface ErrorBoundaryNode {
@@ -177,13 +188,19 @@ interface TooeyInstance {
     update(newSpec: TooeySpec): void;
     get(key: string): unknown;
     set(key: string, value: unknown): void;
+    [key: string]: unknown;
 }
 declare function render(container: HTMLElement, spec: TooeySpec, options?: RenderOptions): TooeyInstance;
+interface CreateTooeyOptions {
+    theme?: Theme;
+    plugins?: TooeyPlugin[];
+}
 interface TooeyFactory {
     render: (container: HTMLElement, spec: TooeySpec) => TooeyInstance;
     theme: Theme;
+    plugins?: TooeyPlugin[];
 }
-declare function createTooey(theme: Theme): TooeyFactory;
+declare function createTooey(themeOrOptions: Theme | CreateTooeyOptions): TooeyFactory;
 declare function $(name: string): StateRef;
 declare const V: "V";
 declare const H: "H";
@@ -208,5 +225,5 @@ declare const Li: "Li";
 declare const M: "M";
 declare const L: "L";
 declare const Sv: "Sv";
-export { render, createTooey, signal, effect, batch, $, V, H, D, G, T, B, I, Ta, S, C, R, Tb, Th, Tbd, Tr, Td, Tc, Ul, Ol, Li, M, L, Sv, TooeySpec, NodeSpec, Props, StateRef, TooeyInstance, TooeyFactory, IfNode, MapNode, ErrorBoundaryNode, ErrorInfo, ErrorHandler, Component, Theme, RenderOptions };
+export { render, createTooey, signal, effect, batch, $, V, H, D, G, T, B, I, Ta, S, C, R, Tb, Th, Tbd, Tr, Td, Tc, Ul, Ol, Li, M, L, Sv, TooeySpec, NodeSpec, Props, StateRef, TooeyInstance, TooeyFactory, CreateTooeyOptions, IfNode, MapNode, ErrorBoundaryNode, ErrorInfo, ErrorHandler, Component, Theme, RenderOptions, TooeyPlugin };
 //# sourceMappingURL=tooey.d.ts.map
