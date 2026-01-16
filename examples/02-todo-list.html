@@ -75,8 +75,8 @@
 
   <script src="../dist/tooey.js"></script>
   <script>
-    // tooey demo
-    const{render,V,H,T,B,I}=tooey;
+    // tooey demo - now supports $index in event handlers
+    const{render,V,H,T,B,I,D}=tooey;
     const app = render(document.getElementById('tooey-app'),{
       s:{txt:"",items:[]},
       r:[V,[
@@ -87,7 +87,10 @@
             app.set('txt','');
           }
         }}]],{g:8}],
-        {map:"items",as:[H,[[T,"$item"],[B,"x",{c:["items","X","$index"]}]],{g:8}]}
+        {map:"items",as:[D,[
+          [T,"$item",{s:{flex:1,color:'#ccc'}}],
+          [B,"x",{c:["items","X","$index"],s:{background:'transparent',border:'none',color:'#666',padding:'4px 8px',fontSize:'14px',cursor:'pointer'}}]
+        ],{s:{display:'flex',gap:'8px',padding:'8px 0',borderBottom:'1px solid #1a1a1a',alignItems:'center'}}]}
       ],{g:12}]
     });
 
