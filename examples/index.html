@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tooey - Token-Efficient UI Library</title>
+  <title>tooey - token-efficient ui library</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, sans-serif; }
     body { margin: 0; padding: 40px; background: #1a1a2e; color: #eee; max-width: 1200px; margin: 0 auto; }
@@ -74,27 +74,27 @@
 </head>
 <body>
   <h1>tooey</h1>
-  <p class="tagline">Token-efficient UI library designed for <span class="highlight">LLM output</span></p>
+  <p class="tagline">token-efficient ui library designed for <span class="highlight">llm output</span></p>
 
   <div class="stats-bar">
     <div class="stat">
       <div class="stat-value">~75%</div>
-      <div class="stat-label">Fewer characters than React</div>
+      <div class="stat-label">fewer characters than react</div>
     </div>
     <div class="stat">
-      <div class="stat-value">~4KB</div>
-      <div class="stat-label">Runtime size (minified)</div>
+      <div class="stat-value">~4kb</div>
+      <div class="stat-label">runtime size (minified)</div>
     </div>
     <div class="stat">
       <div class="stat-value">0</div>
-      <div class="stat-label">Dependencies</div>
+      <div class="stat-label">dependencies</div>
     </div>
   </div>
 
-  <h2>Quick Comparison</h2>
+  <h2>quick comparison</h2>
   <div class="code-compare">
     <div class="code-panel tooey">
-      <h3>Tooey (~89 chars)</h3>
+      <h3>tooey (~89 chars)</h3>
       <pre>{
   s: {n: 0},
   r: [V,{g:8},[
@@ -107,7 +107,7 @@
 }</pre>
     </div>
     <div class="code-panel react">
-      <h3>React (~371 chars)</h3>
+      <h3>react (~371 chars)</h3>
       <pre>function Counter() {
   const [n, setN] = useState(0);
   return (
@@ -129,82 +129,82 @@
     </div>
   </div>
 
-  <h2>Design Principles</h2>
+  <h2>design principles</h2>
   <div class="features">
     <div class="feature">
-      <h4>Mnemonic, Not Numeric</h4>
-      <p>Single-letter codes that are guessable: V=Vertical, H=Horizontal, B=Button, T=Text</p>
+      <h4>mnemonic, not numeric</h4>
+      <p>single-letter codes that are guessable: V=vertical, H=horizontal, B=button, T=text</p>
     </div>
     <div class="feature">
-      <h4>Positional Arguments</h4>
-      <p>Common patterns use position, not keys: [Type, Content, Props] is always the order</p>
+      <h4>positional arguments</h4>
+      <p>common patterns use position, not keys: [type, content, props] is always the order</p>
     </div>
     <div class="feature">
-      <h4>Short Property Names</h4>
+      <h4>short property names</h4>
       <p>g=gap, p=padding, c=click, v=value, w=width, h=height</p>
     </div>
     <div class="feature">
-      <h4>Symbolic Operations</h4>
-      <p>State ops use symbols: + increment, - decrement, ! set, ~ toggle</p>
+      <h4>symbolic operations</h4>
+      <p>state ops use symbols: + increment, - decrement, ! set, ~ toggle</p>
     </div>
     <div class="feature">
-      <h4>LLM-Debuggable</h4>
-      <p>Unlike pure numeric encoding, tooey remains readable and modifiable by LLMs</p>
+      <h4>llm-debuggable</h4>
+      <p>unlike pure numeric encoding, tooey remains readable and modifiable by llms</p>
     </div>
     <div class="feature">
-      <h4>Zero Dependencies</h4>
-      <p>Tiny runtime with signals-based reactivity. No Virtual DOM overhead.</p>
+      <h4>zero dependencies</h4>
+      <p>tiny runtime with signals-based reactivity. no virtual dom overhead.</p>
     </div>
   </div>
 
-  <h2>Examples</h2>
+  <h2>examples</h2>
   <div class="examples">
     <a href="01-counter.html" class="example-card">
-      <h3>Counter</h3>
-      <p>Simple state management with increment/decrement</p>
-      <div class="savings">76% smaller than React</div>
+      <h3>counter</h3>
+      <p>simple state management with increment/decrement</p>
+      <div class="savings">76% smaller than react</div>
     </a>
     <a href="02-todo-list.html" class="example-card">
-      <h3>Todo List</h3>
-      <p>Dynamic lists with add/remove operations</p>
-      <div class="savings">75% smaller than React</div>
+      <h3>todo list</h3>
+      <p>dynamic lists with add/remove operations</p>
+      <div class="savings">75% smaller than react</div>
     </a>
     <a href="03-form.html" class="example-card">
-      <h3>Registration Form</h3>
-      <p>Multiple inputs, checkboxes, validation</p>
-      <div class="savings">64% smaller than React</div>
+      <h3>registration form</h3>
+      <p>multiple inputs, checkboxes, validation</p>
+      <div class="savings">64% smaller than react</div>
     </a>
     <a href="04-temperature-converter.html" class="example-card">
-      <h3>Temperature Converter</h3>
-      <p>Bidirectional data binding</p>
-      <div class="savings">77% smaller than React</div>
+      <h3>temperature converter</h3>
+      <p>bidirectional data binding</p>
+      <div class="savings">77% smaller than react</div>
     </a>
     <a href="05-data-table.html" class="example-card">
-      <h3>Data Table</h3>
-      <p>Sortable, filterable table</p>
-      <div class="savings">80% smaller than React</div>
+      <h3>data table</h3>
+      <p>sortable, filterable table</p>
+      <div class="savings">80% smaller than react</div>
     </a>
   </div>
 
-  <h2>Component Reference</h2>
+  <h2>component reference</h2>
   <div class="code-panel" style="background: #16213e; margin-top: 20px;">
     <pre style="color: #eee;">
-<span style="color:#00d9ff">// Component Types</span>
-V = VStack (vertical flex)    H = HStack (horizontal flex)
-D = Div (container)           G = Grid
-T = Text (span)               B = Button
-I = Input                     S = Select
-C = Checkbox                  L = Link
-M = Image
+<span style="color:#00d9ff">// component types</span>
+V = vstack (vertical flex)    H = hstack (horizontal flex)
+D = div (container)           G = grid
+T = text (span)               B = button
+I = input                     S = select
+C = checkbox                  L = link
+M = image
 
-<span style="color:#00d9ff">// Common Props</span>
+<span style="color:#00d9ff">// common props</span>
 g = gap          p = padding       m = margin
 w = width        h = height        r = border-radius
 bg = background  fg = color        s = style object
-c = onClick      x = onChange      v = value
+c = onclick      x = onchange      v = value
 ph = placeholder t = type          d = disabled
 
-<span style="color:#00d9ff">// State Operations</span>
+<span style="color:#00d9ff">// state operations</span>
 ["stateName", "+"]       // increment
 ["stateName", "-"]       // decrement
 ["stateName", "!", val]  // set to val
@@ -213,13 +213,13 @@ ph = placeholder t = type          d = disabled
 ["stateName", ">", val]  // prepend to array
 ["stateName", "X", idx]  // remove from array
 
-<span style="color:#00d9ff">// State References</span>
+<span style="color:#00d9ff">// state references</span>
 {$: "stateName"}         // reference state value in content
 </pre>
   </div>
 
   <footer>
-    <p>tooey - Token-efficient UI for LLMs</p>
+    <p>tooey - token-efficient ui for llms</p>
   </footer>
 </body>
 </html>

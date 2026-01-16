@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tooey Example: Data Table</title>
+  <title>tooey example: data table</title>
   <style>
     * { box-sizing: border-box; font-family: system-ui, sans-serif; }
     body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; }
@@ -28,39 +28,39 @@
   </style>
 </head>
 <body>
-  <h1>Example 5: Sortable Data Table</h1>
-  <p>A sortable, filterable data table demonstrating complex state management.</p>
+  <h1>example 5: sortable data table</h1>
+  <p>a sortable, filterable data table demonstrating complex state management.</p>
 
   <div class="container">
-    <!-- Tooey Panel -->
+    <!-- tooey panel -->
     <div class="panel">
-      <h3>Tooey</h3>
+      <h3>tooey</h3>
       <pre class="tooey-code">{
   s:{q:"",sort:"name",asc:true,data:[
-    {name:"Alice",age:28,role:"Engineer"},
-    {name:"Bob",age:34,role:"Designer"},
-    {name:"Carol",age:25,role:"Manager"}
+    {name:"alice",age:28,role:"engineer"},
+    {name:"bob",age:34,role:"designer"},
+    {name:"carol",age:25,role:"manager"}
   ]},
   r:[V,{g:12},[
-    [I,"",{ph:"Search...",v:{$:"q"},x:["q","!"]}],
+    [I,"",{ph:"search...",v:{$:"q"},x:["q","!"]}],
     [D,[/* dynamic table */]]
   ]]
 }</pre>
-      <p><strong>Characters:</strong> <span class="stats">~285</span></p>
+      <p><strong>characters:</strong> <span class="stats">~285</span></p>
       <div class="demo" id="tooey-demo"></div>
     </div>
 
-    <!-- React Panel -->
+    <!-- react panel -->
     <div class="panel">
-      <h3>React Equivalent</h3>
+      <h3>react equivalent</h3>
       <pre class="react-code">function DataTable() {
   const [q, setQ] = useState('');
   const [sort, setSort] = useState('name');
   const [asc, setAsc] = useState(true);
   const [data] = useState([
-    {name:"Alice",age:28,role:"Engineer"},
-    {name:"Bob",age:34,role:"Designer"},
-    {name:"Carol",age:25,role:"Manager"}
+    {name:"alice",age:28,role:"engineer"},
+    {name:"bob",age:34,role:"designer"},
+    {name:"carol",age:25,role:"manager"}
   ]);
 
   const filtered = data
@@ -79,19 +79,19 @@
 
   return (
     &lt;div style={{display:'flex',flexDirection:'column',gap:12}}&gt;
-      &lt;input placeholder="Search..." value={q}
+      &lt;input placeholder="search..." value={q}
         onChange={e=&gt;setQ(e.target.value)} /&gt;
       &lt;table&gt;
         &lt;thead&gt;
           &lt;tr&gt;
             &lt;th onClick={()=&gt;toggleSort('name')}&gt;
-              Name {sort==='name' ? (asc?'↑':'↓') : ''}
+              name {sort==='name' ? (asc?'↑':'↓') : ''}
             &lt;/th&gt;
             &lt;th onClick={()=&gt;toggleSort('age')}&gt;
-              Age {sort==='age' ? (asc?'↑':'↓') : ''}
+              age {sort==='age' ? (asc?'↑':'↓') : ''}
             &lt;/th&gt;
             &lt;th onClick={()=&gt;toggleSort('role')}&gt;
-              Role {sort==='role' ? (asc?'↑':'↓') : ''}
+              role {sort==='role' ? (asc?'↑':'↓') : ''}
             &lt;/th&gt;
           &lt;/tr&gt;
         &lt;/thead&gt;
@@ -108,13 +108,13 @@
     &lt;/div&gt;
   );
 }</pre>
-      <p><strong>Characters:</strong> <span class="stats">~1412</span></p>
+      <p><strong>characters:</strong> <span class="stats">~1412</span></p>
     </div>
   </div>
 
   <div class="stats">
-    <h3>Token Efficiency</h3>
-    <p>Tooey: <span>~285 chars</span> | React: <span>~1412 chars</span> | <span>80% reduction</span></p>
+    <h3>token efficiency</h3>
+    <p>tooey: <span>~285 chars</span> | react: <span>~1412 chars</span> | <span>80% reduction</span></p>
   </div>
 
   <script src="../dist/tooey.js"></script>
@@ -123,16 +123,16 @@
 
     const container = document.getElementById('tooey-demo');
 
-    // State
+    // state
     const q = signal('');
     const sortCol = signal('name');
     const asc = signal(true);
     const data = signal([
-      {name:"Alice", age:28, role:"Engineer"},
-      {name:"Bob", age:34, role:"Designer"},
-      {name:"Carol", age:25, role:"Manager"},
-      {name:"David", age:31, role:"Engineer"},
-      {name:"Eve", age:29, role:"Designer"}
+      {name:"alice", age:28, role:"engineer"},
+      {name:"bob", age:34, role:"designer"},
+      {name:"carol", age:25, role:"manager"},
+      {name:"david", age:31, role:"engineer"},
+      {name:"eve", age:29, role:"designer"}
     ]);
 
     function render() {
@@ -141,23 +141,23 @@
       const main = document.createElement('div');
       main.style.cssText = 'display:flex;flex-direction:column;gap:12px';
 
-      // Search input
+      // search input
       const input = document.createElement('input');
-      input.placeholder = 'Search...';
+      input.placeholder = 'search...';
       input.value = q();
       input.addEventListener('input', e => q.set(e.target.value));
       main.appendChild(input);
 
-      // Table
+      // table
       const table = document.createElement('table');
 
-      // Header
+      // header
       const thead = document.createElement('thead');
       const headerRow = document.createElement('tr');
       ['name', 'age', 'role'].forEach(col => {
         const th = document.createElement('th');
         const arrow = sortCol() === col ? (asc() ? ' ↑' : ' ↓') : '';
-        th.textContent = col.charAt(0).toUpperCase() + col.slice(1) + arrow;
+        th.textContent = col + arrow;
         th.addEventListener('click', () => {
           if (sortCol() === col) asc.set(!asc());
           else { sortCol.set(col); asc.set(true); }
@@ -167,7 +167,7 @@
       thead.appendChild(headerRow);
       table.appendChild(thead);
 
-      // Body
+      // body
       const tbody = document.createElement('tbody');
       const filtered = data()
         .filter(row => Object.values(row).some(v =>
