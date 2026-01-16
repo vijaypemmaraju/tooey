@@ -634,7 +634,7 @@ describe('tooey', () => {
         s: { a: 1, b: 2 },
         r: [T, '']
       });
-      instance.update({ s: { a: 10, c: 3 } });
+      instance.update({ s: { a: 10, c: 3 }, r: [T, ''] });
       expect(instance.get('a')).toBe(10);
       expect(instance.get('b')).toBe(2);
       expect(instance.get('c')).toBe(3);
@@ -816,7 +816,7 @@ describe('tooey', () => {
         s: { checked: false },
         r: [H, [[C, '', { ch: { $: 'checked' }, x: ['checked', '!'] }], [T, { $: 'checked' }]], { g: 8, ai: 'center' }]
       });
-      const checkbox = container.querySelector('input[type="checkbox"]')!;
+      const checkbox = container.querySelector('input[type="checkbox"]') as HTMLInputElement;
       expect(checkbox.checked).toBe(false);
       expect(container.textContent).toContain('false');
       checkbox.click();

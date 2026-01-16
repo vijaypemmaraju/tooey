@@ -1160,7 +1160,7 @@ describe('Comprehensive UI Tests', () => {
           r: [V, [[T, { $: 'a' }], [T, { $: 'b' }]]]
         });
 
-        instance.update({ s: { a: 10, b: 20 } });
+        instance.update({ s: { a: 10, b: 20 }, r: [V, [[T, { $: 'a' }], [T, { $: 'b' }]]] });
         expect(instance.get('a')).toBe(10);
         expect(instance.get('b')).toBe(20);
         expect(container.textContent).toBe('1020');
@@ -1172,7 +1172,7 @@ describe('Comprehensive UI Tests', () => {
           r: [T, '']
         });
 
-        instance.update({ s: { newKey: 'newValue' } });
+        instance.update({ s: { newKey: 'newValue' }, r: [T, ''] });
         expect(instance.get('newKey')).toBe('newValue');
         expect(instance.get('existing')).toBe('value');
       });
@@ -1442,8 +1442,8 @@ describe('Comprehensive UI Tests', () => {
         });
 
         // Add first todo
-        const input = container.querySelector('input[type="text"]')!;
-        const addButton = container.querySelectorAll('button')[0];
+        const input = container.querySelector('input[type="text"]') as HTMLInputElement;
+        const addButton = container.querySelectorAll('button')[0] as HTMLButtonElement;
 
         input.value = 'First todo';
         input.dispatchEvent(new Event('input'));
@@ -1461,7 +1461,7 @@ describe('Comprehensive UI Tests', () => {
 
         // Delete first todo
         const deleteButtons = container.querySelectorAll('li button');
-        deleteButtons[0].click();
+        (deleteButtons[0] as HTMLButtonElement).click();
 
         expect(container.querySelectorAll('li').length).toBe(1);
         expect(container.textContent).toContain('Second todo');
@@ -1490,7 +1490,9 @@ describe('Comprehensive UI Tests', () => {
           ], { g: 8 }]
         });
 
-        const [minusBtn, plusBtn] = container.querySelectorAll('button');
+        const buttons = container.querySelectorAll('button');
+        const minusBtn = buttons[0] as HTMLButtonElement;
+        const plusBtn = buttons[1] as HTMLButtonElement;
 
         // Increment to max
         for (let i = 0; i < 10; i++) plusBtn.click();

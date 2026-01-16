@@ -165,9 +165,38 @@ interface TooeySpec {
 
 // ============ render context for cleanup ============
 
+interface ErrorInfo {
+  message: string;
+  componentType?: string;
+  stack?: string;
+}
+
+type ErrorHandler = (error: ErrorInfo) => void;
+
 interface RenderContext {
   cleanups: Array<() => void>;
   state: StateStore;
+  onError?: ErrorHandler;
+}
+
+// ============ error boundary ============
+
+interface ErrorBoundaryNode {
+  boundary: true;
+  child: NodeSpec;
+  fallback?: NodeSpec;
+  onError?: ErrorHandler;
+}
+
+function isErrorBoundaryNode(v: unknown): v is ErrorBoundaryNode {
+  return typeof v === 'object' && v !== null && 'boundary' in v && (v as ErrorBoundaryNode).boundary === true;
+}
+
+function createErrorFallback(error: ErrorInfo): HTMLElement {
+  const el = document.createElement('div');
+  el.style.cssText = 'padding:12px;background:#fee;border:1px solid #fcc;border-radius:4px;color:#c00;font-family:monospace;font-size:12px';
+  el.textContent = `[tooey error] ${error.message}`;
+  return el;
 }
 
 // ============ signals ============
@@ -254,25 +283,25 @@ function applyOp(state: Signal<StateValue>, op: Op, val?: unknown): void {
   try {
     switch (op) {
       case '+':
-        state.set((v) => (v as number) + (typeof val === 'number' ? val : 1));
+        state.set((v: StateValue) => (v as number) + (typeof val === 'number' ? val : 1));
         break;
       case '-':
-        state.set((v) => (v as number) - (typeof val === 'number' ? val : 1));
+        state.set((v: StateValue) => (v as number) - (typeof val === 'number' ? val : 1));
         break;
       case '!':
         state.set(val);
         break;
       case '~':
-        state.set((v) => !v);
+        state.set((v: StateValue) => !v);
         break;
       case '<':
-        state.set((v) => [...(v as unknown[]), val]);
+        state.set((v: StateValue) => [...(v as unknown[]), val]);
         break;
       case '>':
-        state.set((v) => [val, ...(v as unknown[])]);
+        state.set((v: StateValue) => [val, ...(v as unknown[])]);
         break;
       case 'X':
-        state.set((v) => {
+        state.set((v: StateValue) => {
           const arr = v as unknown[];
           if (typeof val === 'number') {
             return arr.filter((_, i) => i !== val);
@@ -284,7 +313,7 @@ function applyOp(state: Signal<StateValue>, op: Op, val?: unknown): void {
         break;
       case '.':
         if (Array.isArray(val) && val.length === 2) {
-          state.set((v) => ({ ...(v as Record<string, unknown>), [val[0]]: val[1] }));
+          state.set((v: StateValue) => ({ ...(v as Record<string, unknown>), [val[0]]: val[1] }));
         }
         break;
     }
@@ -344,7 +373,7 @@ function expandStyleValue(val: string | undefined): string | undefined {
 
 // Parse string-based event handler shorthand
 // Format: "stateName+" | "stateName-" | "stateName~" | "stateName!value"
-function parseEventShorthand(str: string): EventHandler | null {
+function parseEventShorthand(str: string): [string, Op, unknown?] | null {
   if (typeof str !== 'string' || str.length < 2) return null;
 
   const lastChar = str[str.length - 1];
@@ -370,11 +399,44 @@ function parseEventShorthand(str: string): EventHandler | null {
   return null;
 }
 
-// XSS protection - escape HTML entities
-function escapeHtml(str: string): string {
+// XSS protection - escape HTML entities (kept for future use, textContent provides protection now)
+function _escapeHtml(str: string): string {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+// URL validation - prevent dangerous protocols
+const SAFE_URL_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:', 'ftp:'];
+
+function isValidUrl(url: string): boolean {
+  if (!url || typeof url !== 'string') return false;
+
+  // Allow relative URLs and anchors
+  if (url.startsWith('/') || url.startsWith('#') || url.startsWith('.')) {
+    return true;
+  }
+
+  try {
+    const parsed = new URL(url, window.location.href);
+    return SAFE_URL_PROTOCOLS.includes(parsed.protocol);
+  } catch {
+    // If URL parsing fails, check for dangerous patterns directly
+    const lowerUrl = url.toLowerCase().trim();
+    const dangerousPatterns = ['javascript:', 'data:', 'vbscript:'];
+    return !dangerousPatterns.some(pattern => lowerUrl.startsWith(pattern));
+  }
+}
+
+function sanitizeUrl(url: string, propName: string): string | null {
+  if (!url) return null;
+
+  if (!isValidUrl(url)) {
+    console.warn(`[tooey] blocked unsafe URL in ${propName}: "${url.slice(0, 50)}..."`);
+    return null;
+  }
+
+  return url;
 }
 
 function createHandler(
@@ -507,6 +569,47 @@ function createElement(
 ): HTMLElement | null {
   const { state } = ctx;
 
+  // handle error boundary node
+  if (isErrorBoundaryNode(spec)) {
+    const placeholder = document.createElement('div');
+    placeholder.style.display = 'contents';
+
+    try {
+      const childCtx: RenderContext = {
+        cleanups: [],
+        state,
+        onError: spec.onError || ctx.onError,
+      };
+      const child = createElement(spec.child, childCtx, itemContext);
+      if (child) {
+        placeholder.appendChild(child);
+        ctx.cleanups.push(...childCtx.cleanups);
+      }
+    } catch (err) {
+      const errorInfo: ErrorInfo = {
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+      };
+
+      if (spec.onError) {
+        spec.onError(errorInfo);
+      }
+
+      if (spec.fallback) {
+        try {
+          const fallbackEl = createElement(spec.fallback, ctx, itemContext);
+          if (fallbackEl) placeholder.appendChild(fallbackEl);
+        } catch {
+          placeholder.appendChild(createErrorFallback(errorInfo));
+        }
+      } else {
+        placeholder.appendChild(createErrorFallback(errorInfo));
+      }
+    }
+
+    return placeholder;
+  }
+
   // handle reactive if node (supports both long and short form)
   if (isIfNode(spec)) {
     const placeholder = document.createElement('div');
@@ -532,7 +635,7 @@ function createElement(
         currentEl = null;
       }
 
-      let rawValue = typeof ifCond === 'string'
+      const rawValue = typeof ifCond === 'string'
         ? state[ifCond]?.()
         : resolveValue(ifCond, state);
 
@@ -602,7 +705,7 @@ function createElement(
   }
 
   // validate spec structure
-  if (!Array.isArray(spec) || spec.length === 0) {
+  if (!Array.isArray(spec) || (spec as unknown[]).length === 0) {
     console.warn('[tooey] invalid node spec:', spec);
     return null;
   }
@@ -706,12 +809,18 @@ function createElement(
       break;
     case 'M':
       el = document.createElement('img');
-      if (props.src) (el as HTMLImageElement).src = props.src;
+      if (props.src) {
+        const safeSrc = sanitizeUrl(props.src, 'src');
+        if (safeSrc) (el as HTMLImageElement).src = safeSrc;
+      }
       if (props.alt) (el as HTMLImageElement).alt = props.alt;
       break;
     case 'L':
       el = document.createElement('a');
-      if (props.href) (el as HTMLAnchorElement).href = props.href;
+      if (props.href) {
+        const safeHref = sanitizeUrl(props.href, 'href');
+        if (safeHref) (el as HTMLAnchorElement).href = safeHref;
+      }
       break;
     case 'Sv':
       el = document.createElementNS('http://www.w3.org/2000/svg', 'svg') as unknown as HTMLElement;
@@ -740,7 +849,6 @@ function createElement(
     } else if (isStateRef(content)) {
       effect(() => {
         const val = resolveValue(content, state);
-        const safeVal = escapeHtml(String(val ?? ''));
         if (type === 'I') {
           (el as HTMLInputElement).value = String(val ?? '');
         } else if (type === 'Ta') {
@@ -748,6 +856,7 @@ function createElement(
         } else if (type === 'C' || type === 'R') {
           (el as HTMLInputElement).checked = Boolean(val);
         } else {
+          // textContent provides XSS protection by not parsing HTML
           el.textContent = String(val ?? '');
         }
       }, ctx);
@@ -997,5 +1106,8 @@ export {
   StateRef,
   TooeyInstance,
   IfNode,
-  MapNode
+  MapNode,
+  ErrorBoundaryNode,
+  ErrorInfo,
+  ErrorHandler
 };

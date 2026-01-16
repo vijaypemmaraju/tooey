@@ -5,6 +5,7 @@
   "main": "dist/tooey.js",
   "module": "dist/tooey.esm.js",
   "types": "dist/tooey.d.ts",
+  "type": "module",
   "files": [
     "dist"
   ],
@@ -14,6 +15,10 @@
     "serve": "npx serve .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src tests",
+    "lint:fix": "eslint src tests --fix",
+    "typecheck": "tsc --noEmit",
     "count-tokens": "node count-tokens.js"
   },
   "keywords": [
@@ -25,10 +30,15 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^1.2.0",
     "esbuild": "^0.20.0",
+    "eslint": "^9.0.0",
     "gpt-tokenizer": "^3.4.0",
     "jsdom": "^24.0.0",
     "typescript": "^5.3.0",
+    "typescript-eslint": "^8.0.0",
     "vitest": "^1.2.0"
   }
 }
