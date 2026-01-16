@@ -7,7 +7,7 @@
 token-efficient ui library for llm output
 
 ```
-~75% fewer chars than react | ~9kb minified | 0 deps
+~45% fewer tokens than react | ~9kb minified | 0 deps
 ```
 
 ## install
