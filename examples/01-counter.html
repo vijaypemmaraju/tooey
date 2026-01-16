@@ -3,86 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>tooey example: counter</title>
+  <title>counter - tooey</title>
   <style>
-    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
-    body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; }
-    h1 { color: #00d9ff; }
-    h2 { color: #888; margin-top: 2em; }
-    .container { display: flex; gap: 40px; flex-wrap: wrap; }
-    .panel { flex: 1; min-width: 300px; background: #16213e; padding: 20px; border-radius: 12px; }
-    .panel h3 { margin-top: 0; color: #00d9ff; }
-    pre { background: #0f0f23; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 14px; }
-    .tooey-code { color: #7fff7f; }
-    .react-code { color: #ff9f7f; }
-    .demo { background: #0f0f23; padding: 20px; border-radius: 8px; margin-top: 15px; }
-    .stats { margin-top: 20px; padding: 15px; background: #0f0f23; border-radius: 8px; }
-    .stats span { color: #00d9ff; font-weight: bold; }
-    button { padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 6px; background: #00d9ff; color: #000; }
-    button:hover { background: #00b8d9; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; padding: 48px; }
+    a { color: #0af; text-decoration: none; }
+    h1 { font-size: 12px; font-weight: 400; color: #fff; margin-bottom: 4px; }
+    .tag { font-size: 11px; margin-bottom: 32px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px; }
+    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+    .col label { font-size: 10px; color: #666; display: block; margin-bottom: 8px; }
+    pre { font-size: 11px; background: #111; padding: 12px; overflow-x: auto; margin-bottom: 16px; }
+    .tooey pre { color: #4f8; }
+    .react pre { color: #f97; }
+    .demo { background: #111; padding: 16px; }
+    .demo button { font-family: inherit; font-size: 12px; background: #222; color: #fff; border: 1px solid #333; padding: 6px 12px; cursor: pointer; }
+    .demo button:hover { background: #333; }
+    .demo span { color: #0af; }
+    .back { font-size: 11px; margin-bottom: 24px; display: block; }
   </style>
 </head>
 <body>
-  <h1>example 1: counter</h1>
-  <p>a simple counter demonstrating state and click handlers.</p>
+  <a href="index.html" class="back">&larr; back</a>
+  <h1>counter</h1>
+  <p class="tag">-76% vs react</p>
 
-  <div class="container">
-    <!-- tooey panel -->
-    <div class="panel">
-      <h3>tooey</h3>
-      <pre class="tooey-code">{
-  s: {n: 0},
-  r: [V,{g:8},[
-    [T,{$:"n"}],
-    [H,{g:8},[
-      [B,"-",{c:["n","-"]}],
-      [B,"+",{c:["n","+"]}]
-    ]]
-  ]]
-}</pre>
-      <p><strong>characters:</strong> <span class="stats">~89</span></p>
-      <div class="demo" id="tooey-demo"></div>
+  <div class="grid">
+    <div class="col tooey">
+      <label>tooey (89 chars)</label>
+      <pre>{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:["n","-"]}],[B,"+",{c:["n","+"]}]],{g:8}]],{g:8}]}</pre>
+      <div class="demo" id="app"></div>
     </div>
-
-    <!-- react panel -->
-    <div class="panel">
-      <h3>react equivalent</h3>
-      <pre class="react-code">function Counter() {
-  const [n, setN] = useState(0);
-  return (
-    &lt;div style={{display:'flex',flexDirection:'column',gap:8}}&gt;
-      &lt;span&gt;{n}&lt;/span&gt;
-      &lt;div style={{display:'flex',flexDirection:'row',gap:8}}&gt;
-        &lt;button onClick={()=&gt;setN(n=&gt;n-1)}&gt;-&lt;/button&gt;
-        &lt;button onClick={()=&gt;setN(n=&gt;n+1)}&gt;+&lt;/button&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  );
-}</pre>
-      <p><strong>characters:</strong> <span class="stats">~371</span></p>
+    <div class="col react">
+      <label>react (371 chars)</label>
+      <pre>function Counter(){const[n,setN]=useState(0);return(&lt;div style={{display:'flex',flexDirection:'column',gap:8}}&gt;&lt;span&gt;{n}&lt;/span&gt;&lt;div style={{display:'flex',gap:8}}&gt;&lt;button onClick={()=&gt;setN(n-1)}&gt;-&lt;/button&gt;&lt;button onClick={()=&gt;setN(n+1)}&gt;+&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;)}</pre>
     </div>
-  </div>
-
-  <div class="stats">
-    <h3>token efficiency</h3>
-    <p>tooey: <span>~89 chars</span> | react: <span>~371 chars</span> | <span>76% reduction</span></p>
   </div>
 
   <script src="../dist/tooey.js"></script>
   <script>
-    // using the global tooey object
-    const { render, V, H, T, B, $ } = tooey;
-
-    render(document.getElementById('tooey-demo'), {
-      s: {n: 0},
-      r: [V,{g:8},[
-        [T,{$:"n"}],
-        [H,{g:8},[
-          [B,"-",{c:["n","-"]}],
-          [B,"+",{c:["n","+"]}]
-        ]]
-      ]]
-    });
+    const{render,V,H,T,B}=tooey;
+    render(document.getElementById('app'),{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:["n","-"]}],[B,"+",{c:["n","+"]}]],{g:8}]],{g:8}]});
   </script>
 </body>
 </html>

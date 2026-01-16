@@ -713,6 +713,85 @@ describe('tooey', () => {
     });
   });
 
+  describe('showcase examples', () => {
+    it('counter: displays count and increments/decrements', () => {
+      const instance = render(container, {
+        s: { n: 0 },
+        r: [V, [[T, { $: 'n' }], [H, [[B, '-', { c: ['n', '-'] }], [B, '+', { c: ['n', '+'] }]], { g: 4 }]], { g: 8 }]
+      });
+      expect(container.textContent).toContain('0');
+      const buttons = container.querySelectorAll('button');
+      expect(buttons.length).toBe(2);
+      buttons[1].click(); // +
+      expect(instance.get('n')).toBe(1);
+      expect(container.textContent).toContain('1');
+      buttons[0].click(); // -
+      expect(instance.get('n')).toBe(0);
+    });
+
+    it('toggle: switches between ON/OFF states', () => {
+      const instance = render(container, {
+        s: { on: false },
+        r: [V, [{ if: 'on', then: [T, 'ON', { fg: '#4f8' }], else: [T, 'OFF', { fg: '#f55' }] }, [B, 'toggle', { c: ['on', '~'] }]], { g: 8 }]
+      });
+      expect(container.textContent).toContain('OFF');
+      container.querySelector('button')!.click();
+      expect(instance.get('on')).toBe(true);
+      expect(container.textContent).toContain('ON');
+      container.querySelector('button')!.click();
+      expect(container.textContent).toContain('OFF');
+    });
+
+    it('input binding: syncs input value with state', () => {
+      const instance = render(container, {
+        s: { txt: '' },
+        r: [V, [[I, '', { v: { $: 'txt' }, x: ['txt', '!'], ph: 'type here...' }], [T, { $: 'txt' }]], { g: 8 }]
+      });
+      const input = container.querySelector('input')!;
+      expect(input.placeholder).toBe('type here...');
+      input.value = 'hello';
+      input.dispatchEvent(new Event('input'));
+      expect(instance.get('txt')).toBe('hello');
+      expect(container.textContent).toContain('hello');
+    });
+
+    it('list mapping: renders array items', () => {
+      render(container, {
+        s: { items: ['apple', 'banana', 'cherry'] },
+        r: [Ul, [{ map: 'items', as: [Li, '$item'] }]]
+      });
+      const lis = container.querySelectorAll('li');
+      expect(lis.length).toBe(3);
+      expect(lis[0].textContent).toBe('apple');
+      expect(lis[1].textContent).toBe('banana');
+      expect(lis[2].textContent).toBe('cherry');
+    });
+
+    it('conditional: toggles visibility', () => {
+      const instance = render(container, {
+        s: { show: true },
+        r: [V, [{ if: 'show', then: [T, 'visible', { fg: '#4f8' }], else: [T, 'hidden', { fg: '#666' }] }, [B, 'toggle', { c: ['show', '~'] }]], { g: 8 }]
+      });
+      expect(container.textContent).toContain('visible');
+      container.querySelector('button')!.click();
+      expect(instance.get('show')).toBe(false);
+      expect(container.textContent).toContain('hidden');
+    });
+
+    it('checkbox: binds checked state bidirectionally', () => {
+      const instance = render(container, {
+        s: { checked: false },
+        r: [H, [[C, '', { ch: { $: 'checked' }, x: ['checked', '!'] }], [T, { $: 'checked' }]], { g: 8, ai: 'center' }]
+      });
+      const checkbox = container.querySelector('input[type="checkbox"]')!;
+      expect(checkbox.checked).toBe(false);
+      expect(container.textContent).toContain('false');
+      checkbox.click();
+      expect(instance.get('checked')).toBe(true);
+      expect(container.textContent).toContain('true');
+    });
+  });
+
   describe('events', () => {
     it('c handles click', () => {
       let clicked = false;
