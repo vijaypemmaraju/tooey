@@ -26,9 +26,9 @@ jobs:
 
       - name: Configure npm for OIDC auth
         run: |
-          # Remove _authToken line that setup-node adds
+          # Create .npmrc with just the registry (no auth token)
           # This allows npm to use OIDC for authentication via trusted publishers
-          sed -i '/_authToken/d' ~/.npmrc
+          echo "registry=https://registry.npmjs.org/" > ~/.npmrc
           cat ~/.npmrc
 
       - name: Install dependencies
