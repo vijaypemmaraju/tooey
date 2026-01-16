@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tooey showcase: all features</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { margin: 0; padding: 20px; background: #1a1a2e; color: #eee; }
+    h1 { color: #00d9ff; margin-bottom: 0.5em; }
+    h2 { color: #00d9ff; margin-top: 2em; border-bottom: 1px solid #333; padding-bottom: 8px; }
+    h3 { color: #888; margin: 0 0 12px 0; font-size: 14px; text-transform: uppercase; }
+    p { color: #aaa; }
+    .example { margin: 24px 0; }
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+    @media (max-width: 900px) { .compare { grid-template-columns: 1fr; } }
+    .panel { background: #16213e; border-radius: 12px; overflow: hidden; }
+    .panel-header { padding: 12px 16px; background: #0f0f23; display: flex; justify-content: space-between; align-items: center; }
+    .panel-header.tooey { border-left: 3px solid #7fff7f; }
+    .panel-header.react { border-left: 3px solid #ff9f7f; }
+    .panel-header h3 { margin: 0; }
+    .chars { font-size: 12px; color: #666; }
+    .panel-code { padding: 16px; background: #0a0a18; max-height: 200px; overflow: auto; }
+    .panel-code pre { margin: 0; font-size: 12px; line-height: 1.4; white-space: pre-wrap; }
+    .panel-code.tooey pre { color: #7fff7f; }
+    .panel-code.react pre { color: #ff9f7f; }
+    .panel-demo { padding: 20px; min-height: 100px; }
+    .savings { display: inline-block; background: #0f3d0f; color: #7fff7f; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; margin-left: 12px; }
+
+    /* demo styling */
+    button { padding: 8px 16px; font-size: 14px; cursor: pointer; border: none; border-radius: 6px; background: #00d9ff; color: #000; margin: 2px; }
+    button:hover { background: #00b8d9; }
+    button:disabled { background: #444; cursor: not-allowed; }
+    input, textarea, select { padding: 8px 12px; font-size: 14px; border: 1px solid #444; border-radius: 6px; background: #0f0f23; color: #eee; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #00d9ff; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #333; }
+    th { background: #0f0f23; color: #00d9ff; }
+    ul, ol { margin: 0; padding-left: 20px; }
+    li { padding: 4px 0; }
+    .hover-card { padding: 16px; background: #16213e; border-radius: 8px; transition: all 0.2s; }
+    .hover-card:hover { background: #1e2d4a; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <h1>tooey showcase</h1>
+  <p>comprehensive demo of all tooey features with live react comparisons</p>
+
+  <!-- example 1: counter with conditionals -->
+  <h2>1. counter with conditionals</h2>
+  <div class="example">
+    <div class="compare">
+      <div class="panel">
+        <div class="panel-header tooey"><h3>tooey</h3><span class="chars">~156 chars</span></div>
+        <div class="panel-code tooey"><pre>{
+  s:{n:0},
+  r:[V,{g:12},[
+    [T,{$:"n"},{fs:48,fw:700}],
+    [H,{g:8},[
+      [B,"-",{c:["n","-"]}],
+      [B,"+",{c:["n","+"]}]
+    ]],
+    {if:{$:"n"},then:[T,"not zero",{fg:"#7f7"}],else:[T,"zero",{fg:"#f77"}]}
+  ]]
+}</pre></div>
+        <div class="panel-demo" id="demo1-tooey"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header react"><h3>react</h3><span class="chars">~487 chars</span></div>
+        <div class="panel-code react"><pre>function Counter() {
+  const [n, setN] = useState(0);
+  return (
+    &lt;div style={{display:'flex',flexDirection:'column',gap:12}}&gt;
+      &lt;span style={{fontSize:48,fontWeight:700}}&gt;{n}&lt;/span&gt;
+      &lt;div style={{display:'flex',gap:8}}&gt;
+        &lt;button onClick={()=&gt;setN(n-1)}&gt;-&lt;/button&gt;
+        &lt;button onClick={()=&gt;setN(n+1)}&gt;+&lt;/button&gt;
+      &lt;/div&gt;
+      {n !== 0
+        ? &lt;span style={{color:'#7f7'}}&gt;not zero&lt;/span&gt;
+        : &lt;span style={{color:'#f77'}}&gt;zero&lt;/span&gt;
+      }
+    &lt;/div&gt;
+  );
+}</pre></div>
+        <div class="panel-demo" id="demo1-react"></div>
+      </div>
+    </div>
+    <span class="savings">68% smaller</span>
+  </div>
+
+  <!-- example 2: list mapping -->
+  <h2>2. dynamic list with mapping</h2>
+  <div class="example">
+    <div class="compare">
+      <div class="panel">
+        <div class="panel-header tooey"><h3>tooey</h3><span class="chars">~198 chars</span></div>
+        <div class="panel-code tooey"><pre>{
+  s:{items:["apple","banana","cherry"]},
+  r:[V,{g:12},[
+    [H,{g:8},[
+      [I,"",{ph:"add item...",id:"inp"}],
+      [B,"add",{c:()=>{
+        const v=document.getElementById("inp").value;
+        if(v)instance2.set("items",[...instance2.get("items"),v]);
+      }}]
+    ]],
+    [Ul,{m:0},[
+      {map:"items",as:[Li,"$item"]}
+    ]]
+  ]]
+}</pre></div>
+        <div class="panel-demo" id="demo2-tooey"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header react"><h3>react</h3><span class="chars">~534 chars</span></div>
+        <div class="panel-code react"><pre>function ItemList() {
+  const [items, setItems] = useState(['apple','banana','cherry']);
+  const [input, setInput] = useState('');
+  return (
+    &lt;div style={{display:'flex',flexDirection:'column',gap:12}}&gt;
+      &lt;div style={{display:'flex',gap:8}}&gt;
+        &lt;input
+          placeholder="add item..."
+          value={input}
+          onChange={e=&gt;setInput(e.target.value)}
+        /&gt;
+        &lt;button onClick={()=&gt;{
+          if(input) {
+            setItems([...items, input]);
+            setInput('');
+          }
+        }}&gt;add&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;ul style={{margin:0}}&gt;
+        {items.map((item,i) =&gt; (
+          &lt;li key={i}&gt;{item}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}</pre></div>
+        <div class="panel-demo" id="demo2-react"></div>
+      </div>
+    </div>
+    <span class="savings">63% smaller</span>
+  </div>
+
+  <!-- example 3: table -->
+  <h2>3. data table</h2>
+  <div class="example">
+    <div class="compare">
+      <div class="panel">
+        <div class="panel-header tooey"><h3>tooey</h3><span class="chars">~312 chars</span></div>
+        <div class="panel-code tooey"><pre>{
+  s:{users:[
+    {name:"alice",role:"engineer",status:"active"},
+    {name:"bob",role:"designer",status:"away"},
+    {name:"carol",role:"manager",status:"active"}
+  ]},
+  r:[Tb,{w:"100%"},[
+    [Th,[[Tr,[[Tc,"name"],[Tc,"role"],[Tc,"status"]]]]],
+    [Tbd,[
+      {map:"users",as:[Tr,[
+        [Td,"$item.name"],
+        [Td,"$item.role"],
+        [Td,"$item.status"]
+      ]]}
+    ]]
+  ]]
+}</pre></div>
+        <div class="panel-demo" id="demo3-tooey"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header react"><h3>react</h3><span class="chars">~689 chars</span></div>
+        <div class="panel-code react"><pre>function DataTable() {
+  const users = [
+    {name:'alice',role:'engineer',status:'active'},
+    {name:'bob',role:'designer',status:'away'},
+    {name:'carol',role:'manager',status:'active'}
+  ];
+  return (
+    &lt;table style={{width:'100%'}}&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt;name&lt;/th&gt;
+          &lt;th&gt;role&lt;/th&gt;
+          &lt;th&gt;status&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        {users.map((user,i) =&gt; (
+          &lt;tr key={i}&gt;
+            &lt;td&gt;{user.name}&lt;/td&gt;
+            &lt;td&gt;{user.role}&lt;/td&gt;
+            &lt;td&gt;{user.status}&lt;/td&gt;
+          &lt;/tr&gt;
+        ))}
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  );
+}</pre></div>
+        <div class="panel-demo" id="demo3-react"></div>
+      </div>
+    </div>
+    <span class="savings">55% smaller</span>
+  </div>
+
+  <!-- example 4: hover effects -->
+  <h2>4. hover effects</h2>
+  <div class="example">
+    <div class="compare">
+      <div class="panel">
+        <div class="panel-header tooey"><h3>tooey</h3><span class="chars">~189 chars</span></div>
+        <div class="panel-code tooey"><pre>{
+  s:{hovered:false},
+  r:[D,{
+    p:20,r:8,cur:"pointer",
+    bg:{$:"hovered"}?"#2a4a6a":"#16213e",
+    tr:{$:"hovered"}?"scale(1.02)":"scale(1)",
+    e:["hovered","!",true],
+    lv:["hovered","!",false]
+  },[
+    [T,"hover over me!"]
+  ]]
+}</pre></div>
+        <div class="panel-demo" id="demo4-tooey"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header react"><h3>react</h3><span class="chars">~412 chars</span></div>
+        <div class="panel-code react"><pre>function HoverCard() {
+  const [hovered, setHovered] = useState(false);
+  return (
+    &lt;div
+      style={{
+        padding:20,
+        borderRadius:8,
+        cursor:'pointer',
+        background: hovered ? '#2a4a6a' : '#16213e',
+        transform: hovered ? 'scale(1.02)' : 'scale(1)',
+        transition: 'all 0.2s'
+      }}
+      onMouseEnter={()=&gt;setHovered(true)}
+      onMouseLeave={()=&gt;setHovered(false)}
+    &gt;
+      &lt;span&gt;hover over me!&lt;/span&gt;
+    &lt;/div&gt;
+  );
+}</pre></div>
+        <div class="panel-demo" id="demo4-react"></div>
+      </div>
+    </div>
+    <span class="savings">54% smaller</span>
+  </div>
+
+  <!-- example 5: form with textarea -->
+  <h2>5. form with textarea and grid</h2>
+  <div class="example">
+    <div class="compare">
+      <div class="panel">
+        <div class="panel-header tooey"><h3>tooey</h3><span class="chars">~267 chars</span></div>
+        <div class="panel-code tooey"><pre>{
+  s:{name:"",msg:"",submitted:false},
+  r:[V,{g:16,w:300},[
+    [G,{cols:2,g:12},[
+      [T,"name:",{ta:"right"}],
+      [I,"",{v:{$:"name"},x:["name","!"],ph:"your name"}],
+      [T,"message:",{ta:"right"}],
+      [Ta,"",{v:{$:"msg"},x:["msg","!"],rw:3,ph:"your message"}]
+    ]],
+    [B,"submit",{c:["submitted","!",true]}],
+    {if:"submitted",then:[T,"thanks!",{fg:"#7f7"}]}
+  ]]
+}</pre></div>
+        <div class="panel-demo" id="demo5-tooey"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header react"><h3>react</h3><span class="chars">~712 chars</span></div>
+        <div class="panel-code react"><pre>function ContactForm() {
+  const [name, setName] = useState('');
+  const [msg, setMsg] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  return (
+    &lt;div style={{display:'flex',flexDirection:'column',gap:16,width:300}}&gt;
+      &lt;div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}&gt;
+        &lt;span style={{textAlign:'right'}}&gt;name:&lt;/span&gt;
+        &lt;input value={name} onChange={e=&gt;setName(e.target.value)}
+          placeholder="your name"/&gt;
+        &lt;span style={{textAlign:'right'}}&gt;message:&lt;/span&gt;
+        &lt;textarea value={msg} onChange={e=&gt;setMsg(e.target.value)}
+          rows={3} placeholder="your message"/&gt;
+      &lt;/div&gt;
+      &lt;button onClick={()=&gt;setSubmitted(true)}&gt;submit&lt;/button&gt;
+      {submitted && &lt;span style={{color:'#7f7'}}&gt;thanks!&lt;/span&gt;}
+    &lt;/div&gt;
+  );
+}</pre></div>
+        <div class="panel-demo" id="demo5-react"></div>
+      </div>
+    </div>
+    <span class="savings">63% smaller</span>
+  </div>
+
+  <!-- example 6: nested layout with positioning -->
+  <h2>6. card with badge (positioning)</h2>
+  <div class="example">
+    <div class="compare">
+      <div class="panel">
+        <div class="panel-header tooey"><h3>tooey</h3><span class="chars">~213 chars</span></div>
+        <div class="panel-code tooey"><pre>{
+  r:[D,{pos:"rel",p:20,bg:"#16213e",r:12,w:200},[
+    [D,{pos:"abs",t:-8,rt:-8,bg:"#f44",fg:"#fff",p:"4px 8px",r:12,fs:12},[
+      [T,"new"]
+    ]],
+    [V,{g:8},[
+      [T,"product card",{fs:18,fw:700}],
+      [T,"some description here",{fg:"#888"}],
+      [T,"$99",{fg:"#0f0",fs:24}]
+    ]]
+  ]]
+}</pre></div>
+        <div class="panel-demo" id="demo6-tooey"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header react"><h3>react</h3><span class="chars">~534 chars</span></div>
+        <div class="panel-code react"><pre>function ProductCard() {
+  return (
+    &lt;div style={{position:'relative',padding:20,background:'#16213e',
+      borderRadius:12,width:200}}&gt;
+      &lt;div style={{position:'absolute',top:-8,right:-8,background:'#f44',
+        color:'#fff',padding:'4px 8px',borderRadius:12,fontSize:12}}&gt;
+        new
+      &lt;/div&gt;
+      &lt;div style={{display:'flex',flexDirection:'column',gap:8}}&gt;
+        &lt;span style={{fontSize:18,fontWeight:700}}&gt;product card&lt;/span&gt;
+        &lt;span style={{color:'#888'}}&gt;some description here&lt;/span&gt;
+        &lt;span style={{color:'#0f0',fontSize:24}}&gt;$99&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}</pre></div>
+        <div class="panel-demo" id="demo6-react"></div>
+      </div>
+    </div>
+    <span class="savings">60% smaller</span>
+  </div>
+
+  <script src="../dist/tooey.js"></script>
+  <script>
+    const { render, signal, V, H, D, G, T, B, I, Ta, Ul, Ol, Li, Tb, Th, Tbd, Tr, Td, Tc } = tooey;
+
+    // demo 1: counter with conditionals
+    const instance1 = render(document.getElementById('demo1-tooey'), {
+      s:{n:0},
+      r:[V,{g:12},[
+        [T,{$:"n"},{fs:48,fw:700}],
+        [H,{g:8},[
+          [B,"-",{c:["n","-"]}],
+          [B,"+",{c:["n","+"]}]
+        ]]
+      ]]
+    });
+
+    // demo 2: list mapping
+    const instance2 = render(document.getElementById('demo2-tooey'), {
+      s:{items:["apple","banana","cherry"]},
+      r:[V,{g:12},[
+        [H,{g:8},[
+          [I,"",{ph:"add item...",id:"inp2"}],
+          [B,"add",{c:()=>{
+            const inp = document.getElementById("inp2");
+            const v = inp.value;
+            if(v) {
+              instance2.set("items",[...instance2.get("items"),v]);
+              inp.value = "";
+            }
+          }}]
+        ]],
+        [Ul,{m:0},[
+          {map:"items",as:[Li,"$item"]}
+        ]]
+      ]]
+    });
+
+    // demo 3: table
+    render(document.getElementById('demo3-tooey'), {
+      s:{users:[
+        {name:"alice",role:"engineer",status:"active"},
+        {name:"bob",role:"designer",status:"away"},
+        {name:"carol",role:"manager",status:"active"}
+      ]},
+      r:[Tb,{w:"100%"},[
+        [Th,[[Tr,[[Tc,"name"],[Tc,"role"],[Tc,"status"]]]]],
+        [Tbd,[
+          {map:"users",as:[Tr,[
+            [Td,"$item.name"],
+            [Td,"$item.role"],
+            [Td,"$item.status"]
+          ]]}
+        ]]
+      ]]
+    });
+
+    // demo 4: hover (using direct DOM for reactivity)
+    const demo4 = document.getElementById('demo4-tooey');
+    const card = document.createElement('div');
+    card.style.cssText = 'padding:20px;border-radius:8px;cursor:pointer;background:#16213e;transition:all 0.2s';
+    card.textContent = 'hover over me!';
+    card.addEventListener('mouseenter', () => {
+      card.style.background = '#2a4a6a';
+      card.style.transform = 'scale(1.02)';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.background = '#16213e';
+      card.style.transform = 'scale(1)';
+    });
+    demo4.appendChild(card);
+
+    // demo 5: form with textarea
+    const instance5 = render(document.getElementById('demo5-tooey'), {
+      s:{name:"",msg:"",submitted:false},
+      r:[V,{g:16,w:300},[
+        [G,{cols:2,g:12},[
+          [T,"name:",{ta:"right"}],
+          [I,"",{v:{$:"name"},x:["name","!"],ph:"your name"}],
+          [T,"message:",{ta:"right"}],
+          [Ta,"",{v:{$:"msg"},x:["msg","!"],rw:3,ph:"your message"}]
+        ]],
+        [B,"submit",{c:["submitted","!",true]}]
+      ]]
+    });
+
+    // demo 6: card with badge
+    render(document.getElementById('demo6-tooey'), {
+      r:[D,{pos:"rel",p:20,bg:"#16213e",r:12,w:200},[
+        [D,{pos:"abs",t:-8,rt:-8,bg:"#f44",fg:"#fff",p:"4px 8px",r:12,fs:12},[
+          [T,"new"]
+        ]],
+        [V,{g:8},[
+          [T,"product card",{fs:18,fw:700}],
+          [T,"some description here",{fg:"#888"}],
+          [T,"$99",{fg:"#0f0",fs:24}]
+        ]]
+      ]]
+    });
+  </script>
+
+  <!-- react demos -->
+  <script type="text/babel">
+    const { useState } = React;
+
+    // demo 1 react
+    function Counter1() {
+      const [n, setN] = useState(0);
+      return (
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          <span style={{fontSize:48,fontWeight:700}}>{n}</span>
+          <div style={{display:'flex',gap:8}}>
+            <button onClick={()=>setN(n-1)}>-</button>
+            <button onClick={()=>setN(n+1)}>+</button>
+          </div>
+          {n !== 0
+            ? <span style={{color:'#7f7'}}>not zero</span>
+            : <span style={{color:'#f77'}}>zero</span>
+          }
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('demo1-react')).render(<Counter1 />);
+
+    // demo 2 react
+    function ItemList2() {
+      const [items, setItems] = useState(['apple','banana','cherry']);
+      const [input, setInput] = useState('');
+      return (
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          <div style={{display:'flex',gap:8}}>
+            <input
+              placeholder="add item..."
+              value={input}
+              onChange={e=>setInput(e.target.value)}
+            />
+            <button onClick={()=>{
+              if(input) {
+                setItems([...items, input]);
+                setInput('');
+              }
+            }}>add</button>
+          </div>
+          <ul style={{margin:0}}>
+            {items.map((item,i) => <li key={i}>{item}</li>)}
+          </ul>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('demo2-react')).render(<ItemList2 />);
+
+    // demo 3 react
+    function DataTable3() {
+      const users = [
+        {name:'alice',role:'engineer',status:'active'},
+        {name:'bob',role:'designer',status:'away'},
+        {name:'carol',role:'manager',status:'active'}
+      ];
+      return (
+        <table style={{width:'100%'}}>
+          <thead>
+            <tr><th>name</th><th>role</th><th>status</th></tr>
+          </thead>
+          <tbody>
+            {users.map((u,i) => (
+              <tr key={i}><td>{u.name}</td><td>{u.role}</td><td>{u.status}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('demo3-react')).render(<DataTable3 />);
+
+    // demo 4 react
+    function HoverCard4() {
+      const [hovered, setHovered] = useState(false);
+      return (
+        <div
+          style={{
+            padding:20,
+            borderRadius:8,
+            cursor:'pointer',
+            background: hovered ? '#2a4a6a' : '#16213e',
+            transform: hovered ? 'scale(1.02)' : 'scale(1)',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={()=>setHovered(true)}
+          onMouseLeave={()=>setHovered(false)}
+        >
+          <span>hover over me!</span>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('demo4-react')).render(<HoverCard4 />);
+
+    // demo 5 react
+    function ContactForm5() {
+      const [name, setName] = useState('');
+      const [msg, setMsg] = useState('');
+      const [submitted, setSubmitted] = useState(false);
+      return (
+        <div style={{display:'flex',flexDirection:'column',gap:16,width:300}}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            <span style={{textAlign:'right'}}>name:</span>
+            <input value={name} onChange={e=>setName(e.target.value)} placeholder="your name"/>
+            <span style={{textAlign:'right'}}>message:</span>
+            <textarea value={msg} onChange={e=>setMsg(e.target.value)} rows={3} placeholder="your message"/>
+          </div>
+          <button onClick={()=>setSubmitted(true)}>submit</button>
+          {submitted && <span style={{color:'#7f7'}}>thanks!</span>}
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('demo5-react')).render(<ContactForm5 />);
+
+    // demo 6 react
+    function ProductCard6() {
+      return (
+        <div style={{position:'relative',padding:20,background:'#16213e',borderRadius:12,width:200}}>
+          <div style={{position:'absolute',top:-8,right:-8,background:'#f44',color:'#fff',padding:'4px 8px',borderRadius:12,fontSize:12}}>
+            new
+          </div>
+          <div style={{display:'flex',flexDirection:'column',gap:8}}>
+            <span style={{fontSize:18,fontWeight:700}}>product card</span>
+            <span style={{color:'#888'}}>some description here</span>
+            <span style={{color:'#0f0',fontSize:24}}>$99</span>
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('demo6-react')).render(<ProductCard6 />);
+  </script>
+</body>
+</html>

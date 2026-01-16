@@ -39,38 +39,151 @@ tooey is a declarative ui library optimized for minimal token usage when generat
 
 ## component types
 
-| code | component | description |
-|------|-----------|-------------|
-| `V` | vstack | vertical flex container |
-| `H` | hstack | horizontal flex container |
+### layout
+| code | element | description |
+|------|---------|-------------|
+| `V` | div | vertical flex (column) |
+| `H` | div | horizontal flex (row) |
 | `D` | div | generic container |
-| `G` | grid | css grid container |
-| `T` | text | span element |
-| `B` | button | button element |
+| `G` | div | css grid |
+
+### text & buttons
+| code | element | description |
+|------|---------|-------------|
+| `T` | span | text content |
+| `B` | button | clickable button |
+
+### inputs
+| code | element | description |
+|------|---------|-------------|
 | `I` | input | text input |
-| `S` | select | dropdown select |
-| `C` | checkbox | checkbox input |
-| `L` | link | anchor element |
-| `M` | image | image element |
+| `Ta` | textarea | multiline text |
+| `S` | select | dropdown |
+| `C` | input | checkbox |
+| `R` | input | radio button |
+
+### tables
+| code | element | description |
+|------|---------|-------------|
+| `Tb` | table | table container |
+| `Th` | thead | table header |
+| `Tbd` | tbody | table body |
+| `Tr` | tr | table row |
+| `Td` | td | table cell |
+| `Tc` | th | header cell |
+
+### lists
+| code | element | description |
+|------|---------|-------------|
+| `Ul` | ul | unordered list |
+| `Ol` | ol | ordered list |
+| `Li` | li | list item |
+
+### media & links
+| code | element | description |
+|------|---------|-------------|
+| `M` | img | image |
+| `L` | a | link |
+| `Sv` | svg | svg container |
 
 ## property shortcuts
 
-| prop | meaning | example |
-|------|---------|---------|
-| `g` | gap | `{g:8}` → 8px gap |
-| `p` | padding | `{p:16}` → 16px padding |
-| `m` | margin | `{m:8}` → 8px margin |
-| `w` | width | `{w:200}` → 200px width |
-| `h` | height | `{h:100}` → 100px height |
-| `c` | click handler | `{c:["n","+"]}` → increment n on click |
-| `x` | change handler | `{x:["txt","!"]}` → set txt on change |
-| `v` | value binding | `{v:{$:"txt"}}` → bind to txt state |
+### spacing & sizing
+| prop | css property | example |
+|------|--------------|---------|
+| `g` | gap | `{g:8}` → 8px |
+| `p` | padding | `{p:16}` |
+| `m` | margin | `{m:8}` |
+| `w` | width | `{w:200}` |
+| `h` | height | `{h:100}` |
+| `mw` | max-width | `{mw:400}` |
+| `mh` | max-height | `{mh:300}` |
+
+### colors
+| prop | css property | example |
+|------|--------------|---------|
 | `bg` | background | `{bg:"#f00"}` |
 | `fg` | color | `{fg:"#fff"}` |
-| `r` | border-radius | `{r:8}` → 8px radius |
-| `ph` | placeholder | `{ph:"enter..."}` |
-| `t` | input type | `{t:"password"}` |
-| `d` | disabled | `{d:true}` |
+| `o` | opacity | `{o:0.5}` |
+
+### borders
+| prop | css property | example |
+|------|--------------|---------|
+| `r` | border-radius | `{r:8}` |
+| `bw` | border-width | `{bw:1}` |
+| `bc` | border-color | `{bc:"#ccc"}` |
+| `bs` | border-style | `{bs:"solid"}` |
+
+### positioning
+| prop | css property | example |
+|------|--------------|---------|
+| `pos` | position | `{pos:"abs"}` (rel/abs/fix/sticky) |
+| `z` | z-index | `{z:10}` |
+| `t` | top | `{t:0}` |
+| `l` | left | `{l:0}` |
+| `rt` | right | `{rt:0}` |
+
+### typography
+| prop | css property | example |
+|------|--------------|---------|
+| `fs` | font-size | `{fs:16}` |
+| `fw` | font-weight | `{fw:700}` |
+| `ff` | font-family | `{ff:"sans-serif"}` |
+| `ta` | text-align | `{ta:"center"}` |
+| `td` | text-decoration | `{td:"underline"}` |
+| `lh` | line-height | `{lh:1.5}` |
+| `ls` | letter-spacing | `{ls:1}` |
+
+### layout
+| prop | css property | example |
+|------|--------------|---------|
+| `ai` | align-items | `{ai:"center"}` |
+| `jc` | justify-content | `{jc:"space-between"}` |
+| `flw` | flex-wrap | `{flw:"wrap"}` |
+| `cols` | grid-template-columns | `{cols:3}` |
+| `rows` | grid-template-rows | `{rows:2}` |
+
+### misc
+| prop | css property | example |
+|------|--------------|---------|
+| `cur` | cursor | `{cur:"pointer"}` |
+| `ov` | overflow | `{ov:"auto"}` |
+| `sh` | box-shadow | `{sh:"0 2px 4px rgba(0,0,0,.1)"}` |
+| `tr` | transform | `{tr:"rotate(45deg)"}` |
+| `pe` | pointer-events | `{pe:"none"}` |
+| `us` | user-select | `{us:"none"}` |
+
+### element-specific
+| prop | applies to | example |
+|------|------------|---------|
+| `v` | inputs | value binding `{v:{$:"txt"}}` |
+| `ph` | input/textarea | placeholder |
+| `type` | input | input type |
+| `href` | link | url |
+| `src` | image | image url |
+| `alt` | image | alt text |
+| `dis` | button/input | disabled |
+| `ch` | checkbox | checked |
+| `ro` | input/textarea | readonly |
+| `opts` | select | options array |
+| `rw` | textarea | rows |
+| `sp` | td/th | colspan |
+| `rsp` | td/th | rowspan |
+
+## events
+
+| prop | event | example |
+|------|-------|---------|
+| `c` | click | `{c:["n","+"]}` |
+| `x` | input/change | `{x:["txt","!"]}` |
+| `f` | focus | `{f:["focused","!",true]}` |
+| `bl` | blur | `{bl:handler}` |
+| `k` | keydown | `{k:handler}` |
+| `ku` | keyup | `{ku:handler}` |
+| `kp` | keypress | `{kp:handler}` |
+| `e` | mouseenter | `{e:["hovered","!",true]}` |
+| `lv` | mouseleave | `{lv:["hovered","!",false]}` |
+| `sub` | submit | `{sub:handler}` |
 
 ## state operations
 
@@ -83,6 +196,7 @@ tooey is a declarative ui library optimized for minimal token usage when generat
 ["stateName", "<", item]  // append to array
 ["stateName", ">", item]  // prepend to array
 ["stateName", "X", idx]   // remove from array by index
+["stateName", ".", [k,v]] // set property on object
 ```
 
 ## state references
@@ -96,6 +210,38 @@ use `{$: "stateName"}` to reference state in content:
 }
 ```
 
+## control flow
+
+### conditional rendering
+
+```javascript
+{
+  s: {show: true},
+  r: [D, [
+    {if: "show", then: [T, "visible"], else: [T, "hidden"]}
+  ]]
+}
+```
+
+### list mapping
+
+```javascript
+{
+  s: {items: ["a", "b", "c"]},
+  r: [Ul, [
+    {map: "items", as: [Li, "$item"]}
+  ]]
+}
+
+// with objects
+{
+  s: {users: [{name: "alice", age: 30}]},
+  r: [Ul, [
+    {map: "users", as: [Li, "$item.name is $item.age"]}
+  ]]
+}
+```
+
 ## api
 
 ### `tooey.render(element, spec)`
@@ -104,8 +250,8 @@ renders a tooey spec into a dom element.
 
 ```javascript
 const instance = tooey.render(document.getElementById('app'), {
-  s: {n: 0},           // initial state
-  r: [V,[...]]         // root component
+  s: {n: 0},
+  r: [V,[...]]
 });
 ```
 
@@ -116,7 +262,7 @@ returns an instance with:
 
 ### `tooey.signal(initialValue)`
 
-create a reactive signal (for advanced use):
+create a reactive signal:
 
 ```javascript
 const count = tooey.signal(0);
@@ -147,6 +293,7 @@ see the `/examples` directory for runnable demos:
 - `03-form.html` - registration form
 - `04-temperature-converter.html` - bidirectional binding
 - `05-data-table.html` - sortable, filterable table
+- `06-showcase.html` - comprehensive demo of all features
 
 ## building
 

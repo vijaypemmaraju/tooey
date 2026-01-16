@@ -184,37 +184,56 @@
       <p>sortable, filterable table</p>
       <div class="savings">80% smaller than react</div>
     </a>
+    <a href="06-showcase.html" class="example-card">
+      <h3>showcase</h3>
+      <p>all features with live react comparisons</p>
+      <div class="savings">comprehensive demo</div>
+    </a>
   </div>
 
   <h2>component reference</h2>
   <div class="code-panel" style="background: #16213e; margin-top: 20px;">
     <pre style="color: #eee;">
-<span style="color:#00d9ff">// component types</span>
-V = vstack (vertical flex)    H = hstack (horizontal flex)
-D = div (container)           G = grid
-T = text (span)               B = button
-I = input                     S = select
-C = checkbox                  L = link
-M = image
+<span style="color:#00d9ff">// layout</span>
+V = vstack    H = hstack    D = div    G = grid
+
+<span style="color:#00d9ff">// text & buttons</span>
+T = text (span)    B = button
+
+<span style="color:#00d9ff">// inputs</span>
+I = input    Ta = textarea    S = select    C = checkbox    R = radio
+
+<span style="color:#00d9ff">// tables</span>
+Tb = table    Th = thead    Tbd = tbody    Tr = tr    Td = td    Tc = th
+
+<span style="color:#00d9ff">// lists</span>
+Ul = ul    Ol = ol    Li = li
+
+<span style="color:#00d9ff">// media & links</span>
+M = image    L = link    Sv = svg
 
 <span style="color:#00d9ff">// common props</span>
-g = gap          p = padding       m = margin
-w = width        h = height        r = border-radius
-bg = background  fg = color        s = style object
-c = onclick      x = onchange      v = value
-ph = placeholder t = type          d = disabled
+g = gap       p = padding    m = margin     w = width      h = height
+bg = background    fg = color    o = opacity    r = border-radius
+fs = font-size    fw = font-weight    ta = text-align
+pos = position    z = z-index    t/l/rt = top/left/right
+cur = cursor    sh = box-shadow    tr = transform
+
+<span style="color:#00d9ff">// events</span>
+c = click    x = change    f = focus    bl = blur
+k = keydown    e = mouseenter    lv = mouseleave
 
 <span style="color:#00d9ff">// state operations</span>
-["stateName", "+"]       // increment
-["stateName", "-"]       // decrement
-["stateName", "!", val]  // set to val
-["stateName", "~"]       // toggle boolean
-["stateName", "<", val]  // append to array
-["stateName", ">", val]  // prepend to array
-["stateName", "X", idx]  // remove from array
+["state", "+"]       // increment
+["state", "-"]       // decrement
+["state", "!", val]  // set to val
+["state", "~"]       // toggle
+["state", "<", val]  // append
+["state", "X", idx]  // remove
 
-<span style="color:#00d9ff">// state references</span>
-{$: "stateName"}         // reference state value in content
+<span style="color:#00d9ff">// control flow</span>
+{if: "state", then: [...], else: [...]}
+{map: "items", as: [Li, "$item"]}
 </pre>
   </div>
 
