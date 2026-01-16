@@ -10,6 +10,7 @@ Complete API documentation for @tooey/ui - the token-efficient UI library for LL
 - [Events](#events)
 - [State Operations](#state-operations)
 - [Control Flow](#control-flow)
+- [Function Components](#function-components)
 - [Error Boundaries](#error-boundaries)
 - [Types](#types)
 
@@ -351,6 +352,96 @@ function $(name: string): StateRef  // Returns { $: name }
 | `$index` | Current index in map iteration |
 | `$item.prop` | Property of current item object |
 
+## Function Components
+
+Create reusable components using functions. Function components receive props and children, and return a `NodeSpec`.
+
+### Signature
+
+```typescript
+type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
+```
+
+### Basic Example
+
+```javascript
+import { Component, V, T, H, B } from '@tooey/ui';
+
+// Simple component with children
+const Card = (props, children) => [V, children, { bg: '#fff', p: 16, r: 8, ...props }];
+
+// Usage
+render(container, {
+  s: {},
+  r: [Card, [[T, 'Card content'], [T, 'More content']], { bg: '#f0f0f0' }]
+});
+```
+
+### Component with Props
+
+```javascript
+// Component with typed props
+const Alert = ({ type = 'info', message }) =>
+  [V, [[T, message]], { bg: type === 'error' ? '#fee' : '#eef', p: 12, r: 4 }];
+
+// Usage
+render(container, {
+  s: {},
+  r: [Alert, '', { type: 'error', message: 'Something went wrong!' }]
+});
+```
+
+### Nested Components
+
+Function components can be nested:
+
+```javascript
+const Button = (props) => [B, props?.label || 'Click', { bg: '#007bff', fg: '#fff', p: 8, r: 4, ...props }];
+
+const ButtonGroup = (props, children) => [H, children, { g: 8, ...props }];
+
+render(container, {
+  s: { count: 0 },
+  r: [ButtonGroup, [
+    [Button, '', { label: '-', c: 'count-' }],
+    [T, { $: 'count' }],
+    [Button, '', { label: '+', c: 'count+' }]
+  ]]
+});
+```
+
+### With State and Control Flow
+
+Function components work with state references and control flow:
+
+```javascript
+const Counter = (props) => [V, [
+  [T, { $: props?.stateKey || 'count' }],
+  [H, [[B, '-', { c: `${props?.stateKey || 'count'}-` }], [B, '+', { c: `${props?.stateKey || 'count'}+` }]], { g: 8 }]
+], { g: 8 }];
+
+const ConditionalDisplay = ({ condition }) => ({
+  '?': condition,
+  t: [T, 'Condition is true'],
+  e: [T, 'Condition is false']
+});
+
+render(container, {
+  s: { count: 0, show: true },
+  r: [V, [
+    [Counter, '', { stateKey: 'count' }],
+    [ConditionalDisplay, '', { condition: 'show' }]
+  ], { g: 16 }]
+});
+```
+
+### Notes
+
+- Function components are detected by `typeof first === 'function'`
+- Props are passed as the first argument, children as the second
+- Components can return any valid `NodeSpec` (tuples, IfNode, MapNode)
+- Components are evaluated at render time, not during spec definition
+
 ## Error Boundaries
 
 Error boundaries catch errors during rendering and display fallback UI.
@@ -397,10 +488,20 @@ interface TooeySpec {
 
 ### NodeSpec
 
-A node specification (component).
+A node specification (component). Supports built-in components, function components, and control flow nodes.
 
 ```typescript
-type NodeSpec = [ComponentType, Content?, Props?] | IfNode | MapNode;
+type BuiltinNodeSpec = [ComponentType, Content?, Props?];
+type FunctionNodeSpec = [Component, Content?, Props?];
+type NodeSpec = BuiltinNodeSpec | FunctionNodeSpec | IfNode | MapNode;
+```
+
+### Component
+
+A function component that returns a NodeSpec.
+
+```typescript
+type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
 ```
 
 ### StateRef

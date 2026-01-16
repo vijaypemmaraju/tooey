@@ -129,6 +129,9 @@ type ComponentType =
   | 'Ul' | 'Ol' | 'Li'
   | 'M' | 'L' | 'Sv';
 
+// Function component type - returns a NodeSpec
+type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
+
 type StateRef = { $: string };
 
 interface IfNode {
@@ -156,7 +159,10 @@ interface MapNode {
 }
 
 type Content = string | number | StateRef | NodeSpec[] | IfNode | MapNode;
-type NodeSpec = [ComponentType, Content?, Props?] | IfNode | MapNode;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FunctionNodeSpec = [Component<any>, Content?, (Props & Record<string, unknown>)?];
+type BuiltinNodeSpec = [ComponentType, Content?, Props?];
+type NodeSpec = BuiltinNodeSpec | FunctionNodeSpec | IfNode | MapNode;
 
 interface TooeySpec {
   s?: Record<string, StateValue>;
@@ -710,7 +716,18 @@ function createElement(
     return null;
   }
 
-  const [type, content, props = {}] = spec as [ComponentType, Content?, Props?];
+  // handle function components
+  const [first, content, props = {}] = spec as [ComponentType | Component, Content?, Props?];
+  if (typeof first === 'function') {
+    // Function component: call it with (props, children)
+    const children = Array.isArray(content) && content.length > 0 && (Array.isArray(content[0]) || isIfNode(content[0]) || isMapNode(content[0]) || typeof content[0] === 'function')
+      ? content as NodeSpec[]
+      : undefined;
+    const resolved = (first as Component)(props, children);
+    return createElement(resolved, ctx, itemContext);
+  }
+
+  const type = first as ComponentType;
   let el: HTMLElement;
 
   switch (type) {
@@ -1109,5 +1126,6 @@ export {
   MapNode,
   ErrorBoundaryNode,
   ErrorInfo,
-  ErrorHandler
+  ErrorHandler,
+  Component
 };
