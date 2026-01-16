@@ -6,6 +6,15 @@
   "module": "dist/tooey.esm.js",
   "types": "dist/tooey.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/tooey.d.ts",
+      "import": "./dist/tooey.esm.js",
+      "require": "./dist/tooey.js",
+      "default": "./dist/tooey.esm.js"
+    }
+  },
+  "sideEffects": false,
   "files": [
     "dist"
   ],

@@ -141,14 +141,44 @@ short keys: `g` (gap), `p` (padding), `bg` (background), `fg` (color), etc.
 }
 ```
 
+## versioning
+
+**follow semver strictly.** bump version in `package.json` when making changes:
+
+- **patch** (1.0.x): bug fixes, security patches, dependency updates
+  - fixing a rendering bug
+  - updating dependencies for security
+  - fixing typos in error messages
+
+- **minor** (1.x.0): new features, backwards-compatible additions
+  - adding a new component type
+  - adding a new prop
+  - adding a new event handler
+  - adding a new state operation
+
+- **major** (x.0.0): breaking changes
+  - removing or renaming a component
+  - changing prop behavior
+  - changing the spec format
+  - removing a feature
+
+**always increment version** when functionality changes. the publish workflow auto-publishes to npm when version in `package.json` differs from npm registry.
+
 ## ci/cd
 
-github actions workflow (`ci.yml`) runs:
+github actions workflows:
+
+**ci.yml** (runs on PRs and pushes to main):
 1. type checking (`npm run typecheck`)
 2. linting (`npm run lint`)
 3. build (`npm run build`)
 4. tests with coverage (`npm run test:coverage`)
 5. security audit (`npm audit`)
+
+**publish.yml** (runs on push to main):
+1. runs all ci checks
+2. compares package.json version to npm registry
+3. if version changed: publishes to npm and creates git tag
 
 ## common tasks
 

@@ -50,4 +50,4 @@ jobs:
           fi
 
       - name: Security audit
-        run: npm audit --audit-level=moderate || true
+        run: npm audit --audit-level=moderate
