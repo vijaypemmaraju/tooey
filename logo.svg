@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!-- lowercase t: vertical stem -->
   <rect x="24" y="8" width="16" height="48" rx="8" fill="#0af"/>
-  <!-- lowercase t: crossbar -->
-  <rect x="12" y="20" width="40" height="14" rx="7" fill="#0af"/>
+  <!-- lowercase t: crossbar (rotated 20deg for 3D effect) -->
+  <rect x="12" y="20" width="40" height="14" rx="7" fill="#0af" transform="rotate(-20 32 27)"/>
 </svg>
