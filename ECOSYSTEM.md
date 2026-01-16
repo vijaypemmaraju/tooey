@@ -21,7 +21,7 @@ design document for making tooey extensible while preserving token efficiency.
 | phase 1 | function components | ✅ complete |
 | phase 2 | theming | ✅ complete |
 | phase 3 | plugins | ✅ complete |
-| phase 4 | computed & async | ⬜ not started |
+| phase 4 | computed & async | ✅ complete |
 
 ### phase 0: monorepo setup ✅
 
@@ -58,11 +58,12 @@ design document for making tooey extensible while preserving token efficiency.
 - [x] implement extend for instance methods
 - [x] add comprehensive plugin tests (22 tests)
 
-### phase 4: computed & async ⬜
+### phase 4: computed & async ✅
 
-- [ ] export computed helper
-- [ ] export async$ helper
-- [ ] update effect tracking
+- [x] export computed helper
+- [x] export async$ helper
+- [x] update effect tracking
+- [x] add comprehensive tests (17 tests)
 
 ---
 

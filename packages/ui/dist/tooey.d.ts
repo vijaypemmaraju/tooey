@@ -181,6 +181,24 @@ interface ErrorBoundaryNode {
 declare function signal<T>(initial: T): Signal<T>;
 declare function batch(fn: () => void): void;
 declare function effect(fn: () => void, ctx?: RenderContext): () => void;
+interface ComputedSignal<T> {
+    (): T;
+    sub(fn: () => void): () => void;
+}
+declare function computed<T>(fn: () => T): ComputedSignal<T>;
+interface AsyncState<T> {
+    data: T | null;
+    loading: boolean;
+    error: string | null;
+    [key: string]: unknown;
+}
+interface AsyncSpec<T> {
+    s: AsyncState<T>;
+    init(instance: TooeyInstance): Promise<void>;
+}
+declare function async$<T>(promiseOrFn: Promise<T> | (() => Promise<T>), options?: {
+    onError?: (error: Error) => void;
+}): AsyncSpec<T>;
 interface TooeyInstance {
     state: StateStore;
     el: HTMLElement | null;
@@ -225,5 +243,5 @@ declare const Li: "Li";
 declare const M: "M";
 declare const L: "L";
 declare const Sv: "Sv";
-export { render, createTooey, signal, effect, batch, $, V, H, D, G, T, B, I, Ta, S, C, R, Tb, Th, Tbd, Tr, Td, Tc, Ul, Ol, Li, M, L, Sv, TooeySpec, NodeSpec, Props, StateRef, TooeyInstance, TooeyFactory, CreateTooeyOptions, IfNode, MapNode, ErrorBoundaryNode, ErrorInfo, ErrorHandler, Component, Theme, RenderOptions, TooeyPlugin };
+export { render, createTooey, signal, effect, batch, computed, async$, $, V, H, D, G, T, B, I, Ta, S, C, R, Tb, Th, Tbd, Tr, Td, Tc, Ul, Ol, Li, M, L, Sv, TooeySpec, NodeSpec, Props, StateRef, TooeyInstance, TooeyFactory, CreateTooeyOptions, IfNode, MapNode, ErrorBoundaryNode, ErrorInfo, ErrorHandler, Component, Theme, RenderOptions, TooeyPlugin, ComputedSignal, AsyncSpec };
 //# sourceMappingURL=tooey.d.ts.map

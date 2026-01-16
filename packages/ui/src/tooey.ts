@@ -323,6 +323,99 @@ function effect(fn: () => void, ctx?: RenderContext): () => void {
   return cleanup;
 }
 
+// computed signal - derives value from other signals and auto-updates
+interface ComputedSignal<T> {
+  (): T;
+  sub(fn: () => void): () => void;
+}
+
+function computed<T>(fn: () => T): ComputedSignal<T> {
+  let cachedValue: T;
+  let isDirty = true;
+  const subscribers = new Set<() => void>();
+
+  // re-compute and notify subscribers when dependencies change
+  const recompute = () => {
+    isDirty = true;
+    // notify all subscribers that the value may have changed
+    if (batchDepth > 0) {
+      subscribers.forEach(sub => pendingEffects.add(sub));
+    } else {
+      subscribers.forEach(sub => sub());
+    }
+  };
+
+  const sig = (() => {
+    // track this computed as a dependency if inside an effect
+    if (currentEffect) {
+      subscribers.add(currentEffect);
+    }
+
+    // recompute if dirty
+    if (isDirty) {
+      // track dependencies by running the computation inside an effect context
+      const prevEffect = currentEffect;
+      currentEffect = recompute;
+      try {
+        cachedValue = fn();
+      } finally {
+        currentEffect = prevEffect;
+      }
+      isDirty = false;
+    }
+
+    return cachedValue;
+  }) as ComputedSignal<T>;
+
+  sig.sub = (subFn: () => void) => {
+    subscribers.add(subFn);
+    return () => subscribers.delete(subFn);
+  };
+
+  return sig;
+}
+
+// async$ helper - handle async data with loading states
+interface AsyncState<T> {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+  [key: string]: unknown; // index signature for TooeySpec.s compatibility
+}
+
+interface AsyncSpec<T> {
+  s: AsyncState<T>;
+  init(instance: TooeyInstance): Promise<void>;
+}
+
+function async$<T>(
+  promiseOrFn: Promise<T> | (() => Promise<T>),
+  options?: { onError?: (error: Error) => void }
+): AsyncSpec<T> {
+  return {
+    s: {
+      data: null,
+      loading: true,
+      error: null
+    },
+    async init(instance: TooeyInstance) {
+      try {
+        const promise = typeof promiseOrFn === 'function' ? promiseOrFn() : promiseOrFn;
+        const data = await promise;
+        instance.set('data', data);
+        instance.set('loading', false);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        instance.set('error', errorMessage);
+        instance.set('loading', false);
+        if (options?.onError && err instanceof Error) {
+          options.onError(err);
+        }
+      }
+    }
+  };
+}
+
 // ============ state operations ============
 
 function applyOp(state: Signal<StateValue>, op: Op, val?: unknown): void {
@@ -1288,6 +1381,8 @@ export {
   signal,
   effect,
   batch,
+  computed,
+  async$,
   $,
   V, H, D, G,
   T, B,
@@ -1310,5 +1405,7 @@ export {
   Component,
   Theme,
   RenderOptions,
-  TooeyPlugin
+  TooeyPlugin,
+  ComputedSignal,
+  AsyncSpec
 };
