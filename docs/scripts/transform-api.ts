@@ -383,13 +383,15 @@ interface ExampleData {
   description: string;
   tooeyCode: string;
   reactCode: string;
+  demoSpec: string; // JSON stringified spec for live rendering
 }
 
 function getExamples(): ExampleData[] {
   const examplesDir = path.join(rootDir, 'packages/ui/examples');
   const examples: ExampleData[] = [];
 
-  // example metadata with code snippets
+  // example metadata with code snippets and demo specs
+  // demoSpec is a self-contained tooey spec that can be rendered directly
   const exampleData: Record<string, Omit<ExampleData, 'file'>> = {
     '01-counter.html': {
       id: 'counter',
@@ -410,7 +412,11 @@ function getExamples(): ExampleData[] {
       </div>
     </div>
   );
-}`
+}`,
+      demoSpec: JSON.stringify({
+        s: { n: 0 },
+        r: ['V', [['T', { $: 'n' }, { fs: 24, fg: '#0af' }], ['H', [['B', '-', { c: ['n', '-'] }], ['B', '+', { c: ['n', '+'] }]], { g: 8 }]], { g: 16, ai: 'c' }]
+      })
     },
     '02-todo-list.html': {
       id: 'todo-list',
@@ -447,7 +453,14 @@ function getExamples(): ExampleData[] {
       ))}
     </div>
   );
-}`
+}`,
+      demoSpec: JSON.stringify({
+        s: { txt: '', items: ['buy milk', 'walk dog'] },
+        r: ['V', [
+          ['H', [['I', '', { v: { $: 'txt' }, x: ['txt', '!'], ph: 'add item...' }], ['B', '+', { c: ['items', '<', { $: 'txt' }] }]], { g: 8 }],
+          { m: 'items', a: ['H', [['T', '$item', { s: { flex: '1' } }], ['B', 'x', { c: ['items', 'X', '$index'] }]], { g: 8, p: '8px 0', s: { borderBottom: '1px solid #333' } }] }
+        ], { g: 12 }]
+      })
     },
     '03-form.html': {
       id: 'form',
@@ -484,7 +497,16 @@ function getExamples(): ExampleData[] {
       <button onClick={submit}>sign up</button>
     </div>
   );
-}`
+}`,
+      demoSpec: JSON.stringify({
+        s: { name: '', email: '', agree: false },
+        r: ['V', [
+          ['V', [['T', 'name', { fs: 12, fg: '#888' }], ['I', '', { ph: 'your name', v: { $: 'name' }, x: ['name', '!'] }]], { g: 4 }],
+          ['V', [['T', 'email', { fs: 12, fg: '#888' }], ['I', '', { type: 'email', ph: 'you@example.com', v: { $: 'email' }, x: ['email', '!'] }]], { g: 4 }],
+          ['H', [['C', '', { ch: { $: 'agree' }, x: ['agree', '~'] }], ['T', 'i agree to terms', { fs: 13 }]], { g: 8, ai: 'c' }],
+          ['B', 'sign up', { bg: '#0af', fg: '#000', p: '10px 20px', r: 4, s: { border: 'none', cursor: 'pointer' } }]
+        ], { g: 16 }]
+      })
     },
     '04-temperature-converter.html': {
       id: 'temperature',
@@ -524,7 +546,15 @@ function getExamples(): ExampleData[] {
       </div>
     </div>
   );
-}`
+}`,
+      demoSpec: JSON.stringify({
+        s: { c: 20 },
+        r: ['H', [
+          ['V', [['T', 'celsius', { fs: 12, fg: '#888' }], ['I', '', { type: 'number', v: { $: 'c' }, x: ['c', '!'] }]], { g: 4 }],
+          ['T', '=', { fs: 24, fg: '#0af' }],
+          ['V', [['T', 'fahrenheit', { fs: 12, fg: '#888' }], ['T', '68', { fs: 16 }]], { g: 4 }]
+        ], { g: 16, ai: 'c' }]
+      })
     },
     '05-data-table.html': {
       id: 'data-table',
@@ -571,7 +601,16 @@ function getExamples(): ExampleData[] {
       </table>
     </div>
   );
-}`
+}`,
+      demoSpec: JSON.stringify({
+        s: { data: [{ name: 'alice', age: 28, role: 'engineer' }, { name: 'bob', age: 34, role: 'designer' }, { name: 'carol', age: 25, role: 'manager' }] },
+        r: ['V', [
+          ['Tb', [
+            ['Th', [['Tr', [['Tc', 'name', { fg: '#0af' }], ['Tc', 'age', { fg: '#0af' }], ['Tc', 'role', { fg: '#0af' }]]]]],
+            ['Tbd', [{ m: 'data', a: ['Tr', [['Td', '$item.name'], ['Td', '$item.age'], ['Td', '$item.role']]] }]]
+          ]]
+        ], { g: 12 }]
+      })
     },
     '06-tabs.html': {
       id: 'tabs',
@@ -598,7 +637,14 @@ function getExamples(): ExampleData[] {
       <div className="panel">{panels[tab]}</div>
     </div>
   );
-}`
+}`,
+      demoSpec: JSON.stringify({
+        s: { tab: 0 },
+        r: ['V', [
+          ['H', [['B', 'profile', { c: ['tab', '!', 0] }], ['B', 'settings', { c: ['tab', '!', 1] }], ['B', 'about', { c: ['tab', '!', 2] }]], { g: 0, s: { borderBottom: '1px solid #333' } }],
+          { '?': 'tab', is: 0, t: ['T', 'user profile content', { p: 16, fg: '#ccc' }], e: { '?': 'tab', is: 1, t: ['T', 'settings panel', { p: 16, fg: '#ccc' }], e: ['T', 'about section', { p: 16, fg: '#ccc' }] } }
+        ], { g: 0 }]
+      })
     },
     '07-modal.html': {
       id: 'modal',
@@ -631,7 +677,16 @@ function getExamples(): ExampleData[] {
       )}
     </div>
   );
-}`
+}`,
+      demoSpec: JSON.stringify({
+        s: { open: false },
+        r: ['V', [
+          ['B', 'open modal', { c: ['open', '~'] }],
+          { '?': 'open', t: ['D', [
+            ['D', [['T', 'confirm action', { fw: 600, fg: '#fff', fs: 14 }], ['T', 'are you sure?', { fg: '#888', fs: 12 }], ['B', 'close', { c: ['open', '~'] }]], { bg: '#1a1a1a', p: 24, r: 8, g: 12, ta: 'c' }]
+          ], { pos: 'abs', t: 0, l: 0, w: '100%', h: '100%', bg: 'rgba(0,0,0,0.7)', s: { display: 'flex', alignItems: 'center', justifyContent: 'center' } }] }
+        ], { pos: 'rel', h: 150 }]
+      })
     },
     '08-shopping-cart.html': {
       id: 'shopping-cart',
@@ -678,7 +733,15 @@ function getExamples(): ExampleData[] {
       </div>
     </div>
   );
-}`
+}`,
+      demoSpec: JSON.stringify({
+        s: { q1: 1, q2: 2 },
+        r: ['V', [
+          ['H', [['T', 'widget', { fg: '#ccc', s: { flex: '1' } }], ['H', [['B', '-', { c: ['q1', '-'] }], ['T', { $: 'q1' }], ['B', '+', { c: ['q1', '+'] }]], { g: 8, ai: 'c' }], ['T', '$25', { fg: '#0af', w: 50, ta: 'rt' }]], { jc: 'sb', ai: 'c', p: '8px 0', s: { borderBottom: '1px solid #333' } }],
+          ['H', [['T', 'gadget', { fg: '#ccc', s: { flex: '1' } }], ['H', [['B', '-', { c: ['q2', '-'] }], ['T', { $: 'q2' }], ['B', '+', { c: ['q2', '+'] }]], { g: 8, ai: 'c' }], ['T', '$35', { fg: '#0af', w: 50, ta: 'rt' }]], { jc: 'sb', ai: 'c', p: '8px 0', s: { borderBottom: '1px solid #333' } }],
+          ['H', [['T', 'total:', { fg: '#888' }], ['T', '$95', { fg: '#4f8', fw: 600 }]], { jc: 'sb', p: '16px 0' }]
+        ], { g: 0 }]
+      })
     },
     '09-wizard.html': {
       id: 'wizard',
@@ -726,7 +789,15 @@ function getExamples(): ExampleData[] {
       </div>
     </div>
   );
-}`
+}`,
+      demoSpec: JSON.stringify({
+        s: { step: 0, name: '', email: '' },
+        r: ['V', [
+          ['H', [['D', '', { w: 40, h: 4, bg: '#0af', r: 2 }], ['D', '', { w: 40, h: 4, bg: '#333', r: 2 }], ['D', '', { w: 40, h: 4, bg: '#333', r: 2 }]], { g: 4 }],
+          { '?': 'step', is: 0, t: ['V', [['T', 'step 1: name', { fw: 500, fg: '#fff' }], ['I', '', { v: { $: 'name' }, x: ['name', '!'], ph: 'your name' }]], { g: 12 }], e: { '?': 'step', is: 1, t: ['V', [['T', 'step 2: email', { fw: 500, fg: '#fff' }], ['I', '', { type: 'email', v: { $: 'email' }, x: ['email', '!'], ph: 'email' }]], { g: 12 }], e: ['V', [['T', 'done!', { fw: 600, fg: '#4f8', fs: 16 }], ['T', 'thanks for signing up', { fg: '#888' }]], { g: 8 }] } },
+          ['H', [['B', 'back', { c: ['step', '-'] }], ['B', 'next', { c: ['step', '+'] }]], { g: 8, jc: 'fe' }]
+        ], { g: 16 }]
+      })
     }
   };
 

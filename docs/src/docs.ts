@@ -201,7 +201,7 @@ render(document.getElementById('app'), {
       [T, t.description, { fg: 'var(--text-secondary)', fs: 13, m: '8px 0' }], Code({ code: t.signature || '' })]))], { g: 16 }],
 
   'examples': () => [V, [Section({ title: 'examples', subtitle: 'interactive demos with token comparisons' }),
-    [V, API_DATA.examples.map((ex: { id: string; name: string; file: string; savings: string; tooeyTokens: number; reactTokens: number; description: string; tooeyCode: string; reactCode: string }) => Card({}, [
+    [V, API_DATA.examples.map((ex: { id: string; name: string; file: string; savings: string; tooeyTokens: number; reactTokens: number; description: string; tooeyCode: string; reactCode: string; demoSpec: string }) => Card({}, [
       [H, [
         [T, ex.name, { fg: 'var(--text)', fw: 600, fs: 16 }],
         [T, ex.savings, { fg: 'var(--success)', fw: 700, ff: 'monospace', fs: 14 }]
@@ -223,8 +223,8 @@ render(document.getElementById('app'), {
       ], { cols: 2, g: 16 }],
       [V, [
         [H, [[T, 'live demo', { fg: 'var(--text-muted)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
-          [L, 'open in new tab ↗', { href: `examples/${ex.file}`, fg: 'var(--accent)', fs: 11, s: { textDecoration: 'none' }, target: '_blank' }]], { jc: 'sb', ai: 'c' }],
-        [D, '', { s: { position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '8px', border: '1px solid var(--border)' }, cls: `demo-frame-wrapper demo-${ex.id}`, 'data-src': `examples/${ex.file}` }]
+          [L, 'full example ↗', { href: `examples/${ex.file}`, fg: 'var(--accent)', fs: 11, s: { textDecoration: 'none' }, target: '_blank' }]], { jc: 'sb', ai: 'c' }],
+        [D, '', { id: `demo-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' }, 'data-spec': ex.demoSpec }]
       ], { g: 8, m: '16px 0 0 0' }]
     ])), { g: 24 }]], { g: 16 }]
 };
@@ -265,16 +265,19 @@ const renderPage = () => {
     el.style.background = navItems[i].page === page ? 'var(--bg-tertiary)' : 'transparent';
     el.style.color = navItems[i].page === page ? 'var(--accent)' : 'var(--text-secondary)';
   });
-  // inject iframes for examples page demos
+  // render live demos using tooey
   if (page === 'examples') {
-    document.querySelectorAll('.demo-frame-wrapper').forEach((wrapper) => {
-      const el = wrapper as HTMLElement;
-      const src = el.getAttribute('data-src');
-      if (src && !el.querySelector('iframe')) {
-        const iframe = document.createElement('iframe');
-        iframe.src = src;
-        iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
-        el.appendChild(iframe);
+    document.querySelectorAll('[data-spec]').forEach((container) => {
+      const el = container as HTMLElement;
+      const specJson = el.getAttribute('data-spec');
+      if (specJson && !el.dataset.rendered) {
+        try {
+          const spec = JSON.parse(specJson);
+          render(el, spec);
+          el.dataset.rendered = 'true';
+        } catch (e) {
+          console.warn('[tooey] failed to render demo:', e);
+        }
       }
     });
   }
