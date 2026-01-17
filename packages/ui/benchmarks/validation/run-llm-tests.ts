@@ -54,7 +54,10 @@ const TEST_PROMPTS = [
 // ============ api ============
 
 interface GeminiResponse {
-  candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+  candidates?: Array<{
+    content?: { parts?: Array<{ text?: string }> };
+    finishReason?: string;
+  }>;
   error?: { message: string };
 }
 
@@ -64,13 +67,27 @@ async function callGemini(prompt: string): Promise<string> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ role: 'user', parts: [{ text: `${TOOEY_PROMPT}\n\n${prompt}\n\nOutput tooey code only, compact, no explanation.` }] }],
-      generationConfig: { temperature: 0.1, maxOutputTokens: 2048 }
+      generationConfig: { temperature: 0.1, maxOutputTokens: 4096 }
     })
   });
 
   const data = await response.json() as GeminiResponse;
   if (data.error) throw new Error(data.error.message);
-  return (data.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
+
+  const candidate = data.candidates?.[0];
+  const text = candidate?.content?.parts?.[0]?.text || '';
+
+  // debug: log empty responses
+  if (!text && process.env.DEBUG) {
+    console.log('\n[DEBUG] empty response:', JSON.stringify(data, null, 2));
+  }
+
+  // check for blocked/filtered responses
+  if (candidate?.finishReason && candidate.finishReason !== 'STOP') {
+    throw new Error(`response blocked: ${candidate.finishReason}`);
+  }
+
+  return text.trim();
 }
 
 function extractCode(response: string): string {
