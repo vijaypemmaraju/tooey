@@ -44,22 +44,12 @@ const applyCssVars = (theme: Theme): void => {
   });
 };
 
-// inject global styles for layout
+// inject global styles for layout (now using Tailwind classes where possible)
 const injectGlobalStyles = () => {
   if (document.getElementById('tooey-docs-styles')) return;
   const style = document.createElement('style');
   style.id = 'tooey-docs-styles';
   style.textContent = `
-    .grid-2 {
-      display: grid !important;
-      grid-template-columns: 1fr 1fr !important;
-      gap: 16px !important;
-    }
-    @media (max-width: 600px) {
-      .grid-2 {
-        grid-template-columns: 1fr !important;
-      }
-    }
     pre[class*="language-"], code[class*="language-"] {
       font-family: 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace !important;
       white-space: pre-wrap !important;
@@ -112,7 +102,7 @@ const renderLogos = () => {
 };
 
 const Card = (_props: Props = {}, children: NodeSpec[] = []): NodeSpec =>
-  [V, children, { bg: 'var(--bg-secondary)', p: 16, r: 8, s: { border: '1px solid var(--border)' } }];
+  [V, children, { cls: 'bg-bg-secondary p-4 rounded-lg border border-border' }];
 
 // store code blocks for later rendering with Prism
 const codeBlocks: Map<string, { code: string; lang: string }> = new Map();
@@ -120,7 +110,7 @@ const codeBlocks: Map<string, { code: string; lang: string }> = new Map();
 const Code = (props: { code: string; lang?: string }): NodeSpec => {
   const id = `code-${Math.random().toString(36).slice(2, 8)}`;
   codeBlocks.set(id, { code: props.code, lang: props.lang || 'javascript' });
-  return [D, '', { id, bg: 'var(--code-bg)', r: 4, ov: 'auto', s: { maxHeight: '300px' } }];
+  return [D, '', { id, cls: 'bg-code-bg rounded overflow-auto max-h-[300px]' }];
 };
 
 // helper to escape HTML
@@ -141,24 +131,24 @@ const renderCodeBlocks = () => {
 
 const Section = (props: { title: string; subtitle?: string }): NodeSpec =>
   [V, [
-    [T, props.title, { fs: 11, fw: 400, fg: 'var(--text-muted)', s: { textTransform: 'uppercase', letterSpacing: '1px', display: 'block' } }],
-    props.subtitle ? [T, props.subtitle, { fs: 13, fg: 'var(--text-secondary)', m: '4px 0 0 0' }] : null
-  ].filter(Boolean) as NodeSpec[], { m: '0 0 16px 0' }];
+    [T, props.title, { cls: 'text-xs font-normal text-text-muted uppercase tracking-wider block' }],
+    props.subtitle ? [T, props.subtitle, { cls: 'text-sm text-text-secondary mt-1' }] : null
+  ].filter(Boolean) as NodeSpec[], { cls: 'mb-4' }];
 
 const ApiDetail = (props: { item: ApiItem; type: string }): NodeSpec => {
   const { item, type } = props;
   const children: NodeSpec[] = [
     [H, [
-      [T, type, { fs: 10, fg: 'var(--accent)', bg: 'var(--bg-tertiary)', p: '2px 8px', r: 4, s: { textTransform: 'uppercase' } }],
-      [T, item.name || item.op || item.fullName || '', { fs: 18, fw: 600, fg: 'var(--text)' }]
-    ], { g: 8, ai: 'c' }],
-    [T, item.description, { fg: 'var(--text-secondary)', m: '8px 0 16px 0', s: { display: 'block' } }]
+      [T, type, { cls: 'text-[10px] text-accent bg-bg-tertiary px-2 py-0.5 rounded uppercase' }],
+      [T, item.name || item.op || item.fullName || '', { cls: 'text-lg font-semibold text-text-primary' }]
+    ], { cls: 'gap-2 items-center flex' }],
+    [T, item.description, { cls: 'text-text-secondary my-2 mb-4 block' }]
   ];
   if (item.signature) children.push(Code({ code: item.signature }));
   if (item.example) children.push([V, [
-    [T, 'example', { fs: 11, fg: 'var(--text-muted)', s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
+    [T, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider' }],
     Code({ code: item.example })
-  ], { g: 8, m: '16px 0' }]);
+  ], { cls: 'gap-2 my-4' }]);
   return Card({}, children);
 };
 
@@ -171,28 +161,28 @@ type Page = 'home' | 'core-functions' | 'instance-methods' | 'components' | 'pro
 const pages: Record<Page, () => NodeSpec> = {
   'home': () => [V, [
     [V, [
-      [H, [[D, [Logo({ size: 48 })], { w: 48, h: 48, s: { filter: 'drop-shadow(0 4px 20px rgba(0,170,255,0.3))' } }],
-        [V, [[T, 'tooey', { fs: 28, fw: 700, fg: 'var(--text)' }], [T, 'token-efficient ui for llm output', { fs: 14, fg: 'var(--text-secondary)' }]], { g: 4 }]], { g: 16, ai: 'c' }],
-      [H, [[T, '~39%', { fg: 'var(--accent)', fw: 600 }], [T, 'fewer tokens', { fg: 'var(--text-secondary)' }],
-        [T, '|', { fg: 'var(--border)', m: '0 8px' }], [T, '~10kb', { fg: 'var(--accent)', fw: 600 }], [T, 'minified', { fg: 'var(--text-secondary)' }],
-        [T, '|', { fg: 'var(--border)', m: '0 8px' }], [T, '0', { fg: 'var(--accent)', fw: 600 }], [T, 'deps', { fg: 'var(--text-secondary)' }]], { g: 6, ai: 'c', flw: 'wrap', m: '24px 0' }]
-    ], { m: '0 0 32px 0' }],
+      [H, [[D, [Logo({ size: 48 })], { cls: 'w-12 h-12 drop-shadow-[0_4px_20px_rgba(0,170,255,0.3)]' }],
+        [V, [[T, 'tooey', { cls: 'text-2xl font-bold text-text-primary' }], [T, 'token-efficient ui for llm output', { cls: 'text-sm text-text-secondary' }]], { cls: 'gap-1' }]], { cls: 'gap-4 items-center flex' }],
+      [H, [[T, '~39%', { cls: 'text-accent font-semibold' }], [T, 'fewer tokens', { cls: 'text-text-secondary' }],
+        [T, '|', { cls: 'text-border mx-2' }], [T, '~10kb', { cls: 'text-accent font-semibold' }], [T, 'minified', { cls: 'text-text-secondary' }],
+        [T, '|', { cls: 'text-border mx-2' }], [T, '0', { cls: 'text-accent font-semibold' }], [T, 'deps', { cls: 'text-text-secondary' }]], { cls: 'gap-1.5 items-center flex-wrap flex my-6' }]
+    ], { cls: 'mb-8' }],
     Card({}, [Section({ title: 'quick start' }), Code({ code: `import { render, V, T, B } from '@tooey/ui';
 render(document.getElementById('app'), {
   s: { count: 0 },
   r: [V, [[T, { $: 'count' }], [B, '+', { c: 'count+' }]], { g: 8 }]
-});` }), [H, [[B, 'examples', { c: () => navigateTo('examples'), bg: 'var(--accent)', fg: '#fff', p: '8px 16px', r: 4, s: { border: 'none', cursor: 'pointer' } }],
-      [L, 'github', { href: 'https://github.com/vijaypemmaraju/tooey', fg: 'var(--text-secondary)', p: '8px 16px', s: { textDecoration: 'none' } }]], { g: 8, m: '16px 0 0 0' }]]),
+});` }), [H, [[B, 'examples', { c: () => navigateTo('examples'), cls: 'bg-accent text-white px-4 py-2 rounded border-none cursor-pointer hover:bg-accent-hover transition-colors' }],
+      [L, 'github', { href: 'https://github.com/vijaypemmaraju/tooey', cls: 'text-text-secondary px-4 py-2 no-underline hover:text-accent transition-colors' }]], { cls: 'gap-2 flex mt-4' }]]),
     [G, [
-      Card({}, [[T, 'signals & reactivity', { fw: 600, fg: 'var(--text)', fs: 14, s: { display: 'block', marginBottom: '8px' } }], [T, 'fine-grained reactivity with signals, computed, and effects', { fg: 'var(--text-secondary)', fs: 13 }]]),
-      Card({}, [[T, 'function components', { fw: 600, fg: 'var(--text)', fs: 14, s: { display: 'block', marginBottom: '8px' } }], [T, 'create reusable components as simple functions', { fg: 'var(--text-secondary)', fs: 13 }]]),
-      Card({}, [[T, 'theming', { fw: 600, fg: 'var(--text)', fs: 14, s: { display: 'block', marginBottom: '8px' } }], [T, 'token-based theming with $token syntax', { fg: 'var(--text-secondary)', fs: 13 }]]),
-      Card({}, [[T, 'plugins', { fw: 600, fg: 'var(--text)', fs: 14, s: { display: 'block', marginBottom: '8px' } }], [T, 'extend functionality with lifecycle hooks', { fg: 'var(--text-secondary)', fs: 13 }]])
-    ], { cols: 2, g: 16, m: '24px 0' }],
+      Card({}, [[T, 'signals & reactivity', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [T, 'fine-grained reactivity with signals, computed, and effects', { cls: 'text-text-secondary text-sm' }]]),
+      Card({}, [[T, 'function components', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [T, 'create reusable components as simple functions', { cls: 'text-text-secondary text-sm' }]]),
+      Card({}, [[T, 'theming', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [T, 'token-based theming with $token syntax', { cls: 'text-text-secondary text-sm' }]]),
+      Card({}, [[T, 'plugins', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [T, 'extend functionality with lifecycle hooks', { cls: 'text-text-secondary text-sm' }]])
+    ], { cols: 2, g: 16, cls: 'my-6' }],
     Card({}, [Section({ title: 'components' }), [G, ['layout', 'text', 'form', 'table', 'list', 'media'].map(cat =>
-      [V, [[T, cat, { fg: 'var(--accent)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
-        [T, API_DATA.components.filter(c => c.category === cat).map(c => c.name).join(' '), { fg: 'var(--text)', ff: 'monospace' }]], { g: 4 }]), { cols: 3, g: 16 }]])
-  ], { g: 24 }],
+      [V, [[T, cat, { cls: 'text-accent text-xs uppercase tracking-wider' }],
+        [T, API_DATA.components.filter(c => c.category === cat).map(c => c.name).join(' '), { cls: 'text-text-primary font-mono' }]], { cls: 'gap-1' }]), { cols: 3, g: 16 }]])
+  ], { cls: 'space-y-6' }],
 
   'core-functions': () => [V, [Section({ title: 'core functions', subtitle: 'essential functions for rendering and state management' }),
     ...API_DATA.coreFunctions.map(fn => ApiDetail({ item: fn, type: 'function' }))], { g: 16 }],
@@ -202,97 +192,97 @@ render(document.getElementById('app'), {
 
   'components': () => [V, [Section({ title: 'components', subtitle: '22 built-in components with short names' }),
     ...['layout', 'text', 'form', 'table', 'list', 'media'].map(cat => Card({}, [
-      [T, cat, { fs: 13, fw: 600, fg: 'var(--accent)', s: { textTransform: 'uppercase', marginBottom: '12px', display: 'block' } }],
+      [T, cat, { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
       [G, API_DATA.components.filter(c => c.category === cat).map(c => [V, [
-        [H, [[T, c.name, { fg: 'var(--success)', fw: 700, ff: 'monospace', fs: 16 }], [T, `(${c.fullName})`, { fg: 'var(--text-muted)', fs: 12 }]], { g: 6, ai: 'c' }],
-        [T, c.description, { fg: 'var(--text-secondary)', fs: 12 }], [T, c.element, { fg: 'var(--text-muted)', fs: 11, ff: 'monospace' }]
-      ], { g: 4, p: 8, bg: 'var(--bg-tertiary)', r: 4 }]), { cols: 2, g: 8 }]
-    ]))], { g: 16 }],
+        [H, [[T, c.name, { cls: 'text-success font-bold font-mono text-base' }], [T, `(${c.fullName})`, { cls: 'text-text-muted text-xs' }]], { cls: 'gap-1.5 items-center flex' }],
+        [T, c.description, { cls: 'text-text-secondary text-xs' }], [T, c.element, { cls: 'text-text-muted text-xs font-mono' }]
+      ], { cls: 'gap-1 p-2 bg-bg-tertiary rounded' }]), { cols: 2, g: 8 }]
+    ]))], { cls: 'space-y-4' }],
 
   'props': () => [V, [Section({ title: 'props', subtitle: 'all style and element properties' }),
     ...['spacing', 'sizing', 'colors', 'borders', 'positioning', 'typography', 'layout', 'misc', 'element'].map(cat => Card({}, [
-      [T, cat, { fs: 13, fw: 600, fg: 'var(--accent)', s: { textTransform: 'uppercase', marginBottom: '12px', display: 'block' } }],
+      [T, cat, { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
       [V, API_DATA.props.filter(p => p.category === cat).map(p => [H, [
-        [T, p.name, { fg: 'var(--success)', fw: 600, ff: 'monospace', fs: 13, w: 40 }],
-        [T, p.fullName || '', { fg: 'var(--text)', fs: 13, w: 120 }],
-        [T, p.description, { fg: 'var(--text-secondary)', fs: 12, s: { flex: '1' } }],
-        [T, p.example || '', { fg: 'var(--text-muted)', ff: 'monospace', fs: 11 }]
-      ], { g: 8, ai: 'c', p: '6px 0', s: { borderBottom: '1px solid var(--border)' } }]), { g: 0 }]
-    ]))], { g: 16 }],
+        [T, p.name, { cls: 'text-success font-semibold font-mono text-sm w-10' }],
+        [T, p.fullName || '', { cls: 'text-text-primary text-sm w-[120px]' }],
+        [T, p.description, { cls: 'text-text-secondary text-xs flex-1' }],
+        [T, p.example || '', { cls: 'text-text-muted font-mono text-xs' }]
+      ], { cls: 'gap-2 items-center flex py-1.5 border-b border-border' }]), { cls: 'space-y-0' }]
+    ]))], { cls: 'space-y-4' }],
 
   'events': () => [V, [Section({ title: 'events & operations', subtitle: 'event handlers and state operations' }),
-    Card({}, [[T, 'events', { fs: 13, fw: 600, fg: 'var(--accent)', s: { textTransform: 'uppercase', marginBottom: '12px', display: 'block' } }],
-      [V, API_DATA.events.map(e => [H, [[T, e.name, { fg: 'var(--success)', fw: 600, ff: 'monospace', fs: 14, w: 40 }],
-        [T, e.fullName || '', { fg: 'var(--text)', fs: 13, w: 100 }], [T, e.description, { fg: 'var(--text-secondary)', fs: 12, s: { flex: '1' } }],
-        [T, e.example || '', { fg: 'var(--text-muted)', ff: 'monospace', fs: 11 }]], { g: 8, ai: 'c', p: '8px 0', s: { borderBottom: '1px solid var(--border)' } }]), { g: 0 }]]),
-    Card({}, [[T, 'state operations', { fs: 13, fw: 600, fg: 'var(--accent)', s: { textTransform: 'uppercase', marginBottom: '12px', display: 'block' } }],
-      [V, API_DATA.stateOps.map(op => [H, [[T, op.op || '', { fg: 'var(--warning)', fw: 700, ff: 'monospace', fs: 16, w: 30, ta: 'center' }],
-        [T, op.name, { fg: 'var(--text)', fs: 13, w: 80 }], [T, op.description, { fg: 'var(--text-secondary)', fs: 12, s: { flex: '1' } }],
-        [T, op.example || '', { fg: 'var(--text-muted)', ff: 'monospace', fs: 11 }]], { g: 8, ai: 'c', p: '8px 0', s: { borderBottom: '1px solid var(--border)' } }]), { g: 0 }]])
-  ], { g: 16 }],
+    Card({}, [[T, 'events', { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
+      [V, API_DATA.events.map(e => [H, [[T, e.name, { cls: 'text-success font-semibold font-mono text-sm w-10' }],
+        [T, e.fullName || '', { cls: 'text-text-primary text-sm w-[100px]' }], [T, e.description, { cls: 'text-text-secondary text-xs flex-1' }],
+        [T, e.example || '', { cls: 'text-text-muted font-mono text-xs' }]], { cls: 'gap-2 items-center flex py-2 border-b border-border' }]), { cls: 'space-y-0' }]]),
+    Card({}, [[T, 'state operations', { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
+      [V, API_DATA.stateOps.map(op => [H, [[T, op.op || '', { cls: 'text-warning font-bold font-mono text-base w-[30px] text-center' }],
+        [T, op.name, { cls: 'text-text-primary text-sm w-20' }], [T, op.description, { cls: 'text-text-secondary text-xs flex-1' }],
+        [T, op.example || '', { cls: 'text-text-muted font-mono text-xs' }]], { cls: 'gap-2 items-center flex py-2 border-b border-border' }]), { cls: 'space-y-0' }]])
+  ], { cls: 'space-y-4' }],
 
   'control-flow': () => [V, [Section({ title: 'control flow', subtitle: 'conditional rendering and list iteration' }),
-    ...API_DATA.controlFlow.map(cf => Card({}, [[T, cf.name, { fs: 14, fw: 600, fg: 'var(--text)', s: { display: 'block', marginBottom: '8px' } }],
-      [T, cf.description, { fg: 'var(--text-secondary)', fs: 13, s: { display: 'block', marginBottom: '12px' } }],
-      Code({ code: cf.example || '' })]))], { g: 16 }],
+    ...API_DATA.controlFlow.map(cf => Card({}, [[T, cf.name, { cls: 'text-sm font-semibold text-text-primary block mb-2' }],
+      [T, cf.description, { cls: 'text-text-secondary text-sm block mb-3' }],
+      Code({ code: cf.example || '' })]))], { cls: 'space-y-4' }],
 
   'theming': () => [V, [Section({ title: 'theming', subtitle: 'token-based theming system' }),
-    Card({}, [[T, API_DATA.theming.description, { fg: 'var(--text-secondary)', s: { display: 'block', marginBottom: '16px' } }],
-      [T, 'interface', { fs: 11, fg: 'var(--text-muted)', s: { textTransform: 'uppercase', letterSpacing: '1px' } }], Code({ code: API_DATA.theming.interface })]),
-    Card({}, [[T, 'example', { fs: 11, fg: 'var(--text-muted)', s: { textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', display: 'block' } }],
-      Code({ code: API_DATA.theming.example })])], { g: 16 }],
+    Card({}, [[T, API_DATA.theming.description, { cls: 'text-text-secondary block mb-4' }],
+      [T, 'interface', { cls: 'text-xs text-text-muted uppercase tracking-wider' }], Code({ code: API_DATA.theming.interface })]),
+    Card({}, [[T, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }],
+      Code({ code: API_DATA.theming.example })])], { cls: 'space-y-4' }],
 
   'plugins': () => [V, [Section({ title: 'plugins', subtitle: 'extend with lifecycle hooks' }),
-    Card({}, [[T, API_DATA.plugins.description, { fg: 'var(--text-secondary)', s: { display: 'block', marginBottom: '16px' } }], Code({ code: API_DATA.plugins.interface })]),
-    Card({}, [[T, 'hooks', { fs: 13, fw: 600, fg: 'var(--accent)', s: { textTransform: 'uppercase', marginBottom: '12px', display: 'block' } }],
-      [V, API_DATA.plugins.hooks.map(h => [H, [[T, h.name, { fg: 'var(--success)', fw: 600, ff: 'monospace', fs: 13, w: 120 }],
-        [T, h.description, { fg: 'var(--text-secondary)', fs: 12, s: { flex: '1' } }]], { g: 8, ai: 'c', p: '8px 0', s: { borderBottom: '1px solid var(--border)' } }]), { g: 0 }]]),
-    Card({}, [[T, 'example', { fs: 11, fg: 'var(--text-muted)', s: { textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', display: 'block' } }], Code({ code: API_DATA.plugins.example })])
-  ], { g: 16 }],
+    Card({}, [[T, API_DATA.plugins.description, { cls: 'text-text-secondary block mb-4' }], Code({ code: API_DATA.plugins.interface })]),
+    Card({}, [[T, 'hooks', { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
+      [V, API_DATA.plugins.hooks.map(h => [H, [[T, h.name, { cls: 'text-success font-semibold font-mono text-sm w-[120px]' }],
+        [T, h.description, { cls: 'text-text-secondary text-xs flex-1' }]], { cls: 'gap-2 items-center flex py-2 border-b border-border' }]), { cls: 'space-y-0' }]]),
+    Card({}, [[T, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }], Code({ code: API_DATA.plugins.example })])
+  ], { cls: 'space-y-4' }],
 
   'function-components': () => [V, [Section({ title: 'function components', subtitle: 'create reusable components' }),
-    Card({}, [[T, API_DATA.functionComponents.description, { fg: 'var(--text-secondary)', s: { display: 'block', marginBottom: '16px' } }], Code({ code: API_DATA.functionComponents.signature })]),
-    Card({}, [[T, 'example', { fs: 11, fg: 'var(--text-muted)', s: { textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', display: 'block' } }], Code({ code: API_DATA.functionComponents.example })])], { g: 16 }],
+    Card({}, [[T, API_DATA.functionComponents.description, { cls: 'text-text-secondary block mb-4' }], Code({ code: API_DATA.functionComponents.signature })]),
+    Card({}, [[T, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }], Code({ code: API_DATA.functionComponents.example })])], { cls: 'space-y-4' }],
 
   'error-boundaries': () => [V, [Section({ title: 'error boundaries', subtitle: 'catch render errors gracefully' }),
-    Card({}, [[T, API_DATA.errorBoundaries.description, { fg: 'var(--text-secondary)', s: { display: 'block', marginBottom: '16px' } }], Code({ code: API_DATA.errorBoundaries.interface })]),
-    Card({}, [[T, 'example', { fs: 11, fg: 'var(--text-muted)', s: { textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', display: 'block' } }], Code({ code: API_DATA.errorBoundaries.example })])], { g: 16 }],
+    Card({}, [[T, API_DATA.errorBoundaries.description, { cls: 'text-text-secondary block mb-4' }], Code({ code: API_DATA.errorBoundaries.interface })]),
+    Card({}, [[T, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }], Code({ code: API_DATA.errorBoundaries.example })])], { cls: 'space-y-4' }],
 
   'types': () => [V, [Section({ title: 'types', subtitle: 'typescript type definitions' }),
-    ...API_DATA.types.map(t => Card({}, [[T, t.name, { fg: 'var(--success)', fw: 600, ff: 'monospace', fs: 14 }],
-      [T, t.description, { fg: 'var(--text-secondary)', fs: 13, m: '8px 0' }], Code({ code: t.signature || '' })]))], { g: 16 }],
+    ...API_DATA.types.map(t => Card({}, [[T, t.name, { cls: 'text-success font-semibold font-mono text-sm' }],
+      [T, t.description, { cls: 'text-text-secondary text-sm my-2' }], Code({ code: t.signature || '' })]))], { cls: 'space-y-4' }],
 
   'examples': () => [V, [Section({ title: 'examples', subtitle: 'interactive demos with token comparisons' }),
     [V, API_DATA.examples.map((ex: { id: string; name: string; file: string; savings: string; tooeyTokens: number; reactTokens: number; description: string; tooeyCode: string; reactCode: string; demoSpec: string; reactDemoCode: string }) => Card({}, [
       [H, [
-        [T, ex.name, { fg: 'var(--text)', fw: 600, fs: 16 }],
-        [T, ex.savings, { fg: 'var(--success)', fw: 700, ff: 'monospace', fs: 14 }]
-      ], { jc: 'sb', ai: 'c' }],
-      [T, ex.description, { fg: 'var(--text-secondary)', fs: 13, m: '8px 0 16px 0' }],
+        [T, ex.name, { cls: 'text-text-primary font-semibold text-base' }],
+        [T, ex.savings, { cls: 'text-success font-bold font-mono text-sm' }]
+      ], { cls: 'justify-between items-center flex' }],
+      [T, ex.description, { cls: 'text-text-secondary text-sm my-2 mb-4' }],
       [D, [
         [V, [
-          [H, [[T, 'tooey', { fg: 'var(--accent)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
-            [T, `(${ex.tooeyTokens} tokens)`, { fg: 'var(--text-muted)', fs: 11 }]], { g: 8, ai: 'c' }],
+          [H, [[T, 'tooey', { cls: 'text-accent text-xs uppercase tracking-wider' }],
+            [T, `(${ex.tooeyTokens} tokens)`, { cls: 'text-text-muted text-xs' }]], { cls: 'gap-2 items-center flex' }],
           Code({ code: ex.tooeyCode, lang: 'javascript' })
-        ], { g: 8 }],
+        ], { cls: 'gap-2' }],
         [V, [
-          [H, [[T, 'react', { fg: 'var(--warning)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
-            [T, `(${ex.reactTokens} tokens)`, { fg: 'var(--text-muted)', fs: 11 }]], { g: 8, ai: 'c' }],
+          [H, [[T, 'react', { cls: 'text-warning text-xs uppercase tracking-wider' }],
+            [T, `(${ex.reactTokens} tokens)`, { cls: 'text-text-muted text-xs' }]], { cls: 'gap-2 items-center flex' }],
           Code({ code: ex.reactCode, lang: 'jsx' })
-        ], { g: 8 }]
-      ], { cls: 'grid-2' }],
-      [T, 'live demos', { fg: 'var(--text-muted)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' }, m: '16px 0 8px 0' }],
+        ], { cls: 'gap-2' }]
+      ], { cls: 'grid grid-cols-1 sm:grid-cols-2 gap-4' }],
+      [T, 'live demos', { cls: 'text-text-muted text-xs uppercase tracking-wider mt-4 mb-2' }],
       [D, [
         [V, [
-          [T, 'tooey', { fg: 'var(--accent)', fs: 10, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
-          [D, '', { id: `demo-tooey-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' } }]
-        ], { g: 8 }],
+          [T, 'tooey', { cls: 'text-accent text-[10px] uppercase tracking-wider' }],
+          [D, '', { id: `demo-tooey-${ex.id}`, cls: 'bg-bg-tertiary p-4 rounded-lg border border-border min-h-[100px]' }]
+        ], { cls: 'gap-2' }],
         [V, [
-          [T, 'react', { fg: 'var(--warning)', fs: 10, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
-          [D, '', { id: `demo-react-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' } }]
-        ], { g: 8 }]
-      ], { cls: 'grid-2' }]
-    ])), { g: 24 }]], { g: 16 }]
+          [T, 'react', { cls: 'text-warning text-[10px] uppercase tracking-wider' }],
+          [D, '', { id: `demo-react-${ex.id}`, cls: 'bg-bg-tertiary p-4 rounded-lg border border-border min-h-[100px]' }]
+        ], { cls: 'gap-2' }]
+      ], { cls: 'grid grid-cols-1 sm:grid-cols-2 gap-4' }]
+    ])), { cls: 'space-y-6' }]], { cls: 'space-y-4' }]
 };
 
 // store demo data for lookup by ID
@@ -514,12 +504,11 @@ const renderSearchResults = () => {
   if (!results.length) { searchContainer.innerHTML = ''; return; }
   searchContainer.innerHTML = '';
   render(searchContainer, { r: [V, results.slice(0, 10).map(r => [D, [
-    [H, [[T, r.type, { fs: 9, fg: 'var(--accent)', bg: 'var(--bg-tertiary)', p: '2px 6px', r: 2, s: { textTransform: 'uppercase' } }],
-      [T, r.name, { fg: 'var(--text)', fw: 500, fs: 13 }]], { g: 6, ai: 'c' }],
-    [T, r.description, { fg: 'var(--text-secondary)', fs: 11 }]
-  ], { p: 8, r: 4, cur: 'pointer', cls: 'search-result' }]), {
-    pos: 'abs', t: 42, l: 0, rt: 0, bg: 'var(--bg-secondary)', r: 4, p: 8, z: 100, mh: 300, ov: 'auto',
-    s: { border: '1px solid var(--border)', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }
+    [H, [[T, r.type, { cls: 'text-[9px] text-accent bg-bg-tertiary px-1.5 py-0.5 rounded uppercase' }],
+      [T, r.name, { cls: 'text-text-primary font-medium text-sm' }]], { cls: 'gap-1.5 items-center flex' }],
+    [T, r.description, { cls: 'text-text-secondary text-xs' }]
+  ], { cls: 'search-result p-2 rounded cursor-pointer hover:bg-bg-tertiary transition-colors' }]), {
+    cls: 'absolute top-[42px] left-0 right-0 bg-bg-secondary rounded p-2 z-[100] max-h-[300px] overflow-auto border border-border shadow-lg'
   }] });
 };
 
@@ -538,22 +527,22 @@ const init = () => {
     s: {},
     r: [H, [
       // mobile menu button (hidden on desktop)
-      [B, '', { id: 'menu-btn', pos: 'fix', t: 16, l: 16, z: 1001, bg: 'var(--bg-secondary)', p: 10, r: 8, s: { border: '1px solid var(--border)', display: 'none' } }],
+      [B, '', { id: 'menu-btn', cls: 'fixed top-4 left-4 z-[1001] bg-bg-secondary p-2.5 rounded-lg border border-border hidden' }],
       // sidebar overlay (for mobile)
-      [D, '', { id: 'sidebar-overlay', pos: 'fix', t: 0, l: 0, w: '100vw', h: '100vh', z: 999, bg: 'rgba(0,0,0,0.5)', s: { display: 'none' } }],
+      [D, '', { id: 'sidebar-overlay', cls: 'fixed inset-0 z-[999] bg-black/50 hidden' }],
       // sidebar
       [V, [
-        [H, [Logo({ size: 32 }), [T, 'tooey', { fs: 18, fw: 700, fg: 'var(--text)' }]], { g: 8, ai: 'c', m: '0 0 24px 0' }],
-        [V, [[I, '', { ph: 'search...', bg: 'var(--bg-tertiary)', fg: 'var(--text)', p: '8px 12px', r: 4, w: '100%', s: { border: '1px solid var(--border)', outline: 'none' }, id: 'search' }]], { pos: 'rel', m: '0 0 16px 0' }],
+        [H, [Logo({ size: 32 }), [T, 'tooey', { cls: 'text-lg font-bold text-text-primary' }]], { cls: 'gap-2 items-center flex mb-6' }],
+        [V, [[I, '', { ph: 'search...', id: 'search', cls: 'bg-bg-tertiary text-text-primary px-3 py-2 rounded w-full border border-border outline-none focus:border-accent' }]], { cls: 'relative mb-4' }],
         [D, '', { id: 'search-results' }],
-        [V, navItems.map(item => [B, item.label, { bg: 'transparent', fg: 'var(--text-secondary)', p: '8px 12px', r: 4, w: '100%', ta: 'left', fs: 13, cur: 'pointer', s: { border: 'none' }, cls: 'nav-btn' }]), { g: 2 }],
-        [H, [[B, '', { bg: 'transparent', fg: 'var(--text-secondary)', p: 8, r: 4, cur: 'pointer', s: { border: 'none' }, id: 'theme-btn' }],
-          [L, '', { href: 'https://github.com/vijaypemmaraju/tooey', fg: 'var(--text-secondary)', p: 8, id: 'github-link' }]], { g: 8, m: 'auto 0 0 0' }]
-      ], { w: 240, h: '100vh', p: 24, bg: 'var(--bg-secondary)', pos: 'fix', t: 0, l: 0, z: 1000, s: { borderRight: '1px solid var(--border)', overflowY: 'auto', display: 'flex', flexDirection: 'column', transition: 'transform 0.3s ease' }, id: 'sidebar' }],
+        [V, navItems.map(item => [B, item.label, { cls: 'nav-btn bg-transparent text-text-secondary px-3 py-2 rounded w-full text-left text-sm cursor-pointer border-none hover:bg-bg-tertiary hover:text-accent transition-colors' }]), { cls: 'gap-0.5' }],
+        [H, [[B, '', { id: 'theme-btn', cls: 'bg-transparent text-text-secondary p-2 rounded cursor-pointer border-none hover:text-accent transition-colors' }],
+          [L, '', { href: 'https://github.com/vijaypemmaraju/tooey', id: 'github-link', cls: 'text-text-secondary p-2 hover:text-accent transition-colors' }]], { cls: 'gap-2 mt-auto' }]
+      ], { id: 'sidebar', cls: 'w-60 h-screen p-6 bg-bg-secondary fixed top-0 left-0 z-[1000] border-r border-border overflow-y-auto flex flex-col transition-transform duration-300' }],
       // content
-      [D, [{ boundary: true, child: [D, '', { id: 'page-content' }], fallback: Card({}, [[T, 'error', { fg: 'var(--error)', fw: 600 }]]), onError: (e) => console.error(e) }],
-        { m: '0 0 0 240px', p: 32, mw: 900, s: { minHeight: '100vh' }, id: 'main-content' }]
-    ], { w: '100%' }]
+      [D, [{ boundary: true, child: [D, '', { id: 'page-content' }], fallback: Card({}, [[T, 'error', { cls: 'text-error font-semibold' }]]), onError: (e) => console.error(e) }],
+        { id: 'main-content', cls: 'ml-60 p-8 max-w-[900px] min-h-screen' }]
+    ], { cls: 'w-full' }]
   };
 
   render(container, spec, { plugins: [loggerPlugin] });

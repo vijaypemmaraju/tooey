@@ -4,139 +4,129 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>tooey</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: ui-monospace, monospace; background: #0a0a0f; color: #888; min-height: 100vh; padding: 32px; }
-    @media (min-width: 600px) { body { padding: 48px; } }
-    a { color: #0af; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    header { margin-bottom: 48px; }
-    .logo { width: 32px; height: 32px; margin-bottom: 16px; display: block; }
-    h1 { font-size: 16px; font-weight: 400; color: #fff; margin-bottom: 4px; }
-    .tag { font-size: 12px; margin-bottom: 12px; }
-    .github { font-size: 12px; display: inline-flex; align-items: center; gap: 6px; }
-
-    section { margin-bottom: 40px; }
-    section h2 { font-size: 11px; font-weight: 400; color: #666; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
-
-    .stats { display: flex; flex-wrap: wrap; gap: 16px 32px; }
-    .stat { font-size: 13px; }
-    .stat span { color: #0af; font-weight: 500; }
-
-    .examples { display: flex; flex-direction: column; gap: 12px; }
-    .example { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; align-items: baseline; }
-    .example .name { color: #fff; min-width: 100px; }
-    .example .pct { color: #4f8; min-width: 50px; }
-    .example .desc { color: #666; }
-
-    .code { margin-bottom: 40px; }
-    .code h2 { font-size: 11px; font-weight: 400; color: #666; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
-    pre { font-size: 10px; color: #4f8; background: #111; padding: 16px; overflow-x: auto; border-radius: 4px; white-space: pre-wrap; word-break: break-word; }
-
-    .ref { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
-    .ref-group { font-size: 12px; line-height: 1.8; }
-    .ref-group .label { color: #0af; display: block; margin-bottom: 4px; }
-    .ref-group .items { color: #666; }
-  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: '#0af',
+            success: '#4f8',
+            bg: {
+              primary: '#0a0a0f',
+              secondary: '#111118',
+            },
+            text: {
+              primary: '#fff',
+              secondary: '#888',
+              muted: '#666',
+            },
+          },
+          fontFamily: {
+            mono: ['ui-monospace', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
 </head>
-<body>
-  <header>
-    <svg class="logo" viewBox="0 0 64 64">
+<body class="font-mono bg-bg-primary text-text-secondary min-h-screen p-8 md:p-12">
+  <header class="mb-12">
+    <svg class="w-8 h-8 mb-4 block" viewBox="0 0 64 64">
       <rect x="24" y="8" width="16" height="48" rx="8" fill="#0af"/>
       <rect x="12" y="20" width="40" height="14" rx="7" fill="#0af" transform="rotate(-20 32 27)"/>
     </svg>
-    <h1>tooey</h1>
-    <p class="tag">token-efficient ui for llm output</p>
-    <a href="https://github.com/vijaypemmaraju/tooey" class="github">
+    <h1 class="text-base font-normal text-text-primary mb-1">tooey</h1>
+    <p class="text-xs mb-3">token-efficient ui for llm output</p>
+    <a href="https://github.com/vijaypemmaraju/tooey" class="text-xs text-accent no-underline hover:underline inline-flex items-center gap-1.5">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
       GitHub
     </a>
   </header>
 
-  <section>
-    <h2>Stats</h2>
-    <div class="stats">
-      <div class="stat"><span>~36%</span> fewer tokens than React</div>
-      <div class="stat"><span>~9kb</span> minified</div>
-      <div class="stat"><span>0</span> dependencies</div>
+  <section class="mb-10">
+    <h2 class="text-xs font-normal text-text-muted mb-4 uppercase tracking-wider">Stats</h2>
+    <div class="flex flex-wrap gap-4 md:gap-8">
+      <div class="text-sm"><span class="text-accent font-medium">~36%</span> fewer tokens than React</div>
+      <div class="text-sm"><span class="text-accent font-medium">~9kb</span> minified</div>
+      <div class="text-sm"><span class="text-accent font-medium">0</span> dependencies</div>
     </div>
   </section>
 
-  <section>
-    <h2>Examples</h2>
-    <div class="examples">
-      <div class="example">
-        <a href="01-counter.html" class="name">counter</a>
-        <span class="pct">-45%</span>
-        <span class="desc">increment / decrement</span>
+  <section class="mb-10">
+    <h2 class="text-xs font-normal text-text-muted mb-4 uppercase tracking-wider">Examples</h2>
+    <div class="flex flex-col gap-3">
+      <div class="flex flex-wrap gap-2 md:gap-4 text-sm items-baseline">
+        <span class="text-text-primary min-w-[100px]">counter</span>
+        <span class="text-success min-w-[50px]">-45%</span>
+        <span class="text-text-muted">increment / decrement</span>
       </div>
-      <div class="example">
-        <a href="02-todo-list.html" class="name">todo list</a>
-        <span class="pct">-55%</span>
-        <span class="desc">add / remove items</span>
+      <div class="flex flex-wrap gap-2 md:gap-4 text-sm items-baseline">
+        <span class="text-text-primary min-w-[100px]">todo list</span>
+        <span class="text-success min-w-[50px]">-55%</span>
+        <span class="text-text-muted">add / remove items</span>
       </div>
-      <div class="example">
-        <a href="03-form.html" class="name">form</a>
-        <span class="pct">-7%</span>
-        <span class="desc">inputs, validation</span>
+      <div class="flex flex-wrap gap-2 md:gap-4 text-sm items-baseline">
+        <span class="text-text-primary min-w-[100px]">form</span>
+        <span class="text-success min-w-[50px]">-7%</span>
+        <span class="text-text-muted">inputs, validation</span>
       </div>
-      <div class="example">
-        <a href="04-temperature-converter.html" class="name">converter</a>
-        <span class="pct">-59%</span>
-        <span class="desc">bidirectional binding</span>
+      <div class="flex flex-wrap gap-2 md:gap-4 text-sm items-baseline">
+        <span class="text-text-primary min-w-[100px]">converter</span>
+        <span class="text-success min-w-[50px]">-59%</span>
+        <span class="text-text-muted">bidirectional binding</span>
       </div>
-      <div class="example">
-        <a href="05-data-table.html" class="name">data table</a>
-        <span class="pct">-52%</span>
-        <span class="desc">sort, filter</span>
+      <div class="flex flex-wrap gap-2 md:gap-4 text-sm items-baseline">
+        <span class="text-text-primary min-w-[100px]">data table</span>
+        <span class="text-success min-w-[50px]">-52%</span>
+        <span class="text-text-muted">sort, filter</span>
       </div>
-      <div class="example">
-        <a href="06-tabs.html" class="name">tabs</a>
-        <span class="pct">-16%</span>
-        <span class="desc">conditional panels</span>
+      <div class="flex flex-wrap gap-2 md:gap-4 text-sm items-baseline">
+        <span class="text-text-primary min-w-[100px]">tabs</span>
+        <span class="text-success min-w-[50px]">-16%</span>
+        <span class="text-text-muted">conditional panels</span>
       </div>
-      <div class="example">
-        <a href="07-modal.html" class="name">modal</a>
-        <span class="pct">-24%</span>
-        <span class="desc">dialog, overlay</span>
+      <div class="flex flex-wrap gap-2 md:gap-4 text-sm items-baseline">
+        <span class="text-text-primary min-w-[100px]">modal</span>
+        <span class="text-success min-w-[50px]">-24%</span>
+        <span class="text-text-muted">dialog, overlay</span>
       </div>
-      <div class="example">
-        <a href="08-shopping-cart.html" class="name">cart</a>
-        <span class="pct">-29%</span>
-        <span class="desc">quantity, totals</span>
+      <div class="flex flex-wrap gap-2 md:gap-4 text-sm items-baseline">
+        <span class="text-text-primary min-w-[100px]">cart</span>
+        <span class="text-success min-w-[50px]">-29%</span>
+        <span class="text-text-muted">quantity, totals</span>
       </div>
-      <div class="example">
-        <a href="09-wizard.html" class="name">wizard</a>
-        <span class="pct">-26%</span>
-        <span class="desc">multi-step form</span>
+      <div class="flex flex-wrap gap-2 md:gap-4 text-sm items-baseline">
+        <span class="text-text-primary min-w-[100px]">wizard</span>
+        <span class="text-success min-w-[50px]">-26%</span>
+        <span class="text-text-muted">multi-step form</span>
       </div>
     </div>
   </section>
 
-  <div class="code">
-    <h2>Quick Start</h2>
-    <pre>{s:{n:0},r:[V,[[T,{$:"n"}],[B,"+",{c:["n","+"]}]],{g:8}]}</pre>
+  <div class="mb-10">
+    <h2 class="text-xs font-normal text-text-muted mb-3 uppercase tracking-wider">Quick Start</h2>
+    <pre class="text-[10px] text-success bg-bg-secondary p-4 overflow-x-auto rounded whitespace-pre-wrap break-words">{s:{n:0},r:[V,[[T,{$:"n"}],[B,"+",{c:["n","+"]}]],{g:8}]}</pre>
   </div>
 
   <section>
-    <h2>Reference</h2>
-    <div class="ref">
-      <div class="ref-group">
-        <span class="label">components</span>
-        <span class="items">V H D G &middot; T B &middot; I Ta S C R &middot; Tb Th Tbd Tr Td Tc &middot; Ul Ol Li &middot; M L Sv</span>
+    <h2 class="text-xs font-normal text-text-muted mb-4 uppercase tracking-wider">Reference</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="text-xs leading-relaxed">
+        <span class="text-accent block mb-1">components</span>
+        <span class="text-text-muted">V H D G &middot; T B &middot; I Ta S C R &middot; Tb Th Tbd Tr Td Tc &middot; Ul Ol Li &middot; M L Sv</span>
       </div>
-      <div class="ref-group">
-        <span class="label">style props</span>
-        <span class="items">g p m w h mw mh &middot; bg fg o &middot; r bw bc bs &middot; fs fw ff ta &middot; ai jc flw</span>
+      <div class="text-xs leading-relaxed">
+        <span class="text-accent block mb-1">style props</span>
+        <span class="text-text-muted">g p m w h mw mh &middot; bg fg o &middot; r bw bc bs &middot; fs fw ff ta &middot; ai jc flw</span>
       </div>
-      <div class="ref-group">
-        <span class="label">events</span>
-        <span class="items">c (click) &middot; x (input) &middot; f (focus) &middot; bl (blur) &middot; k (keydown) &middot; e lv (hover)</span>
+      <div class="text-xs leading-relaxed">
+        <span class="text-accent block mb-1">events</span>
+        <span class="text-text-muted">c (click) &middot; x (input) &middot; f (focus) &middot; bl (blur) &middot; k (keydown) &middot; e lv (hover)</span>
       </div>
-      <div class="ref-group">
-        <span class="label">state ops</span>
-        <span class="items">+ - (inc/dec) &middot; ! (set) &middot; ~ (toggle) &middot; &lt; &gt; (push) &middot; X (remove) &middot; . (prop)</span>
+      <div class="text-xs leading-relaxed">
+        <span class="text-accent block mb-1">state ops</span>
+        <span class="text-text-muted">+ - (inc/dec) &middot; ! (set) &middot; ~ (toggle) &middot; &lt; &gt; (push) &middot; X (remove) &middot; . (prop)</span>
       </div>
     </div>
   </section>
