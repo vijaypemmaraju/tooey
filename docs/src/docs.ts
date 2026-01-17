@@ -3,7 +3,7 @@
  * demonstrates the full tooey ecosystem: signals, computed, effects, plugins, theming, function components
  */
 
-import { render, signal, effect, V, H, D, G, T, B, I, L } from '@tooey/ui';
+import { render, signal, effect, V, H, D, G, T, B, I, L, Sv } from '@tooey/ui';
 import type { TooeySpec, NodeSpec, Props, TooeyPlugin } from '@tooey/ui';
 import { API_DATA, searchAPI, type SearchResult, type ApiItem } from './api-data';
 
@@ -61,6 +61,14 @@ const loggerPlugin: TooeyPlugin = {
 // function components
 // ============================================================================
 
+const Logo = (props: { size?: number }): NodeSpec => {
+  const size = props.size || 32;
+  return [Sv, [
+    { tag: 'rect', x: 24, y: 8, width: 16, height: 48, rx: 8, fill: 'currentColor' },
+    { tag: 'rect', x: 12, y: 20, width: 40, height: 14, rx: 7, fill: 'currentColor', transform: 'rotate(-20 32 27)' }
+  ], { w: size, h: size, vb: '0 0 64 64', fg: 'var(--accent)' }];
+};
+
 const Card = (_props: Props = {}, children: NodeSpec[] = []): NodeSpec =>
   [V, children, { bg: 'var(--bg-secondary)', p: 16, r: 8, s: { border: '1px solid var(--border)' } }];
 
@@ -101,7 +109,7 @@ type Page = 'home' | 'core-functions' | 'instance-methods' | 'components' | 'pro
 const pages: Record<Page, () => NodeSpec> = {
   'home': () => [V, [
     [V, [
-      [H, [[D, '', { w: 48, h: 48, r: 12, bg: 'var(--accent)', s: { boxShadow: '0 4px 20px rgba(0,170,255,0.3)' } }],
+      [H, [[D, [Logo({ size: 48 })], { w: 48, h: 48, s: { filter: 'drop-shadow(0 4px 20px rgba(0,170,255,0.3))' } }],
         [V, [[T, 'tooey', { fs: 28, fw: 700, fg: 'var(--text)' }], [T, 'token-efficient ui for llm output', { fs: 14, fg: 'var(--text-secondary)' }]], { g: 4 }]], { g: 16, ai: 'c' }],
       [H, [[T, '~39%', { fg: 'var(--accent)', fw: 600 }], [T, 'fewer tokens', { fg: 'var(--text-secondary)' }],
         [T, '|', { fg: 'var(--border)', m: '0 8px' }], [T, '~10kb', { fg: 'var(--accent)', fw: 600 }], [T, 'minified', { fg: 'var(--text-secondary)' }],
@@ -193,9 +201,38 @@ render(document.getElementById('app'), {
       [T, t.description, { fg: 'var(--text-secondary)', fs: 13, m: '8px 0' }], Code({ code: t.signature || '' })]))], { g: 16 }],
 
   'examples': () => [V, [Section({ title: 'examples', subtitle: 'interactive demos with token comparisons' }),
-    [V, API_DATA.examples.map(ex => Card({}, [[H, [[L, ex.name, { href: `examples/${ex.file}`, fg: 'var(--text)', fw: 500, s: { textDecoration: 'none', flex: '1' } }],
-      [T, ex.tokens, { fg: 'var(--success)', fw: 600, ff: 'monospace' }]], { jc: 'sb', ai: 'c' }],
-      [T, ex.description, { fg: 'var(--text-secondary)', fs: 13, m: '8px 0 0 0' }]])), { g: 8 }]], { g: 16 }]
+    [V, API_DATA.examples.map((ex: { id: string; name: string; file: string; savings: string; tooeyTokens: number; reactTokens: number; description: string; tooeyCode: string; reactCode: string; demoSpec: string; reactDemoCode: string }) => Card({}, [
+      [H, [
+        [T, ex.name, { fg: 'var(--text)', fw: 600, fs: 16 }],
+        [T, ex.savings, { fg: 'var(--success)', fw: 700, ff: 'monospace', fs: 14 }]
+      ], { jc: 'sb', ai: 'c' }],
+      [T, ex.description, { fg: 'var(--text-secondary)', fs: 13, m: '8px 0 16px 0' }],
+      [G, [
+        [V, [
+          [H, [[T, 'tooey', { fg: 'var(--accent)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
+            [T, `(${ex.tooeyTokens} tokens)`, { fg: 'var(--text-muted)', fs: 11 }]], { g: 8, ai: 'c' }],
+          Code({ code: ex.tooeyCode })
+        ], { g: 8 }],
+        [V, [
+          [H, [[T, 'react', { fg: 'var(--warning)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
+            [T, `(${ex.reactTokens} tokens)`, { fg: 'var(--text-muted)', fs: 11 }]], { g: 8, ai: 'c' }],
+          [D, [[T, ex.reactCode, { s: { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } }]], {
+            bg: 'var(--code-bg)', p: 8, r: 4, fs: 12, ff: 'ui-monospace, monospace', fg: 'var(--warning)', ov: 'auto', s: { maxHeight: '300px' }
+          }]
+        ], { g: 8 }]
+      ], { cols: 2, g: 16 }],
+      [T, 'live demos', { fg: 'var(--text-muted)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' }, m: '16px 0 8px 0' }],
+      [G, [
+        [V, [
+          [T, 'tooey', { fg: 'var(--accent)', fs: 10, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
+          [D, '', { id: `demo-tooey-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' }, 'data-spec': ex.demoSpec }]
+        ], { g: 8 }],
+        [V, [
+          [T, 'react', { fg: 'var(--warning)', fs: 10, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
+          [D, '', { id: `demo-react-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' }, 'data-react': ex.reactDemoCode }]
+        ], { g: 8 }]
+      ], { cols: 2, g: 16 }]
+    ])), { g: 24 }]], { g: 16 }]
 };
 
 const navItems: Array<{ label: string; page: Page }> = [
@@ -224,6 +261,57 @@ const navigateTo = (page: Page) => {
   searchResults.set([]);
 };
 
+// load React and Babel from CDN for examples page
+let reactLoaded = false;
+const loadReact = (): Promise<void> => {
+  if (reactLoaded) return Promise.resolve();
+  return new Promise((resolve) => {
+    const react = document.createElement('script');
+    react.src = 'https://unpkg.com/react@18/umd/react.development.js';
+    react.crossOrigin = 'anonymous';
+    react.onload = () => {
+      const reactDom = document.createElement('script');
+      reactDom.src = 'https://unpkg.com/react-dom@18/umd/react-dom.development.js';
+      reactDom.crossOrigin = 'anonymous';
+      reactDom.onload = () => {
+        const babel = document.createElement('script');
+        babel.src = 'https://unpkg.com/@babel/standalone/babel.min.js';
+        babel.onload = () => {
+          reactLoaded = true;
+          resolve();
+        };
+        document.head.appendChild(babel);
+      };
+      document.head.appendChild(reactDom);
+    };
+    document.head.appendChild(react);
+  });
+};
+
+const renderReactDemo = (container: HTMLElement, code: string) => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Babel = (window as any).Babel;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const React = (window as any).React;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ReactDOM = (window as any).ReactDOM;
+    if (!Babel || !React || !ReactDOM) return;
+
+    // transpile JSX to JS
+    const transformed = Babel.transform(code, { presets: ['react'] }).code;
+    // create component function
+    const Component = new Function('React', `${transformed}; return ${code.match(/function\s+(\w+)/)?.[1] || 'Component'};`)(React);
+    // render to container
+    const root = ReactDOM.createRoot(container);
+    root.render(React.createElement(Component));
+    container.dataset.rendered = 'true';
+  } catch (e) {
+    console.warn('[tooey] failed to render react demo:', e);
+    container.textContent = 'failed to render';
+  }
+};
+
 const renderPage = () => {
   if (!pageContainer) return;
   const page = currentPage();
@@ -234,6 +322,33 @@ const renderPage = () => {
     el.style.background = navItems[i].page === page ? 'var(--bg-tertiary)' : 'transparent';
     el.style.color = navItems[i].page === page ? 'var(--accent)' : 'var(--text-secondary)';
   });
+  // render live demos
+  if (page === 'examples') {
+    // render tooey demos
+    document.querySelectorAll('[data-spec]').forEach((container) => {
+      const el = container as HTMLElement;
+      const specJson = el.getAttribute('data-spec');
+      if (specJson && !el.dataset.rendered) {
+        try {
+          const spec = JSON.parse(specJson);
+          render(el, spec);
+          el.dataset.rendered = 'true';
+        } catch (e) {
+          console.warn('[tooey] failed to render demo:', e);
+        }
+      }
+    });
+    // load react and render react demos
+    loadReact().then(() => {
+      document.querySelectorAll('[data-react]').forEach((container) => {
+        const el = container as HTMLElement;
+        const code = el.getAttribute('data-react');
+        if (code && !el.dataset.rendered) {
+          renderReactDemo(el, code);
+        }
+      });
+    });
+  }
 };
 
 const renderSearchResults = () => {
@@ -270,7 +385,7 @@ const init = () => {
       [D, '', { id: 'sidebar-overlay', pos: 'fix', t: 0, l: 0, w: '100vw', h: '100vh', z: 999, bg: 'rgba(0,0,0,0.5)', s: { display: 'none' } }],
       // sidebar
       [V, [
-        [H, [[D, '', { w: 32, h: 32, r: 8, bg: 'var(--accent)', s: { flexShrink: '0' } }], [T, 'tooey', { fs: 18, fw: 700, fg: 'var(--text)' }]], { g: 8, ai: 'c', m: '0 0 24px 0' }],
+        [H, [Logo({ size: 32 }), [T, 'tooey', { fs: 18, fw: 700, fg: 'var(--text)' }]], { g: 8, ai: 'c', m: '0 0 24px 0' }],
         [V, [[I, '', { ph: 'search...', bg: 'var(--bg-tertiary)', fg: 'var(--text)', p: '8px 12px', r: 4, w: '100%', s: { border: '1px solid var(--border)', outline: 'none' }, id: 'search' }]], { pos: 'rel', m: '0 0 16px 0' }],
         [D, '', { id: 'search-results' }],
         [V, navItems.map(item => [B, item.label, { bg: 'transparent', fg: 'var(--text-secondary)', p: '8px 12px', r: 4, w: '100%', ta: 'left', fs: 13, cur: 'pointer', s: { border: 'none' }, cls: 'nav-btn' }]), { g: 2 }],

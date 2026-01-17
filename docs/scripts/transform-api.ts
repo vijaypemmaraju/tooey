@@ -110,7 +110,17 @@ interface ApiData {
     example: string;
   };
   types: ApiItem[];
-  examples: Array<{ name: string; file: string; tokens: string; description: string }>;
+  examples: Array<{
+    id: string;
+    name: string;
+    file: string;
+    savings: string;
+    tooeyTokens: number;
+    reactTokens: number;
+    description: string;
+    tooeyCode: string;
+    reactCode: string;
+  }>;
 }
 
 // ============================================================================
@@ -363,37 +373,607 @@ function getStaticData(): Partial<ApiData> {
   return { props, events, stateOps, controlFlow };
 }
 
-function getExamples(): Array<{ name: string; file: string; tokens: string; description: string }> {
+interface ExampleData {
+  id: string;
+  name: string;
+  file: string;
+  savings: string;
+  tooeyTokens: number;
+  reactTokens: number;
+  description: string;
+  tooeyCode: string;
+  reactCode: string;
+  demoSpec: string; // JSON stringified spec for live rendering
+  reactDemoCode: string; // JSX code that can be run with Babel
+}
+
+function getExamples(): ExampleData[] {
   const examplesDir = path.join(rootDir, 'packages/ui/examples');
-  const examples: Array<{ name: string; file: string; tokens: string; description: string }> = [];
+  const examples: ExampleData[] = [];
+
+  // example metadata with code snippets and demo specs
+  // demoSpec is a self-contained tooey spec that can be rendered directly
+  const exampleData: Record<string, Omit<ExampleData, 'file'>> = {
+    '01-counter.html': {
+      id: 'counter',
+      name: 'counter',
+      savings: '-45%',
+      tooeyTokens: 56,
+      reactTokens: 102,
+      description: 'increment / decrement buttons with state',
+      tooeyCode: '{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:["n","-"]}],[B,"+",{c:["n","+"]}]],{g:8}]],{g:8}]}',
+      reactCode: `function Counter() {
+  const [n, setN] = useState(0);
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:8}}>
+      <span>{n}</span>
+      <div style={{display:'flex',gap:8}}>
+        <button onClick={()=>setN(n-1)}>-</button>
+        <button onClick={()=>setN(n+1)}>+</button>
+      </div>
+    </div>
+  );
+}`,
+      demoSpec: JSON.stringify({
+        s: { n: 0 },
+        r: ['V', [['T', { $: 'n' }, { fs: 24, fg: '#0af' }], ['H', [['B', '-', { c: ['n', '-'] }], ['B', '+', { c: ['n', '+'] }]], { g: 8 }]], { g: 16, ai: 'c' }]
+      }),
+      reactDemoCode: `function Counter() {
+  const [n, setN] = React.useState(0);
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16,alignItems:'center'}}>
+      <span style={{fontSize:24,color:'#fa0'}}>{n}</span>
+      <div style={{display:'flex',gap:8}}>
+        <button onClick={()=>setN(n-1)}>-</button>
+        <button onClick={()=>setN(n+1)}>+</button>
+      </div>
+    </div>
+  );
+}`
+    },
+    '02-todo-list.html': {
+      id: 'todo-list',
+      name: 'todo list',
+      savings: '-55%',
+      tooeyTokens: 92,
+      reactTokens: 203,
+      description: 'add / remove items with input binding',
+      tooeyCode: `{s:{txt:"",items:[]},r:[V,[
+  [H,[[I,"",{v:{$:"txt"},x:["txt","!"],ph:"add..."}],[B,"+",{c:add}]],{g:8}],
+  {map:"items",as:[H,[[T,"$item"],[B,"x",{c:del}]],{g:8}]}
+],{g:12}]}`,
+      reactCode: `function TodoList() {
+  const [txt, setTxt] = useState('');
+  const [items, setItems] = useState([]);
+  const add = () => {
+    if (txt) {
+      setItems([...items, txt]);
+      setTxt('');
+    }
+  };
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:12}}>
+      <div style={{display:'flex',gap:8}}>
+        <input value={txt} onChange={e=>setTxt(e.target.value)}
+          placeholder="add..." />
+        <button onClick={add}>+</button>
+      </div>
+      {items.map((item, i) => (
+        <div key={i} style={{display:'flex',gap:8}}>
+          <span>{item}</span>
+          <button onClick={()=>setItems(items.filter((_,j)=>j!==i))}>x</button>
+        </div>
+      ))}
+    </div>
+  );
+}`,
+      demoSpec: JSON.stringify({
+        s: { txt: '', items: ['buy milk', 'walk dog'] },
+        r: ['V', [
+          ['H', [['I', '', { v: { $: 'txt' }, x: ['txt', '!'], ph: 'add item...' }], ['B', '+', { c: ['items', '<', { $: 'txt' }] }]], { g: 8 }],
+          { m: 'items', a: ['H', [['T', '$item', { s: { flex: '1' } }], ['B', 'x', { c: ['items', 'X', '$index'] }]], { g: 8, p: '8px 0', s: { borderBottom: '1px solid #333' } }] }
+        ], { g: 12 }]
+      }),
+      reactDemoCode: `function TodoList() {
+  const [txt, setTxt] = React.useState('');
+  const [items, setItems] = React.useState(['buy milk', 'walk dog']);
+  const add = () => { if (txt) { setItems([...items, txt]); setTxt(''); } };
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:12}}>
+      <div style={{display:'flex',gap:8}}>
+        <input value={txt} onChange={e=>setTxt(e.target.value)} placeholder="add item..." style={{flex:1,padding:'8px',background:'#0a0a0f',color:'#fff',border:'1px solid #333',borderRadius:4}} />
+        <button onClick={add}>+</button>
+      </div>
+      {items.map((item, i) => (
+        <div key={i} style={{display:'flex',gap:8,padding:'8px 0',borderBottom:'1px solid #333'}}>
+          <span style={{flex:1}}>{item}</span>
+          <button onClick={()=>setItems(items.filter((_,j)=>j!==i))}>x</button>
+        </div>
+      ))}
+    </div>
+  );
+}`
+    },
+    '03-form.html': {
+      id: 'form',
+      name: 'form',
+      savings: '-7%',
+      tooeyTokens: 196,
+      reactTokens: 211,
+      description: 'inputs, checkbox, validation',
+      tooeyCode: `{s:{name:"",email:"",pw:"",agree:false},r:[V,[
+  [V,[[T,"name"],[I,"",{ph:"your name",v:{$:"name"},x:["name","!"]}]],{g:4}],
+  [V,[[T,"email"],[I,"",{type:"email",ph:"you@example.com",v:{$:"email"},x:["email","!"]}]],{g:4}],
+  [V,[[T,"password"],[I,"",{type:"password",ph:"********",v:{$:"pw"},x:["pw","!"]}]],{g:4}],
+  [H,[[C,"",{ch:{$:"agree"},x:["agree","~"]}],[T,"i agree to terms"]],{g:8,ai:"center"}],
+  [B,"sign up",{c:submit}]
+],{g:16}]}`,
+      reactCode: `function Form() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [pw, setPw] = useState('');
+  const [agree, setAgree] = useState(false);
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <label>name</label>
+        <input placeholder="your name" value={name}
+          onChange={e=>setName(e.target.value)} />
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <label>email</label>
+        <input type="email" placeholder="you@example.com"
+          value={email} onChange={e=>setEmail(e.target.value)} />
+      </div>
+      ...
+      <button onClick={submit}>sign up</button>
+    </div>
+  );
+}`,
+      demoSpec: JSON.stringify({
+        s: { name: '', email: '', agree: false },
+        r: ['V', [
+          ['V', [['T', 'name', { fs: 12, fg: '#888' }], ['I', '', { ph: 'your name', v: { $: 'name' }, x: ['name', '!'] }]], { g: 4 }],
+          ['V', [['T', 'email', { fs: 12, fg: '#888' }], ['I', '', { type: 'email', ph: 'you@example.com', v: { $: 'email' }, x: ['email', '!'] }]], { g: 4 }],
+          ['H', [['C', '', { ch: { $: 'agree' }, x: ['agree', '~'] }], ['T', 'i agree to terms', { fs: 13 }]], { g: 8, ai: 'c' }],
+          ['B', 'sign up', { bg: '#0af', fg: '#000', p: '10px 20px', r: 4, s: { border: 'none', cursor: 'pointer' } }]
+        ], { g: 16 }]
+      }),
+      reactDemoCode: `function Form() {
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [agree, setAgree] = React.useState(false);
+  const inputStyle = {padding:'8px',background:'#0a0a0f',color:'#fff',border:'1px solid #333',borderRadius:4,width:'100%'};
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <span style={{fontSize:12,color:'#888'}}>name</span>
+        <input placeholder="your name" value={name} onChange={e=>setName(e.target.value)} style={inputStyle} />
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <span style={{fontSize:12,color:'#888'}}>email</span>
+        <input type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} style={inputStyle} />
+      </div>
+      <div style={{display:'flex',gap:8,alignItems:'center'}}>
+        <input type="checkbox" checked={agree} onChange={e=>setAgree(e.target.checked)} />
+        <span style={{fontSize:13}}>i agree to terms</span>
+      </div>
+      <button style={{background:'#fa0',color:'#000',padding:'10px 20px',borderRadius:4,border:'none',cursor:'pointer'}}>sign up</button>
+    </div>
+  );
+}`
+    },
+    '04-temperature-converter.html': {
+      id: 'temperature',
+      name: 'temperature converter',
+      savings: '-59%',
+      tooeyTokens: 109,
+      reactTokens: 269,
+      description: 'bidirectional binding between celsius and fahrenheit',
+      tooeyCode: `{s:{c:0,f:32},r:[H,[
+  [V,[[T,"celsius"],[I,"",{type:"number",v:{$:"c"},x:onC}]],{g:4}],
+  [T,"=",{fs:24,fg:"#0af"}],
+  [V,[[T,"fahrenheit"],[I,"",{type:"number",v:{$:"f"},x:onF}]],{g:4}]
+],{g:16,ai:"center"}]}`,
+      reactCode: `function TempConverter() {
+  const [c, setC] = useState(0);
+  const [f, setF] = useState(32);
+  const onCelsiusChange = (e) => {
+    const val = parseFloat(e.target.value) || 0;
+    setC(val);
+    setF(val * 9/5 + 32);
+  };
+  const onFahrenheitChange = (e) => {
+    const val = parseFloat(e.target.value) || 0;
+    setF(val);
+    setC((val - 32) * 5/9);
+  };
+  return (
+    <div style={{display:'flex',gap:16,alignItems:'center'}}>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <span>celsius</span>
+        <input type="number" value={c} onChange={onCelsiusChange}/>
+      </div>
+      <span style={{fontSize:24}}>=</span>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <span>fahrenheit</span>
+        <input type="number" value={f} onChange={onFahrenheitChange}/>
+      </div>
+    </div>
+  );
+}`,
+      demoSpec: JSON.stringify({
+        s: { c: 20 },
+        r: ['H', [
+          ['V', [['T', 'celsius', { fs: 12, fg: '#888' }], ['I', '', { type: 'number', v: { $: 'c' }, x: ['c', '!'] }]], { g: 4 }],
+          ['T', '=', { fs: 24, fg: '#0af' }],
+          ['V', [['T', 'fahrenheit', { fs: 12, fg: '#888' }], ['T', '68', { fs: 16 }]], { g: 4 }]
+        ], { g: 16, ai: 'c' }]
+      }),
+      reactDemoCode: `function TempConverter() {
+  const [c, setC] = React.useState(20);
+  const [f, setF] = React.useState(68);
+  const inputStyle = {padding:'8px',background:'#0a0a0f',color:'#fff',border:'1px solid #333',borderRadius:4,width:80};
+  const onC = e => { const v = parseFloat(e.target.value)||0; setC(v); setF(Math.round(v*9/5+32)); };
+  const onF = e => { const v = parseFloat(e.target.value)||0; setF(v); setC(Math.round((v-32)*5/9)); };
+  return (
+    <div style={{display:'flex',gap:16,alignItems:'center'}}>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <span style={{fontSize:12,color:'#888'}}>celsius</span>
+        <input type="number" value={c} onChange={onC} style={inputStyle} />
+      </div>
+      <span style={{fontSize:24,color:'#fa0'}}>=</span>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <span style={{fontSize:12,color:'#888'}}>fahrenheit</span>
+        <input type="number" value={f} onChange={onF} style={inputStyle} />
+      </div>
+    </div>
+  );
+}`
+    },
+    '05-data-table.html': {
+      id: 'data-table',
+      name: 'data table',
+      savings: '-52%',
+      tooeyTokens: 131,
+      reactTokens: 275,
+      description: 'sortable, filterable table with search',
+      tooeyCode: `{s:{q:"",sort:"name",asc:true,data:[...]},r:[V,[
+  [I,"",{ph:"search...",v:{$:"q"},x:["q","!"]}],
+  [Tb,[
+    [Th,[[Tr,[[Tc,"name",{c:sort}],[Tc,"age",{c:sort}],[Tc,"role",{c:sort}]]]]],
+    [Tbd,[{map:"filtered",as:[Tr,[[Td,"$item.name"],[Td,"$item.age"],[Td,"$item.role"]]]}]]
+  ]]
+],{g:12}]}`,
+      reactCode: `function DataTable() {
+  const [q, setQ] = useState('');
+  const [sort, setSort] = useState('name');
+  const [asc, setAsc] = useState(true);
+  const [data] = useState([...]);
+  const filtered = data
+    .filter(r => Object.values(r).some(v =>
+      String(v).toLowerCase().includes(q.toLowerCase())))
+    .sort((a,b) => {...});
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:12}}>
+      <input placeholder="search..." value={q}
+        onChange={e=>setQ(e.target.value)} />
+      <table>
+        <thead>
+          <tr>
+            <th onClick={()=>toggleSort('name')}>name</th>
+            ...
+          </tr>
+        </thead>
+        <tbody>
+          {filtered.map((row,i) => (
+            <tr key={i}>
+              <td>{row.name}</td>
+              ...
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}`,
+      demoSpec: JSON.stringify({
+        s: { data: [{ name: 'alice', age: 28, role: 'engineer' }, { name: 'bob', age: 34, role: 'designer' }, { name: 'carol', age: 25, role: 'manager' }] },
+        r: ['V', [
+          ['Tb', [
+            ['Th', [['Tr', [['Tc', 'name', { fg: '#0af' }], ['Tc', 'age', { fg: '#0af' }], ['Tc', 'role', { fg: '#0af' }]]]]],
+            ['Tbd', [{ m: 'data', a: ['Tr', [['Td', '$item.name'], ['Td', '$item.age'], ['Td', '$item.role']]] }]]
+          ]]
+        ], { g: 12 }]
+      }),
+      reactDemoCode: `function DataTable() {
+  const data = [{name:'alice',age:28,role:'engineer'},{name:'bob',age:34,role:'designer'},{name:'carol',age:25,role:'manager'}];
+  const thStyle = {color:'#fa0',textAlign:'left',padding:'8px',borderBottom:'1px solid #333'};
+  const tdStyle = {padding:'8px',borderBottom:'1px solid #333'};
+  return (
+    <table style={{width:'100%',borderCollapse:'collapse'}}>
+      <thead>
+        <tr><th style={thStyle}>name</th><th style={thStyle}>age</th><th style={thStyle}>role</th></tr>
+      </thead>
+      <tbody>
+        {data.map((r,i) => <tr key={i}><td style={tdStyle}>{r.name}</td><td style={tdStyle}>{r.age}</td><td style={tdStyle}>{r.role}</td></tr>)}
+      </tbody>
+    </table>
+  );
+}`
+    },
+    '06-tabs.html': {
+      id: 'tabs',
+      name: 'tabs',
+      savings: '-16%',
+      tooeyTokens: 107,
+      reactTokens: 127,
+      description: 'conditional rendering with tab panels',
+      tooeyCode: `{s:{tab:0},r:[V,[
+  [H,[[B,"profile",{c:["tab","!",0]}],[B,"settings",{c:["tab","!",1]}],[B,"about",{c:["tab","!",2]}]]],
+  {if:{$:"tab"},eq:0,then:[T,"user profile content"],else:{if:{$:"tab"},eq:1,then:[T,"settings panel"],else:[T,"about section"]}}
+],{g:0}]}`,
+      reactCode: `function Tabs() {
+  const [tab, setTab] = useState(0);
+  const panels = ['user profile content', 'settings panel', 'about section'];
+  return (
+    <div>
+      <div style={{display:'flex'}}>
+        {['profile','settings','about'].map((t,i) => (
+          <button key={i} onClick={()=>setTab(i)}
+            className={tab===i?'active':''}>{t}</button>
+        ))}
+      </div>
+      <div className="panel">{panels[tab]}</div>
+    </div>
+  );
+}`,
+      demoSpec: JSON.stringify({
+        s: { tab: 0 },
+        r: ['V', [
+          ['H', [['B', 'profile', { c: ['tab', '!', 0] }], ['B', 'settings', { c: ['tab', '!', 1] }], ['B', 'about', { c: ['tab', '!', 2] }]], { g: 0, s: { borderBottom: '1px solid #333' } }],
+          { '?': 'tab', is: 0, t: ['T', 'user profile content', { p: 16, fg: '#ccc' }], e: { '?': 'tab', is: 1, t: ['T', 'settings panel', { p: 16, fg: '#ccc' }], e: ['T', 'about section', { p: 16, fg: '#ccc' }] } }
+        ], { g: 0 }]
+      }),
+      reactDemoCode: `function Tabs() {
+  const [tab, setTab] = React.useState(0);
+  const tabs = ['profile','settings','about'];
+  const panels = ['user profile content','settings panel','about section'];
+  const btnStyle = (i) => ({padding:'8px 16px',background:'transparent',border:'none',cursor:'pointer',color:i===tab?'#fa0':'#666',borderBottom:i===tab?'2px solid #fa0':'none'});
+  return (
+    <div>
+      <div style={{display:'flex',borderBottom:'1px solid #333'}}>
+        {tabs.map((t,i) => <button key={i} style={btnStyle(i)} onClick={()=>setTab(i)}>{t}</button>)}
+      </div>
+      <div style={{padding:16,color:'#ccc'}}>{panels[tab]}</div>
+    </div>
+  );
+}`
+    },
+    '07-modal.html': {
+      id: 'modal',
+      name: 'modal',
+      savings: '-24%',
+      tooeyTokens: 135,
+      reactTokens: 178,
+      description: 'dialog / overlay with conditional visibility',
+      tooeyCode: `{s:{open:false},r:[V,[
+  [B,"open modal",{c:["open","~"]}],
+  {if:"open",then:[D,[
+    [D,[[T,"confirm action",{fw:600}],[T,"are you sure?"],[B,"close",{c:["open","~"]}]],{bg:"#1a1a1a",p:24,r:8,g:12}]
+  ],{pos:"abs",t:0,l:0,w:"100%",h:"100%",bg:"rgba(0,0,0,0.7)",ai:"center",jc:"center"}]}
+]]}`,
+      reactCode: `function Modal() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <button onClick={()=>setOpen(true)}>open modal</button>
+      {open && (
+        <div style={{position:'absolute',top:0,left:0,width:'100%',
+          height:'100%',background:'rgba(0,0,0,0.7)',
+          display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <div style={{background:'#1a1a1a',padding:24,borderRadius:8}}>
+            <h3 style={{fontWeight:600}}>confirm action</h3>
+            <p>are you sure?</p>
+            <button onClick={()=>setOpen(false)}>close</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}`,
+      demoSpec: JSON.stringify({
+        s: { open: false },
+        r: ['V', [
+          ['B', 'open modal', { c: ['open', '~'] }],
+          { '?': 'open', t: ['D', [
+            ['D', [['T', 'confirm action', { fw: 600, fg: '#fff', fs: 14 }], ['T', 'are you sure?', { fg: '#888', fs: 12 }], ['B', 'close', { c: ['open', '~'] }]], { bg: '#1a1a1a', p: 24, r: 8, g: 12, ta: 'c' }]
+          ], { pos: 'abs', t: 0, l: 0, w: '100%', h: '100%', bg: 'rgba(0,0,0,0.7)', s: { display: 'flex', alignItems: 'center', justifyContent: 'center' } }] }
+        ], { pos: 'rel', h: 150 }]
+      }),
+      reactDemoCode: `function Modal() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div style={{position:'relative',height:150}}>
+      <button onClick={()=>setOpen(true)}>open modal</button>
+      {open && (
+        <div style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',background:'rgba(0,0,0,0.7)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <div style={{background:'#1a1a1a',padding:24,borderRadius:8,textAlign:'center',display:'flex',flexDirection:'column',gap:12}}>
+            <span style={{fontWeight:600,color:'#fff',fontSize:14}}>confirm action</span>
+            <span style={{color:'#888',fontSize:12}}>are you sure?</span>
+            <button onClick={()=>setOpen(false)}>close</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}`
+    },
+    '08-shopping-cart.html': {
+      id: 'shopping-cart',
+      name: 'shopping cart',
+      savings: '-29%',
+      tooeyTokens: 197,
+      reactTokens: 279,
+      description: 'quantity controls with computed total',
+      tooeyCode: `{s:{items:[{n:"widget",p:25,q:1},{n:"gadget",p:35,q:2}]},r:[V,[
+  {map:"items",as:[H,[
+    [T,"$item.n",{fg:"#ccc"}],
+    [H,[[B,"-",{c:dec}],[T,"$item.q"],[B,"+",{c:inc}]],{g:8,ai:"center"}],
+    [T,"$item.price",{fg:"#0af"}]
+  ],{jc:"space-between",ai:"center",p:"8px 0"}]},
+  [H,[[T,"total:"],[T,{$:"total"},{fg:"#4f8",fw:600}]],{jc:"space-between",p:"16px 0"}]
+],{g:0}]}`,
+      reactCode: `function Cart() {
+  const [items, setItems] = useState([
+    {n:"widget",p:25,q:1},
+    {n:"gadget",p:35,q:2}
+  ]);
+  const updateQty = (i, delta) => {
+    setItems(items.map((item, j) =>
+      j === i ? {...item, q: Math.max(0, item.q + delta)} : item
+    ).filter(item => item.q > 0));
+  };
+  const total = items.reduce((s,i) => s + i.p * i.q, 0);
+  return (
+    <div>
+      {items.map((item, i) => (
+        <div key={i} className="cart-item">
+          <span className="name">{item.n}</span>
+          <div className="qty">
+            <button onClick={()=>updateQty(i,-1)}>-</button>
+            <span>{item.q}</span>
+            <button onClick={()=>updateQty(i,1)}>+</button>
+          </div>
+          <span className="price">\${item.p * item.q}</span>
+        </div>
+      ))}
+      <div className="total">
+        <span>total:</span>
+        <span>\${total}</span>
+      </div>
+    </div>
+  );
+}`,
+      demoSpec: JSON.stringify({
+        s: { q1: 1, q2: 2 },
+        r: ['V', [
+          ['H', [['T', 'widget', { fg: '#ccc', s: { flex: '1' } }], ['H', [['B', '-', { c: ['q1', '-'] }], ['T', { $: 'q1' }], ['B', '+', { c: ['q1', '+'] }]], { g: 8, ai: 'c' }], ['T', '$25', { fg: '#0af', w: 50, ta: 'rt' }]], { jc: 'sb', ai: 'c', p: '8px 0', s: { borderBottom: '1px solid #333' } }],
+          ['H', [['T', 'gadget', { fg: '#ccc', s: { flex: '1' } }], ['H', [['B', '-', { c: ['q2', '-'] }], ['T', { $: 'q2' }], ['B', '+', { c: ['q2', '+'] }]], { g: 8, ai: 'c' }], ['T', '$35', { fg: '#0af', w: 50, ta: 'rt' }]], { jc: 'sb', ai: 'c', p: '8px 0', s: { borderBottom: '1px solid #333' } }],
+          ['H', [['T', 'total:', { fg: '#888' }], ['T', '$95', { fg: '#4f8', fw: 600 }]], { jc: 'sb', p: '16px 0' }]
+        ], { g: 0 }]
+      }),
+      reactDemoCode: `function Cart() {
+  const [items, setItems] = React.useState([{n:'widget',p:25,q:1},{n:'gadget',p:35,q:2}]);
+  const update = (i,d) => setItems(items.map((it,j)=>j===i?{...it,q:Math.max(0,it.q+d)}:it).filter(it=>it.q>0));
+  const total = items.reduce((s,i)=>s+i.p*i.q,0);
+  return (
+    <div>
+      {items.map((it,i) => (
+        <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 0',borderBottom:'1px solid #333'}}>
+          <span style={{flex:1,color:'#ccc'}}>{it.n}</span>
+          <div style={{display:'flex',gap:8,alignItems:'center'}}>
+            <button onClick={()=>update(i,-1)}>-</button>
+            <span>{it.q}</span>
+            <button onClick={()=>update(i,1)}>+</button>
+          </div>
+          <span style={{color:'#fa0',width:50,textAlign:'right'}}>\${it.p*it.q}</span>
+        </div>
+      ))}
+      <div style={{display:'flex',justifyContent:'space-between',padding:'16px 0'}}>
+        <span style={{color:'#888'}}>total:</span>
+        <span style={{color:'#4f8',fontWeight:600}}>\${total}</span>
+      </div>
+    </div>
+  );
+}`
+    },
+    '09-wizard.html': {
+      id: 'wizard',
+      name: 'wizard',
+      savings: '-26%',
+      tooeyTokens: 249,
+      reactTokens: 338,
+      description: 'multi-step form with progress indicator',
+      tooeyCode: `{s:{step:0,name:"",email:""},r:[V,[
+  [H,[[D,{cls:"step done"}],[D,{cls:"step"}],[D,{cls:"step"}]],{g:4}],
+  {if:{$:"step"},eq:0,then:[V,[[T,"step 1: name"],[I,"",{v:{$:"name"},x:["name","!"],ph:"your name"}]],{g:12}]},
+  {if:{$:"step"},eq:1,then:[V,[[T,"step 2: email"],[I,"",{v:{$:"email"},x:["email","!"],ph:"email",type:"email"}]],{g:12}]},
+  {if:{$:"step"},eq:2,then:[V,[[T,"done!"],[T,"thanks for signing up"]],{g:12}]},
+  [H,[[B,"back",{c:["step","-"],dis:{$:"step"},eq:0}],[B,"next",{c:["step","+"]}]],{g:8,jc:"flex-end"}]
+],{g:16}]}`,
+      reactCode: `function Wizard() {
+  const [step, setStep] = useState(0);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',gap:4}}>
+        {[0,1,2].map(i => (
+          <div key={i} className={'step'+(i<=step?' done':'')} />
+        ))}
+      </div>
+      {step === 0 && (
+        <div>
+          <h3>step 1: name</h3>
+          <input value={name} onChange={e=>setName(e.target.value)}
+            placeholder="your name" />
+        </div>
+      )}
+      {step === 1 && (
+        <div>
+          <h3>step 2: email</h3>
+          <input type="email" value={email}
+            onChange={e=>setEmail(e.target.value)} placeholder="email" />
+        </div>
+      )}
+      {step === 2 && <div><h3>done!</h3><p>thanks for signing up</p></div>}
+      <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
+        <button disabled={step===0} onClick={()=>setStep(s=>s-1)}>back</button>
+        <button onClick={()=>setStep(s=>Math.min(2,s+1))}>next</button>
+      </div>
+    </div>
+  );
+}`,
+      demoSpec: JSON.stringify({
+        s: { step: 0, name: '', email: '' },
+        r: ['V', [
+          ['H', [['D', '', { w: 40, h: 4, bg: '#0af', r: 2 }], ['D', '', { w: 40, h: 4, bg: '#333', r: 2 }], ['D', '', { w: 40, h: 4, bg: '#333', r: 2 }]], { g: 4 }],
+          { '?': 'step', is: 0, t: ['V', [['T', 'step 1: name', { fw: 500, fg: '#fff' }], ['I', '', { v: { $: 'name' }, x: ['name', '!'], ph: 'your name' }]], { g: 12 }], e: { '?': 'step', is: 1, t: ['V', [['T', 'step 2: email', { fw: 500, fg: '#fff' }], ['I', '', { type: 'email', v: { $: 'email' }, x: ['email', '!'], ph: 'email' }]], { g: 12 }], e: ['V', [['T', 'done!', { fw: 600, fg: '#4f8', fs: 16 }], ['T', 'thanks for signing up', { fg: '#888' }]], { g: 8 }] } },
+          ['H', [['B', 'back', { c: ['step', '-'] }], ['B', 'next', { c: ['step', '+'] }]], { g: 8, jc: 'fe' }]
+        ], { g: 16 }]
+      }),
+      reactDemoCode: `function Wizard() {
+  const [step, setStep] = React.useState(0);
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const inputStyle = {padding:'8px',background:'#0a0a0f',color:'#fff',border:'1px solid #333',borderRadius:4,width:'100%'};
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',gap:4}}>
+        {[0,1,2].map(i => <div key={i} style={{width:40,height:4,borderRadius:2,background:i<=step?'#fa0':'#333'}} />)}
+      </div>
+      {step===0 && <div style={{display:'flex',flexDirection:'column',gap:12}}><span style={{fontWeight:500,color:'#fff'}}>step 1: name</span><input value={name} onChange={e=>setName(e.target.value)} placeholder="your name" style={inputStyle}/></div>}
+      {step===1 && <div style={{display:'flex',flexDirection:'column',gap:12}}><span style={{fontWeight:500,color:'#fff'}}>step 2: email</span><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="email" style={inputStyle}/></div>}
+      {step===2 && <div style={{display:'flex',flexDirection:'column',gap:8}}><span style={{fontWeight:600,color:'#4f8',fontSize:16}}>done!</span><span style={{color:'#888'}}>thanks for signing up</span></div>}
+      <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
+        <button disabled={step===0} onClick={()=>setStep(s=>s-1)}>back</button>
+        <button onClick={()=>setStep(s=>Math.min(2,s+1))}>next</button>
+      </div>
+    </div>
+  );
+}`
+    }
+  };
 
   try {
     const files = fs.readdirSync(examplesDir).filter(f => f.endsWith('.html') && f !== 'index.html');
 
     for (const file of files.sort()) {
-      const content = fs.readFileSync(path.join(examplesDir, file), 'utf-8');
-      const titleMatch = content.match(/<title>([^<]+)<\/title>/);
-      const name = titleMatch ? titleMatch[1].replace('tooey - ', '').replace(' | tooey', '') : file.replace('.html', '');
-
-      // token savings estimates based on file names
-      const tokenMap: Record<string, string> = {
-        '01-counter.html': '-45%',
-        '02-todo-list.html': '-55%',
-        '03-form.html': '-7%',
-        '04-temperature-converter.html': '-59%',
-        '05-data-table.html': '-52%',
-        '06-tabs.html': '-16%',
-        '07-modal.html': '-24%',
-        '08-shopping-cart.html': '-29%',
-        '09-wizard.html': '-26%'
-      };
-
-      examples.push({
-        name,
-        file,
-        tokens: tokenMap[file] || '',
-        description: name
-      });
+      const data = exampleData[file];
+      if (data) {
+        examples.push({ ...data, file });
+      }
     }
   } catch {
     console.warn('could not read examples directory');
