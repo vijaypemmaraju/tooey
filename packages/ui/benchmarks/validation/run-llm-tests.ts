@@ -41,7 +41,12 @@ IMPORTANT: Output compact tooey on a single line with no whitespace or newlines.
 
 const REACT_PROMPT = `You are a React expert. Generate React functional components using hooks.
 
-IMPORTANT: Output compact React code on a single line with minimal whitespace. Do not include imports or exports - just the component function.`;
+Write idiomatic, readable React code as a developer would normally write it:
+- Use descriptive variable names (count, isOpen, handleClick, etc.)
+- Use normal formatting with proper indentation
+- Include the full component function
+- Do not minify or compress the code
+- Do not include imports or exports - just the component function`;
 
 // ============ test cases ============
 
