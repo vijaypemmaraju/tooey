@@ -1,0 +1,12 @@
+{
+  "name": "tooey",
+  "description": "generate token-efficient ui specs with tooey - 75% fewer tokens than react",
+  "version": "1.0.0",
+  "author": {
+    "name": "tooey"
+  },
+  "homepage": "https://github.com/vijaypemmaraju/tooey",
+  "repository": "https://github.com/vijaypemmaraju/tooey",
+  "license": "MIT",
+  "keywords": ["ui", "llm", "token-efficient", "react-alternative"]
+}
