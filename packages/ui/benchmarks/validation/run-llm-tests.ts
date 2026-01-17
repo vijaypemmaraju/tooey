@@ -32,12 +32,18 @@ const TOOEY_PROMPT = TOOEY_SYSTEM_PROMPT + `
 {s:{txt:"",items:[]},r:[V,[[H,[[I,"",{v:{$:"txt"},x:"txt",ph:"new item"}],[B,"+",{c:"add"}]],{g:8}],[Ul,[{m:"items",a:[Li,"$item"]}]]],{g:12}]}
 
 ### Tabs
-{s:{tab:0},r:[V,[[H,[[B,"A",{c:"tab!0"}],[B,"B",{c:"tab!1"}]]],{?:"tab",is:0,t:[T,"Tab A content"]},{?:"tab",is:1,t:[T,"Tab B content"]}]]}
+{s:{t:0},r:[V,[[H,[[B,"A",{c:"t!0"}],[B,"B",{c:"t!1"}]],{g:8}],{?:"t",is:0,t:[T,"Tab A content"]},{?:"t",is:1,t:[T,"Tab B content"]}],{g:12}]}
 
 ### Form
 {s:{name:"",email:""},r:[V,[[V,[[T,"Name"],[I,"",{v:{$:"name"},x:"name",ph:"name"}]],{g:4}],[V,[[T,"Email"],[I,"",{type:"email",v:{$:"email"},x:"email",ph:"email"}]],{g:4}]],{g:16}]}
 
-IMPORTANT: Output compact tooey on a single line with no whitespace or newlines. Do not use JSON formatting.`;
+### Modal (deeply nested)
+{s:{o:false},r:[V,[[B,"Open",{c:"o~"}],{?:"o",t:[D,[[D,[[T,"Title",{fw:700}],[T,"Content here"],[B,"Close",{c:"o~"}]],{bg:"#fff",p:16,r:8,g:8}]],{pos:"fix",w:"100vw",h:"100vh",bg:"#0008",jc:"c",ai:"c"}]}],{g:8}]}
+
+IMPORTANT:
+- Output compact tooey on a single line with no whitespace or newlines
+- Use bare component identifiers (V, H, T, B, etc.) NOT strings ("V", "H")
+- Do not use JSON formatting with quoted keys`;
 
 const REACT_PROMPT = `You are a React expert. Generate React functional components using hooks.
 
@@ -118,9 +124,9 @@ function checkTooeyStructure(code: string, id: string): boolean {
     '002': () => /~/.test(code) && /[TB]/.test(code),
     '003': () => /v\s*:\s*\{/.test(code) && /I/.test(code),
     '004': () => /Ul/.test(code) && /Li/.test(code),
-    '005': () => /tab/.test(code) && /\?/.test(code),
+    '005': () => /\?/.test(code) && /is\s*:\s*[01]/.test(code) && /!\d/.test(code), // conditional with is:0/1 and set operations
     '006': () => /I/.test(code) && /password/i.test(code),
-    '007': () => /\?/.test(code) && /(open|modal|show)/i.test(code),
+    '007': () => /\?/.test(code) && /~/.test(code), // conditional with toggle
     '008': () => /Ol/.test(code) && /Li/.test(code),
   };
   return checks[id]?.() ?? false;
@@ -186,7 +192,12 @@ async function main() {
     process.exit(1);
   }
 
+  // count prompt tokens
+  const tooeyPromptTokens = countTokens(TOOEY_PROMPT);
+  const reactPromptTokens = countTokens(REACT_PROMPT);
+
   console.log(`\ntooey vs react llm generation test\nmodel: ${GEMINI_MODEL}\n`);
+  console.log(`prompt tokens: tooey ${tooeyPromptTokens} vs react ${reactPromptTokens}`);
 
   const results: Result[] = [];
 
@@ -248,12 +259,21 @@ async function main() {
   const totalReactTokens = results.reduce((s, r) => s + r.react.tokens, 0);
   const avgSavings = totalReactTokens > 0 ? Math.round((1 - totalTooeyTokens / totalReactTokens) * 100) : 0;
 
+  // calculate total tokens including prompts (prompt is sent once per generation)
+  const tooeyPromptTokens = countTokens(TOOEY_PROMPT);
+  const reactPromptTokens = countTokens(REACT_PROMPT);
+  const totalTooeyWithPrompt = totalTooeyTokens + (tooeyPromptTokens * results.length);
+  const totalReactWithPrompt = totalReactTokens + (reactPromptTokens * results.length);
+  const netSavings = totalReactWithPrompt > 0 ? Math.round((1 - totalTooeyWithPrompt / totalReactWithPrompt) * 100) : 0;
+
   console.log(`\n${'='.repeat(50)}`);
   console.log(`\n--- summary ---\n`);
   console.log(`tooey: ${tooeyValid}/${results.length} syntax valid, ${tooeyCorrect}/${results.length} structure correct`);
   console.log(`react: ${reactValid}/${results.length} syntax valid, ${reactCorrect}/${results.length} structure correct`);
-  console.log(`\ntotal tokens: tooey ${totalTooeyTokens} vs react ${totalReactTokens}`);
-  console.log(`token savings: ${avgSavings}%\n`);
+  console.log(`\noutput tokens: tooey ${totalTooeyTokens} vs react ${totalReactTokens} (${avgSavings}% savings)`);
+  console.log(`prompt tokens: tooey ${tooeyPromptTokens} vs react ${reactPromptTokens}`);
+  console.log(`total (prompt × ${results.length} + output): tooey ${totalTooeyWithPrompt} vs react ${totalReactWithPrompt}`);
+  console.log(`net savings: ${netSavings}%\n`);
 
   // write report
   let report = `# tooey vs react llm generation test results
@@ -267,9 +287,12 @@ date: ${new Date().toISOString().split('T')[0]}
 |--------|-------|-------|
 | syntax valid | ${tooeyValid}/${results.length} (${Math.round(tooeyValid/results.length*100)}%) | ${reactValid}/${results.length} (${Math.round(reactValid/results.length*100)}%) |
 | structure correct | ${tooeyCorrect}/${results.length} (${Math.round(tooeyCorrect/results.length*100)}%) | ${reactCorrect}/${results.length} (${Math.round(reactCorrect/results.length*100)}%) |
-| total tokens | ${totalTooeyTokens} | ${totalReactTokens} |
+| output tokens | ${totalTooeyTokens} | ${totalReactTokens} |
+| prompt tokens | ${tooeyPromptTokens} | ${reactPromptTokens} |
+| total (prompt × ${results.length} + output) | ${totalTooeyWithPrompt} | ${totalReactWithPrompt} |
 
-**token savings: ${avgSavings}%**
+**output savings: ${avgSavings}%**
+**net savings (including prompts): ${netSavings}%**
 
 ## per-test comparison
 
