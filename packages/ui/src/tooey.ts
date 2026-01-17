@@ -2,7 +2,7 @@
  * tooey - token-efficient ui library for llms
  *
  * component types (2-letter abbreviations):
- *   layout: vs (vstack), hs (hstack), dv (div), gr (grid)
+ *   layout: vs (vstack), hs (hstack), dv (div), gr (grid), fr (fragment)
  *   text & buttons: tx (text/span), bt (button)
  *   inputs: in (input), ta (textarea), sl (select), cb (checkbox), rd (radio)
  *   tables: tb (table), th (thead), bd (tbody), tr (tr), td (td), tc (th)
@@ -19,6 +19,7 @@
  *     shortcuts: c=center, sb=space-between, fe=flex-end, fs=flex-start, st=stretch
  *   misc: cur (cursor), ov (overflow), pe (pointer-events), us (user-select), sh, tr
  *   element-specific: v (value), ph (placeholder), type, href, src, alt, dis, ch, ro, opts
+ *   refs: rf (ref callback or ref object)
  *
  * events: c (click), x (input/change), f (focus), bl (blur), k (keydown), ku, kp, e, lv, sub
  *   shorthand: "state+" (increment), "state-" (decrement), "state~" (toggle), "state!val" (set)
@@ -28,12 +29,78 @@
  * control flow (short form): {?: cond, t: [...], e: [...]} | {m: state, a: [...]}
  * control flow (long form): {if: state, then: [...], else: [...]} | {map: state, as: [...]}
  * equality check: {?: "state", is: 0, t: [...]} or {?: {$:"state"}, is: 0, t: [...]}
+ *
+ * advanced features:
+ *   refs: ref() creates ref object, rf prop attaches to element
+ *   context: cx(default) creates context, ux(ctx) gets value, {pv: ctx, v: val, c: [...]} provides
+ *   portals: {pt: target, c: [...]} renders children to target element
+ *   memo: {mm: ['deps'], c: [...]} memoizes based on state deps, mm(component, compare) wraps component
+ *   reducer: rd$(reducer, initialState) returns {s, dp} for reducer pattern
+ *   ssr: rts(spec) renders to string, hy(container, spec) hydrates
+ *   router: rt (router), lk (link), ot(routes) outlet, nav(path) navigate
+ *   devtools: devtools({name, log}) plugin for debugging
  */
 
 // ============ types ============
 
 type StateValue = unknown;
 type StateStore = Record<string, Signal<StateValue>>;
+
+// ============ refs ============
+
+interface Ref<T = HTMLElement | null> {
+  el: T;
+}
+
+function ref<T = HTMLElement | null>(initial: T = null as T): Ref<T> {
+  return { el: initial };
+}
+
+type RefCallback = (el: HTMLElement) => void;
+type RefProp = Ref | RefCallback;
+
+// ============ context ============
+
+// context id counter for unique identification
+let contextIdCounter = 0;
+
+interface Context<T> {
+  _id: number;
+  _default: T;
+}
+
+// context value stack for nested providers
+const contextStacks: Map<number, unknown[]> = new Map();
+
+function cx<T>(defaultValue: T): Context<T> {
+  const id = contextIdCounter++;
+  contextStacks.set(id, [defaultValue]);
+  return { _id: id, _default: defaultValue };
+}
+
+function ux<T>(context: Context<T>): T {
+  const stack = contextStacks.get(context._id);
+  if (!stack || stack.length === 0) {
+    return context._default;
+  }
+  return stack[stack.length - 1] as T;
+}
+
+// push context value (used by provider)
+function pushContext<T>(context: Context<T>, value: T): void {
+  const stack = contextStacks.get(context._id);
+  if (stack) {
+    stack.push(value);
+  }
+}
+
+// pop context value (used by provider cleanup)
+function popContext<T>(context: Context<T>): void {
+  const stack = contextStacks.get(context._id);
+  if (stack && stack.length > 1) {
+    stack.pop();
+  }
+}
 
 // ============ theming ============
 
@@ -159,6 +226,8 @@ interface Props {
   sub?: EventHandler;
   // custom styles
   s?: Record<string, unknown>;
+  // refs
+  rf?: RefProp;
 }
 
 type ComponentType =
@@ -167,7 +236,8 @@ type ComponentType =
   | 'in' | 'ta' | 'sl' | 'cb' | 'rd'
   | 'tb' | 'th' | 'bd' | 'tr' | 'td' | 'tc'
   | 'ul' | 'ol' | 'li'
-  | 'im' | 'ln' | 'sv';
+  | 'im' | 'ln' | 'sv'
+  | 'fr';  // fragment
 
 // function component type - returns a NodeSpec
 type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
@@ -198,11 +268,30 @@ interface MapNode {
   key?: string;
 }
 
+// provider node for context
+interface ProviderNode {
+  pv: Context<unknown>;
+  v: unknown;
+  c: NodeSpec | NodeSpec[];
+}
+
+// portal node for rendering outside component tree
+interface PortalNode {
+  pt: HTMLElement | string;  // target element or selector
+  c: NodeSpec | NodeSpec[];
+}
+
+// memo node for memoized rendering
+interface MemoNode {
+  mm: string[];  // dependency state keys
+  c: NodeSpec;
+}
+
 type Content = string | number | StateRef | NodeSpec[] | IfNode | MapNode;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FunctionNodeSpec = [Component<any>, Content?, (Props & Record<string, unknown>)?];
 type BuiltinNodeSpec = [ComponentType, Content?, Props?];
-type NodeSpec = BuiltinNodeSpec | FunctionNodeSpec | IfNode | MapNode;
+type NodeSpec = BuiltinNodeSpec | FunctionNodeSpec | IfNode | MapNode | ProviderNode | PortalNode | MemoNode;
 
 interface TooeySpec {
   s?: Record<string, StateValue>;
@@ -418,6 +507,82 @@ function async$<T>(
   };
 }
 
+// reducer helper - creates state and dispatch function for reducer pattern
+type Reducer<S, A> = (state: S, action: A) => S;
+type Dispatch<A> = (action: A) => void;
+
+interface ReducerSpec<S extends Record<string, unknown>, A> {
+  s: S;
+  dp: Dispatch<A>;
+}
+
+function rd$<S extends Record<string, unknown>, A>(
+  reducer: Reducer<S, A>,
+  initialState: S
+): ReducerSpec<S, A> {
+  let currentState = initialState;
+  let instance: TooeyInstance | null = null;
+
+  const dispatch: Dispatch<A> = (action: A) => {
+    const newState = reducer(currentState, action);
+    if (newState !== currentState) {
+      currentState = newState;
+      if (instance) {
+        batch(() => {
+          Object.entries(newState).forEach(([key, val]) => {
+            instance!.set(key, val);
+          });
+        });
+      }
+    }
+  };
+
+  // create a proxy to capture the instance when state is accessed
+  const stateProxy = new Proxy(initialState, {
+    get(target, prop) {
+      return target[prop as keyof S];
+    }
+  });
+
+  return {
+    s: stateProxy,
+    dp: dispatch,
+    // internal: bind instance after render
+    _bind(inst: TooeyInstance) {
+      instance = inst;
+    }
+  } as ReducerSpec<S, A> & { _bind: (inst: TooeyInstance) => void };
+}
+
+// memoized component wrapper - caches result based on props comparison
+function mm<P extends Props>(
+  component: Component<P>,
+  compareFn?: (prevProps: P | undefined, nextProps: P | undefined) => boolean
+): Component<P> {
+  let cachedResult: NodeSpec | null = null;
+  let prevProps: P | undefined = undefined;
+
+  const defaultCompare = (prev: P | undefined, next: P | undefined): boolean => {
+    if (prev === next) return true;
+    if (!prev || !next) return false;
+    const prevKeys = Object.keys(prev);
+    const nextKeys = Object.keys(next);
+    if (prevKeys.length !== nextKeys.length) return false;
+    return prevKeys.every(key => (prev as Record<string, unknown>)[key] === (next as Record<string, unknown>)[key]);
+  };
+
+  const compare = compareFn || defaultCompare;
+
+  return (props?: P, children?: NodeSpec[]): NodeSpec => {
+    if (cachedResult && compare(prevProps, props)) {
+      return cachedResult;
+    }
+    prevProps = props;
+    cachedResult = component(props, children);
+    return cachedResult;
+  };
+}
+
 // ============ state operations ============
 
 function applyOp(state: Signal<StateValue>, op: Op, val?: unknown): void {
@@ -475,6 +640,18 @@ function isIfNode(v: unknown): v is IfNode {
 
 function isMapNode(v: unknown): v is MapNode {
   return typeof v === 'object' && v !== null && !Array.isArray(v) && ('map' in v || 'm' in v);
+}
+
+function isProviderNode(v: unknown): v is ProviderNode {
+  return typeof v === 'object' && v !== null && !Array.isArray(v) && 'pv' in v;
+}
+
+function isPortalNode(v: unknown): v is PortalNode {
+  return typeof v === 'object' && v !== null && !Array.isArray(v) && 'pt' in v;
+}
+
+function isMemoNode(v: unknown): v is MemoNode {
+  return typeof v === 'object' && v !== null && !Array.isArray(v) && 'mm' in v && 'c' in v;
 }
 
 function resolveValue(content: unknown, state: StateStore): unknown {
@@ -898,6 +1075,138 @@ function createElement(
     return placeholder;
   }
 
+  // handle provider node for context
+  if (isProviderNode(spec)) {
+    const placeholder = document.createElement('div');
+    placeholder.style.display = 'contents';
+
+    // push context value
+    pushContext(spec.pv as Context<unknown>, spec.v);
+
+    // render children - detect if spec.c is already an array of node specs
+    // if first element is a function, it's a single function component NodeSpec [Fn, content?, props?]
+    // if first element is an array or object node (if/map/provider/etc), it's an array of NodeSpecs
+    const isNodeSpecArray = (arr: unknown[]): boolean => {
+      const first = arr[0];
+      // function as first = single function component, not array of specs
+      if (typeof first === 'function') return false;
+      return Array.isArray(first) || isIfNode(first) || isMapNode(first) ||
+             isProviderNode(first) || isPortalNode(first) || isMemoNode(first) ||
+             isErrorBoundaryNode(first);
+    };
+
+    const children = Array.isArray(spec.c) && spec.c.length > 0 && isNodeSpecArray(spec.c as unknown[])
+      ? spec.c as NodeSpec[]
+      : [spec.c as NodeSpec];
+
+    children.forEach(child => {
+      const el = createElement(child, ctx, itemContext);
+      if (el) placeholder.appendChild(el);
+    });
+
+    // cleanup: pop context value when destroyed
+    ctx.cleanups.push(() => popContext(spec.pv as Context<unknown>));
+
+    return placeholder;
+  }
+
+  // handle portal node - render to different target
+  if (isPortalNode(spec)) {
+    const target = typeof spec.pt === 'string'
+      ? document.querySelector(spec.pt)
+      : spec.pt;
+
+    if (!target) {
+      console.warn(`[tooey] portal target not found: ${spec.pt}`);
+      return null;
+    }
+
+    // create a wrapper for portal content
+    const portalWrapper = document.createElement('div');
+    portalWrapper.style.display = 'contents';
+    portalWrapper.setAttribute('data-tooey-portal', 'true');
+
+    // render children into portal wrapper - detect if spec.c is already an array of node specs
+    // if first element is a function, it's a single function component NodeSpec [Fn, content?, props?]
+    const isNodeSpecArray = (arr: unknown[]): boolean => {
+      const first = arr[0];
+      if (typeof first === 'function') return false;
+      return Array.isArray(first) || isIfNode(first) || isMapNode(first) ||
+             isProviderNode(first) || isPortalNode(first) || isMemoNode(first) ||
+             isErrorBoundaryNode(first);
+    };
+
+    const children = Array.isArray(spec.c) && spec.c.length > 0 && isNodeSpecArray(spec.c as unknown[])
+      ? spec.c as NodeSpec[]
+      : [spec.c as NodeSpec];
+
+    children.forEach(child => {
+      const el = createElement(child, ctx, itemContext);
+      if (el) portalWrapper.appendChild(el);
+    });
+
+    // append to target
+    target.appendChild(portalWrapper);
+
+    // cleanup: remove portal content when destroyed
+    ctx.cleanups.push(() => {
+      if (portalWrapper.parentNode) {
+        portalWrapper.parentNode.removeChild(portalWrapper);
+      }
+    });
+
+    // return empty placeholder in original location
+    const placeholder = document.createElement('div');
+    placeholder.style.display = 'none';
+    placeholder.setAttribute('data-tooey-portal-anchor', 'true');
+    return placeholder;
+  }
+
+  // handle memo node - memoized rendering based on state dependencies
+  if (isMemoNode(spec)) {
+    const placeholder = document.createElement('div');
+    placeholder.style.display = 'contents';
+
+    let currentEl: HTMLElement | null = null;
+    let childCtx: RenderContext | null = null;
+    let prevValues: unknown[] = [];
+
+    const updateMemo = () => {
+      // get current values of dependencies
+      const currentValues = spec.mm.map(key => state[key]?.());
+
+      // check if any dependency changed
+      const hasChanged = prevValues.length === 0 ||
+        currentValues.some((val, i) => val !== prevValues[i]);
+
+      if (!hasChanged && currentEl) {
+        return; // skip re-render
+      }
+
+      prevValues = currentValues;
+
+      // cleanup previous render
+      if (childCtx) {
+        childCtx.cleanups.forEach(fn => fn());
+        childCtx.cleanups = [];
+      }
+      if (currentEl) {
+        placeholder.innerHTML = '';
+        currentEl = null;
+      }
+
+      childCtx = { cleanups: [], state, theme: ctx.theme, plugins: ctx.plugins };
+      currentEl = createElement(spec.c, childCtx, itemContext);
+      if (currentEl) {
+        placeholder.appendChild(currentEl);
+        ctx.cleanups.push(...childCtx.cleanups);
+      }
+    };
+
+    effect(updateMemo, ctx);
+    return placeholder;
+  }
+
   // validate spec structure
   if (!Array.isArray(spec) || (spec as unknown[]).length === 0) {
     console.warn('[tooey] invalid node spec:', spec);
@@ -1083,9 +1392,25 @@ function createElement(
     case 'sv':
       el = document.createElementNS('http://www.w3.org/2000/svg', 'svg') as unknown as HTMLElement;
       break;
+    case 'fr':
+      // fragment - renders children without wrapper, but we need a container
+      // use display:contents to make it invisible in layout
+      el = document.createElement('div');
+      el.style.display = 'contents';
+      el.setAttribute('data-tooey-fragment', 'true');
+      break;
     default:
       console.warn(`[tooey] unknown component type: ${type}`);
       el = document.createElement('div');
+  }
+
+  // handle ref prop
+  if (props.rf) {
+    if (typeof props.rf === 'function') {
+      (props.rf as RefCallback)(el);
+    } else {
+      (props.rf as Ref).el = el;
+    }
   }
 
   if (props.cls) el.className = props.cls;
@@ -1414,8 +1739,472 @@ const li = 'li' as const;
 const im = 'im' as const;
 const ln = 'ln' as const;
 const sv = 'sv' as const;
+const fr = 'fr' as const;
+
+// ============ ssr (server-side rendering) ============
+
+// spec to html string converter for SSR
+function specToHtml(spec: NodeSpec, state: Record<string, StateValue> = {}, theme?: Theme): string {
+  // create a mock state store for value resolution
+  const mockState: StateStore = {};
+  Object.entries(state).forEach(([key, val]) => {
+    // create a callable function that also has set and sub methods
+    const mockSig = (() => val) as Signal<StateValue>;
+    mockSig.set = () => {};
+    mockSig.sub = () => () => {};
+    mockState[key] = mockSig;
+  });
+
+  function resolveContent(content: unknown): string {
+    if (isStateRef(content)) {
+      const val = mockState[content.$]?.();
+      return val !== undefined && val !== null ? String(val) : '';
+    }
+    return String(content ?? '');
+  }
+
+  function resolveStyleVal(val: string | number | undefined): string | undefined {
+    if (val === undefined) return undefined;
+    if (typeof val === 'string' && val.startsWith('$') && theme) {
+      const token = val.slice(1);
+      const categories: (keyof Theme)[] = ['colors', 'spacing', 'radius', 'fonts'];
+      for (const cat of categories) {
+        const category = theme[cat];
+        if (category && token in category) {
+          const v = category[token];
+          return typeof v === 'number' ? `${v}px` : String(v);
+        }
+      }
+    }
+    return typeof val === 'number' ? `${val}px` : val;
+  }
+
+  function propsToStyle(props: Props): string {
+    const styles: string[] = [];
+    if (props.g !== undefined) { const v = resolveStyleVal(props.g); if (v) styles.push(`gap:${v}`); }
+    if (props.p !== undefined) { const v = resolveStyleVal(props.p); if (v) styles.push(`padding:${v}`); }
+    if (props.m !== undefined) { const v = resolveStyleVal(props.m); if (v) styles.push(`margin:${v}`); }
+    if (props.w !== undefined) { const v = resolveStyleVal(props.w); if (v) styles.push(`width:${v}`); }
+    if (props.h !== undefined) { const v = resolveStyleVal(props.h); if (v) styles.push(`height:${v}`); }
+    if (props.bg !== undefined) { const v = resolveStyleVal(props.bg); if (v) styles.push(`background:${v}`); }
+    if (props.fg !== undefined) { const v = resolveStyleVal(props.fg); if (v) styles.push(`color:${v}`); }
+    if (props.r !== undefined) { const v = resolveStyleVal(props.r); if (v) styles.push(`border-radius:${v}`); }
+    if (props.fs !== undefined) { const v = resolveStyleVal(props.fs); if (v) styles.push(`font-size:${v}`); }
+    if (props.fw !== undefined) styles.push(`font-weight:${props.fw}`);
+    if (props.ai !== undefined) styles.push(`align-items:${styleShortcuts[props.ai] || props.ai}`);
+    if (props.jc !== undefined) styles.push(`justify-content:${styleShortcuts[props.jc] || props.jc}`);
+    return styles.join(';');
+  }
+
+  function nodeToHtml(node: NodeSpec): string {
+    // handle if node
+    if (isIfNode(node)) {
+      const ifCond = node.if ?? node['?'];
+      const thenBranch = node.then ?? node.t;
+      const elseBranch = node.else ?? node.e;
+      const eqValue = node.eq ?? node.is;
+
+      const rawValue = typeof ifCond === 'string'
+        ? mockState[ifCond]?.()
+        : isStateRef(ifCond) ? mockState[ifCond.$]?.() : ifCond;
+
+      const condition = eqValue !== undefined ? rawValue === eqValue : Boolean(rawValue);
+      const branch = condition ? thenBranch : elseBranch;
+      if (!branch) return '';
+
+      if (Array.isArray(branch) && branch.length > 0 && Array.isArray(branch[0])) {
+        return (branch as NodeSpec[]).map(nodeToHtml).join('');
+      }
+      return nodeToHtml(branch as NodeSpec);
+    }
+
+    // handle map node
+    if (isMapNode(node)) {
+      const mapSource = node.map ?? node.m;
+      const asTemplate = node.as ?? node.a;
+      if (!asTemplate) return '';
+
+      const arr = (typeof mapSource === 'string'
+        ? mockState[mapSource]?.()
+        : isStateRef(mapSource) ? mockState[mapSource.$]?.() : mapSource) as unknown[];
+
+      if (!Array.isArray(arr)) return '';
+
+      return arr.map((item, index) => {
+        // temporarily set $item and $index for template resolution
+        const itemStr = typeof item === 'object' ? JSON.stringify(item) : String(item);
+        return nodeToHtml(asTemplate).replace(/\$item\.(\w+)/g, (_, key) => {
+          return String((item as Record<string, unknown>)?.[key] ?? '');
+        }).replace(/\$item/g, itemStr).replace(/\$index/g, String(index));
+      }).join('');
+    }
+
+    // handle provider node
+    if (isProviderNode(node)) {
+      const children = Array.isArray(node.c) && node.c.length > 0 && Array.isArray(node.c[0])
+        ? node.c as NodeSpec[]
+        : [node.c as NodeSpec];
+      return children.map(nodeToHtml).join('');
+    }
+
+    // handle portal node - skip for SSR (render placeholder)
+    if (isPortalNode(node)) {
+      return '<!-- portal -->';
+    }
+
+    // handle memo node
+    if (isMemoNode(node)) {
+      return nodeToHtml(node.c);
+    }
+
+    // handle error boundary
+    if (isErrorBoundaryNode(node)) {
+      try {
+        return nodeToHtml(node.child);
+      } catch {
+        return node.fallback ? nodeToHtml(node.fallback) : '<div>[error]</div>';
+      }
+    }
+
+    if (!Array.isArray(node) || (node as unknown[]).length === 0) return '';
+
+    const [typeOrFn, content, props = {}] = node as [ComponentType | Component, Content?, Props?];
+
+    // handle function components
+    if (typeof typeOrFn === 'function') {
+      const children = Array.isArray(content) && content.length > 0 && Array.isArray(content[0])
+        ? content as NodeSpec[]
+        : undefined;
+      const resolved = (typeOrFn as Component)(props, children);
+      return nodeToHtml(resolved);
+    }
+
+    const type = typeOrFn as ComponentType;
+
+    // map component types to HTML tags
+    const tagMap: Record<ComponentType, string> = {
+      vs: 'div', hs: 'div', dv: 'div', gr: 'div', fr: 'div',
+      tx: 'span', bt: 'button',
+      in: 'input', ta: 'textarea', sl: 'select', cb: 'input', rd: 'input',
+      tb: 'table', th: 'thead', bd: 'tbody', tr: 'tr', td: 'td', tc: 'th',
+      ul: 'ul', ol: 'ol', li: 'li',
+      im: 'img', ln: 'a', sv: 'svg'
+    };
+
+    const tag = tagMap[type] || 'div';
+    const selfClosing = ['input', 'img'].includes(tag);
+
+    // build attributes
+    const attrs: string[] = [];
+
+    // add type-specific styles
+    let baseStyle = '';
+    if (type === 'vs') baseStyle = 'display:flex;flex-direction:column;';
+    if (type === 'hs') baseStyle = 'display:flex;flex-direction:row;';
+    if (type === 'gr') baseStyle = 'display:grid;';
+    if (type === 'fr') baseStyle = 'display:contents;';
+
+    const propsStyle = propsToStyle(props);
+    const fullStyle = baseStyle + propsStyle;
+    if (fullStyle) attrs.push(`style="${fullStyle}"`);
+
+    if (props.cls) attrs.push(`class="${props.cls}"`);
+    if (props.id) attrs.push(`id="${props.id}"`);
+    if (props.dis) attrs.push('disabled');
+    if (props.href) attrs.push(`href="${props.href}"`);
+    if (props.src) attrs.push(`src="${props.src}"`);
+    if (props.alt) attrs.push(`alt="${props.alt}"`);
+    if (props.ph) attrs.push(`placeholder="${props.ph}"`);
+    if (props.type) attrs.push(`type="${props.type}"`);
+    if (type === 'cb') attrs.push('type="checkbox"');
+    if (type === 'rd') attrs.push('type="radio"');
+
+    // add data attribute for hydration
+    attrs.push('data-tooey-ssr="true"');
+
+    const attrStr = attrs.length > 0 ? ' ' + attrs.join(' ') : '';
+
+    if (selfClosing) {
+      return `<${tag}${attrStr}/>`;
+    }
+
+    // handle content
+    let innerHtml = '';
+    if (content !== undefined) {
+      if (Array.isArray(content) && content.length > 0 && (Array.isArray(content[0]) || isIfNode(content[0]) || isMapNode(content[0]))) {
+        innerHtml = (content as NodeSpec[]).map(nodeToHtml).join('');
+      } else if (isIfNode(content) || isMapNode(content)) {
+        innerHtml = nodeToHtml(content as NodeSpec);
+      } else if (typeof content === 'string' || typeof content === 'number' || isStateRef(content)) {
+        innerHtml = resolveContent(content);
+      }
+    }
+
+    // handle select options
+    if (type === 'sl' && props.opts) {
+      innerHtml = props.opts.map(opt =>
+        `<option value="${opt.v}">${opt.l}</option>`
+      ).join('');
+    }
+
+    return `<${tag}${attrStr}>${innerHtml}</${tag}>`;
+  }
+
+  return nodeToHtml(spec);
+}
+
+// render to string for SSR (short name: rts)
+function rts(spec: TooeySpec, options?: { theme?: Theme }): string {
+  return specToHtml(spec.r, spec.s || {}, options?.theme);
+}
+
+// hydrate - attach event listeners and reactivity to SSR-rendered HTML
+function hy(container: HTMLElement, spec: TooeySpec, options?: RenderOptions): TooeyInstance {
+  // for now, just re-render (full hydration would require matching DOM nodes)
+  // this is a simple implementation - production would need smarter reconciliation
+  return render(container, spec, options);
+}
+
+// ============ router ============
+
+interface Route {
+  p: string;  // path pattern
+  c: NodeSpec | Component;  // component to render
+  ch?: Route[];  // child routes for nested routing
+}
+
+interface RouterState {
+  path: string;
+  params: Record<string, string>;
+  query: Record<string, string>;
+}
+
+// global router state
+let routerState: Signal<RouterState> | null = null;
+let routerBase = '';
+
+function initRouter(base = ''): Signal<RouterState> {
+  if (routerState) return routerState;
+
+  routerBase = base;
+  const getState = (): RouterState => {
+    const path = window.location.pathname.replace(base, '') || '/';
+    const query: Record<string, string> = {};
+    new URLSearchParams(window.location.search).forEach((v, k) => {
+      query[k] = v;
+    });
+    return { path, params: {}, query };
+  };
+
+  routerState = signal(getState());
+
+  // listen for popstate (back/forward)
+  window.addEventListener('popstate', () => {
+    routerState?.set(getState());
+  });
+
+  return routerState;
+}
+
+// navigate programmatically
+function nav(path: string, options?: { replace?: boolean }): void {
+  const fullPath = routerBase + path;
+  if (options?.replace) {
+    window.history.replaceState(null, '', fullPath);
+  } else {
+    window.history.pushState(null, '', fullPath);
+  }
+  if (routerState) {
+    const query: Record<string, string> = {};
+    new URLSearchParams(window.location.search).forEach((v, k) => {
+      query[k] = v;
+    });
+    routerState.set({ path, params: {}, query });
+  }
+}
+
+// match route pattern to path
+function matchRoute(pattern: string, path: string): { match: boolean; params: Record<string, string> } {
+  const patternParts = pattern.split('/').filter(Boolean);
+  const pathParts = path.split('/').filter(Boolean);
+
+  if (patternParts.length !== pathParts.length) {
+    // check for wildcard
+    if (!patternParts.some(p => p === '*')) {
+      return { match: false, params: {} };
+    }
+  }
+
+  const params: Record<string, string> = {};
+
+  for (let i = 0; i < patternParts.length; i++) {
+    const pp = patternParts[i];
+    const pathPart = pathParts[i];
+
+    if (pp === '*') {
+      return { match: true, params };
+    }
+    if (pp.startsWith(':')) {
+      params[pp.slice(1)] = pathPart || '';
+    } else if (pp !== pathPart) {
+      return { match: false, params: {} };
+    }
+  }
+
+  return { match: true, params };
+}
+
+// router props interface
+interface RouterProps extends Props {
+  routes?: Route[];
+  base?: string;
+}
+
+// link props interface
+interface LinkProps extends Props {
+  to?: string;
+}
+
+// route component props (passed to route components)
+interface RouteProps extends Props {
+  params?: Record<string, string>;
+}
+
+// router component - renders matched route
+const Router: Component<RouterProps> = (props) => {
+  const routes = props?.routes || [];
+  const base = props?.base || '';
+
+  initRouter(base);
+
+  return {
+    '?': { $: '_routerMatch' },
+    t: [dv, 'Route matched'],
+    e: [dv, 'No route matched']
+  } as unknown as NodeSpec;
+};
+
+// create router view that reactively renders matched route
+function createRouterView(routes: Route[], base = ''): NodeSpec {
+  const routerSig = initRouter(base);
+
+  // this needs to be a function component that re-evaluates on route change
+  const RouteView: Component = () => {
+    const { path } = routerSig();
+
+    for (const route of routes) {
+      const { match, params } = matchRoute(route.p, path);
+      if (match) {
+        // update params in router state
+        if (Object.keys(params).length > 0) {
+          routerSig.set(s => ({ ...s, params }));
+        }
+
+        if (typeof route.c === 'function') {
+          return (route.c as Component<RouteProps>)({ params });
+        }
+        return route.c as NodeSpec;
+      }
+    }
+
+    // no match - return empty
+    return [tx, ''];
+  };
+
+  return [RouteView];
+}
+
+// link component for navigation
+const Link: Component<LinkProps> = (props, children) => {
+  const href = props?.to || '/';
+  return [ln, children || href, {
+    href: routerBase + href,
+    c: () => {
+      nav(href);
+    },
+    cls: props?.cls
+  }];
+};
+
+// router component type constants
+const rt = Router;
+const lk = Link;
+
+// outlet for nested routes (renders children routes)
+function ot(routes: Route[]): NodeSpec {
+  return createRouterView(routes);
+}
+
+// ============ devtools plugin ============
+
+interface DevtoolsOptions {
+  name?: string;
+  log?: boolean;
+}
+
+function devtools(options?: DevtoolsOptions): TooeyPlugin {
+  const name = options?.name || 'tooey';
+  const shouldLog = options?.log ?? true;
+
+  let stateHistory: Array<{ timestamp: number; key: string; oldVal: unknown; newVal: unknown }> = [];
+
+  return {
+    name: 'devtools',
+
+    onInit(instance) {
+      if (shouldLog) {
+        console.log(`[${name}] initialized`, {
+          state: Object.fromEntries(
+            Object.entries(instance.state).map(([k, v]) => [k, v()])
+          )
+        });
+      }
+
+      // expose devtools API on window
+      if (typeof window !== 'undefined') {
+        (window as unknown as Record<string, unknown>).__TOOEY_DEVTOOLS__ = {
+          instance,
+          getState: () => Object.fromEntries(
+            Object.entries(instance.state).map(([k, v]) => [k, v()])
+          ),
+          setState: (key: string, value: unknown) => instance.set(key, value),
+          getHistory: () => stateHistory,
+          clearHistory: () => { stateHistory = []; }
+        };
+      }
+    },
+
+    onDestroy(_instance) {
+      if (shouldLog) {
+        console.log(`[${name}] destroyed`);
+      }
+      if (typeof window !== 'undefined') {
+        delete (window as unknown as Record<string, unknown>).__TOOEY_DEVTOOLS__;
+      }
+    },
+
+    onStateChange(key, oldVal, newVal) {
+      stateHistory.push({
+        timestamp: Date.now(),
+        key,
+        oldVal,
+        newVal
+      });
+
+      // keep last 100 entries
+      if (stateHistory.length > 100) {
+        stateHistory = stateHistory.slice(-100);
+      }
+
+      if (shouldLog) {
+        console.log(`[${name}] state change:`, key, oldVal, '→', newVal);
+      }
+    }
+  };
+}
 
 export {
+  // core
   render,
   createTooey,
   signal,
@@ -1424,12 +2213,50 @@ export {
   computed,
   async$,
   $,
-  vs, hs, dv, gr,
+  // components
+  vs, hs, dv, gr, fr,
   tx, bt,
   In, ta, sl, cb, rd,
   tb, th, bd, Tr, Td, tc,
   ul, ol, li,
   im, ln, sv,
+  // refs
+  ref,
+  Ref,
+  RefCallback,
+  RefProp,
+  // context
+  cx,
+  ux,
+  Context,
+  ProviderNode,
+  PortalNode,
+  MemoNode,
+  // reducer
+  rd$,
+  Reducer,
+  Dispatch,
+  ReducerSpec,
+  // memo
+  mm,
+  // ssr
+  rts,
+  hy,
+  // router
+  rt,
+  lk,
+  ot,
+  nav,
+  Route,
+  RouterState,
+  RouterProps,
+  LinkProps,
+  RouteProps,
+  createRouterView,
+  // devtools
+  devtools,
+  DevtoolsOptions,
+  // types
   TooeySpec,
   NodeSpec,
   Props,

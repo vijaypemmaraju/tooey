@@ -2,7 +2,7 @@
  * tooey - token-efficient ui library for llms
  *
  * component types (2-letter abbreviations):
- *   layout: vs (vstack), hs (hstack), dv (div), gr (grid)
+ *   layout: vs (vstack), hs (hstack), dv (div), gr (grid), fr (fragment)
  *   text & buttons: tx (text/span), bt (button)
  *   inputs: in (input), ta (textarea), sl (select), cb (checkbox), rd (radio)
  *   tables: tb (table), th (thead), bd (tbody), tr (tr), td (td), tc (th)
@@ -19,6 +19,7 @@
  *     shortcuts: c=center, sb=space-between, fe=flex-end, fs=flex-start, st=stretch
  *   misc: cur (cursor), ov (overflow), pe (pointer-events), us (user-select), sh, tr
  *   element-specific: v (value), ph (placeholder), type, href, src, alt, dis, ch, ro, opts
+ *   refs: rf (ref callback or ref object)
  *
  * events: c (click), x (input/change), f (focus), bl (blur), k (keydown), ku, kp, e, lv, sub
  *   shorthand: "state+" (increment), "state-" (decrement), "state~" (toggle), "state!val" (set)
@@ -28,9 +29,31 @@
  * control flow (short form): {?: cond, t: [...], e: [...]} | {m: state, a: [...]}
  * control flow (long form): {if: state, then: [...], else: [...]} | {map: state, as: [...]}
  * equality check: {?: "state", is: 0, t: [...]} or {?: {$:"state"}, is: 0, t: [...]}
+ *
+ * advanced features:
+ *   refs: ref() creates ref object, rf prop attaches to element
+ *   context: cx(default) creates context, ux(ctx) gets value, {pv: ctx, v: val, c: [...]} provides
+ *   portals: {pt: target, c: [...]} renders children to target element
+ *   memo: {mm: ['deps'], c: [...]} memoizes based on state deps, mm(component, compare) wraps component
+ *   reducer: rd$(reducer, initialState) returns {s, dp} for reducer pattern
+ *   ssr: rts(spec) renders to string, hy(container, spec) hydrates
+ *   router: rt (router), lk (link), ot(routes) outlet, nav(path) navigate
+ *   devtools: devtools({name, log}) plugin for debugging
  */
 type StateValue = unknown;
 type StateStore = Record<string, Signal<StateValue>>;
+interface Ref<T = HTMLElement | null> {
+    el: T;
+}
+declare function ref<T = HTMLElement | null>(initial?: T): Ref<T>;
+type RefCallback = (el: HTMLElement) => void;
+type RefProp = Ref | RefCallback;
+interface Context<T> {
+    _id: number;
+    _default: T;
+}
+declare function cx<T>(defaultValue: T): Context<T>;
+declare function ux<T>(context: Context<T>): T;
 type ThemeValue = string | number;
 type ThemeCategory = Record<string, ThemeValue>;
 interface Theme {
@@ -129,8 +152,9 @@ interface Props {
     lv?: EventHandler;
     sub?: EventHandler;
     s?: Record<string, unknown>;
+    rf?: RefProp;
 }
-type ComponentType = 'vs' | 'hs' | 'dv' | 'gr' | 'tx' | 'bt' | 'in' | 'ta' | 'sl' | 'cb' | 'rd' | 'tb' | 'th' | 'bd' | 'tr' | 'td' | 'tc' | 'ul' | 'ol' | 'li' | 'im' | 'ln' | 'sv';
+type ComponentType = 'vs' | 'hs' | 'dv' | 'gr' | 'tx' | 'bt' | 'in' | 'ta' | 'sl' | 'cb' | 'rd' | 'tb' | 'th' | 'bd' | 'tr' | 'td' | 'tc' | 'ul' | 'ol' | 'li' | 'im' | 'ln' | 'sv' | 'fr';
 type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
 type StateRef = {
     $: string;
@@ -152,10 +176,23 @@ interface MapNode {
     a?: NodeSpec;
     key?: string;
 }
+interface ProviderNode {
+    pv: Context<unknown>;
+    v: unknown;
+    c: NodeSpec | NodeSpec[];
+}
+interface PortalNode {
+    pt: HTMLElement | string;
+    c: NodeSpec | NodeSpec[];
+}
+interface MemoNode {
+    mm: string[];
+    c: NodeSpec;
+}
 type Content = string | number | StateRef | NodeSpec[] | IfNode | MapNode;
 type FunctionNodeSpec = [Component<any>, Content?, (Props & Record<string, unknown>)?];
 type BuiltinNodeSpec = [ComponentType, Content?, Props?];
-type NodeSpec = BuiltinNodeSpec | FunctionNodeSpec | IfNode | MapNode;
+type NodeSpec = BuiltinNodeSpec | FunctionNodeSpec | IfNode | MapNode | ProviderNode | PortalNode | MemoNode;
 interface TooeySpec {
     s?: Record<string, StateValue>;
     r: NodeSpec;
@@ -200,6 +237,14 @@ interface AsyncSpec<T> {
 declare function async$<T>(promiseOrFn: Promise<T> | (() => Promise<T>), options?: {
     onError?: (error: Error) => void;
 }): AsyncSpec<T>;
+type Reducer<S, A> = (state: S, action: A) => S;
+type Dispatch<A> = (action: A) => void;
+interface ReducerSpec<S extends Record<string, unknown>, A> {
+    s: S;
+    dp: Dispatch<A>;
+}
+declare function rd$<S extends Record<string, unknown>, A>(reducer: Reducer<S, A>, initialState: S): ReducerSpec<S, A>;
+declare function mm<P extends Props>(component: Component<P>, compareFn?: (prevProps: P | undefined, nextProps: P | undefined) => boolean): Component<P>;
 interface TooeyInstance {
     state: StateStore;
     el: HTMLElement | null;
@@ -244,5 +289,42 @@ declare const li: "li";
 declare const im: "im";
 declare const ln: "ln";
 declare const sv: "sv";
-export { render, createTooey, signal, effect, batch, computed, async$, $, vs, hs, dv, gr, tx, bt, In, ta, sl, cb, rd, tb, th, bd, Tr, Td, tc, ul, ol, li, im, ln, sv, TooeySpec, NodeSpec, Props, StateRef, TooeyInstance, TooeyFactory, CreateTooeyOptions, IfNode, MapNode, ErrorBoundaryNode, ErrorInfo, ErrorHandler, Component, Theme, RenderOptions, TooeyPlugin, ComputedSignal, AsyncSpec };
+declare const fr: "fr";
+declare function rts(spec: TooeySpec, options?: {
+    theme?: Theme;
+}): string;
+declare function hy(container: HTMLElement, spec: TooeySpec, options?: RenderOptions): TooeyInstance;
+interface Route {
+    p: string;
+    c: NodeSpec | Component;
+    ch?: Route[];
+}
+interface RouterState {
+    path: string;
+    params: Record<string, string>;
+    query: Record<string, string>;
+}
+declare function nav(path: string, options?: {
+    replace?: boolean;
+}): void;
+interface RouterProps extends Props {
+    routes?: Route[];
+    base?: string;
+}
+interface LinkProps extends Props {
+    to?: string;
+}
+interface RouteProps extends Props {
+    params?: Record<string, string>;
+}
+declare function createRouterView(routes: Route[], base?: string): NodeSpec;
+declare const rt: Component<RouterProps>;
+declare const lk: Component<LinkProps>;
+declare function ot(routes: Route[]): NodeSpec;
+interface DevtoolsOptions {
+    name?: string;
+    log?: boolean;
+}
+declare function devtools(options?: DevtoolsOptions): TooeyPlugin;
+export { render, createTooey, signal, effect, batch, computed, async$, $, vs, hs, dv, gr, fr, tx, bt, In, ta, sl, cb, rd, tb, th, bd, Tr, Td, tc, ul, ol, li, im, ln, sv, ref, Ref, RefCallback, RefProp, cx, ux, Context, ProviderNode, PortalNode, MemoNode, rd$, Reducer, Dispatch, ReducerSpec, mm, rts, hy, rt, lk, ot, nav, Route, RouterState, RouterProps, LinkProps, RouteProps, createRouterView, devtools, DevtoolsOptions, TooeySpec, NodeSpec, Props, StateRef, TooeyInstance, TooeyFactory, CreateTooeyOptions, IfNode, MapNode, ErrorBoundaryNode, ErrorInfo, ErrorHandler, Component, Theme, RenderOptions, TooeyPlugin, ComputedSignal, AsyncSpec };
 //# sourceMappingURL=tooey.d.ts.map
