@@ -6,7 +6,7 @@ import {
   batch,
   computed,
   async$,
-  V, T, B,
+  vs, tx, bt,
   TooeyInstance
 } from '../src/tooey';
 
@@ -221,7 +221,7 @@ describe('async$', () => {
 
     const instance = render(container, {
       s: asyncSpec.s,
-      r: [T, { $: 'data' }]
+      r: [tx, { $: 'data' }]
     });
 
     await asyncSpec.init(instance);
@@ -236,7 +236,7 @@ describe('async$', () => {
 
     const instance = render(container, {
       s: asyncSpec.s,
-      r: [T, '']
+      r: [tx, '']
     });
 
     await asyncSpec.init(instance);
@@ -251,7 +251,7 @@ describe('async$', () => {
 
     const instance = render(container, {
       s: asyncSpec.s,
-      r: [T, '']
+      r: [tx, '']
     });
 
     await asyncSpec.init(instance);
@@ -267,7 +267,7 @@ describe('async$', () => {
 
     const instance = render(container, {
       s: asyncSpec.s,
-      r: [T, '']
+      r: [tx, '']
     });
 
     await asyncSpec.init(instance);
@@ -282,8 +282,8 @@ describe('async$', () => {
 
     const instance = render(container, {
       s: asyncSpec.s,
-      r: [V, [
-        { '?': 'loading', t: [T, 'Loading...'], e: [T, { $: 'data' }] }
+      r: [vs, [
+        { '?': 'loading', t: [tx, 'Loading...'], e: [tx, { $: 'data' }] }
       ]]
     });
 
@@ -299,10 +299,10 @@ describe('async$', () => {
 
     const instance = render(container, {
       s: asyncSpec.s,
-      r: [V, [
-        { '?': 'loading', t: [T, 'Loading...'] },
-        { '?': 'error', t: [T, { $: 'error' }] },
-        { '?': 'data', t: [T, { $: 'data' }] }
+      r: [vs, [
+        { '?': 'loading', t: [tx, 'Loading...'] },
+        { '?': 'error', t: [tx, { $: 'error' }] },
+        { '?': 'data', t: [tx, { $: 'data' }] }
       ]]
     });
 
@@ -318,7 +318,7 @@ describe('async$', () => {
 
     const instance = render(container, {
       s: asyncSpec.s,
-      r: [T, '']
+      r: [tx, '']
     });
 
     await asyncSpec.init(instance);
@@ -336,7 +336,7 @@ describe('async$', () => {
 
     const instance = render(container, {
       s: asyncSpec.s,
-      r: [T, '']
+      r: [tx, '']
     });
 
     await asyncSpec.init(instance);
@@ -349,9 +349,9 @@ describe('async$', () => {
 
     const instance = render(container, {
       s: { ...asyncSpec.s, localValue: 'local' },
-      r: [V, [
-        [T, { $: 'localValue' }],
-        { '?': 'loading', e: [T, { $: 'data' }] }
+      r: [vs, [
+        [tx, { $: 'localValue' }],
+        { '?': 'loading', e: [tx, { $: 'data' }] }
       ]]
     });
 
@@ -393,7 +393,7 @@ describe('computed with render', () => {
   it('computed can derive from instance state signals', () => {
     const instance = render(container, {
       s: { items: [1, 2, 3] },
-      r: [T, '']
+      r: [tx, '']
     });
 
     // create computed from instance state

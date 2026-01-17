@@ -30,6 +30,8 @@ importers:
         specifier: ^5.3.3
         version: 5.9.3
 
+  packages/claude-plugin: {}
+
   packages/components:
     dependencies:
       '@tooey/ui':

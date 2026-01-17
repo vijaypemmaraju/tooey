@@ -18,46 +18,46 @@ use this skill when the user asks to generate ui components, forms, interactive 
 
 ```
 tooey: token-efficient UI lib. spec={s:{state},r:[component,content?,props?]}
-components: V(vstack) H(hstack) D(div) G(grid) T(text) B(button) I(input) Ta(textarea) S(select) C(checkbox) R(radio) Tb/Th/Tbd/Tr/Td/Tc(table) Ul/Ol/Li(list) M(img) L(a) Sv(svg)
+components: vs(vstack) hs(hstack) dv(div) gr(grid) tx(text) bt(button) In(input) ta(textarea) sl(select) cb(checkbox) rd(radio) tb/th/bd/Tr/Td/tc(table) ul/ol/li(list) im(img) ln(a) sv(svg)
 props: g(gap) p(padding) m(margin) w(width) h(height) mw mh bg(background) fg(color) o(opacity) r(radius) bw bc bs pos(position:rel/abs/fix) z t l rt b fs(font-size) fw ff ta td lh ls ai(align-items) jc(justify-content) flw cols rows cur ov sh tr pe us v(value) ph(placeholder) type href src alt dis(disabled) ch(checked) ro(readonly) opts cls id show(conditional display)
 layout shortcuts: c=center sb=space-between fe=flex-end fs=flex-start st=stretch
 events: c(click) x(input) f(focus) bl(blur) k(keydown) e(mouseenter) lv(mouseleave) sub(submit)
 state ops: "key+"(inc) "key-"(dec) "key~"(toggle) "key!val"(set) or ["key","op",val?] where op=+/-/!/~/</>/X/.
 control: {?:"key",t:[...],e:[...]} {?:"key",is:val,t:[...]} {m:"arr",a:[...]}
 state ref: {$:"key"} | in map: $item $index $item.prop
-function components: const Comp=(props,children)=>[V,children,{...props}] | use: [Comp,content,props]
+function components: const Comp=(props,children)=>[vs,children,{...props}] | use: [Comp,content,props]
 ```
 
 ## examples
 
 counter:
 ```javascript
-{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:"n-"}],[B,"+",{c:"n+"}]],{g:8}]],{g:8}]}
+{s:{n:0},r:[vs,[[tx,{$:"n"}],[hs,[[bt,"-",{c:"n-"}],[bt,"+",{c:"n+"}]],{g:8}]],{g:8}]}
 ```
 
 toggle:
 ```javascript
-{s:{v:false},r:[V,[[T,{$:"v"}],[B,"Toggle",{c:"v~"}]],{g:8}]}
+{s:{v:false},r:[vs,[[tx,{$:"v"}],[bt,"Toggle",{c:"v~"}]],{g:8}]}
 ```
 
 input preview:
 ```javascript
-{s:{t:""},r:[V,[[I,"",{v:{$:"t"},x:"t"}],[T,{$:"t"}]],{g:8}]}
+{s:{t:""},r:[vs,[[In,"",{v:{$:"t"},x:"t"}],[tx,{$:"t"}]],{g:8}]}
 ```
 
 tabs:
 ```javascript
-{s:{t:0},r:[V,[[H,[[B,"Home",{c:"t!0"}],[B,"About",{c:"t!1"}]],{g:8}],{?:"t",is:0,t:[T,"Home content"]},{?:"t",is:1,t:[T,"About content"]}],{g:12}]}
+{s:{t:0},r:[vs,[[hs,[[bt,"Home",{c:"t!0"}],[bt,"About",{c:"t!1"}]],{g:8}],{?:"t",is:0,t:[tx,"Home content"]},{?:"t",is:1,t:[tx,"About content"]}],{g:12}]}
 ```
 
 login form:
 ```javascript
-{s:{u:"",p:""},r:[V,[[V,[[T,"Username"],[I,"",{v:{$:"u"},x:"u"}]],{g:4}],[V,[[T,"Password"],[I,"",{type:"password",v:{$:"p"},x:"p"}]],{g:4}],[B,"Login"]],{g:16}]}
+{s:{u:"",p:""},r:[vs,[[vs,[[tx,"Username"],[In,"",{v:{$:"u"},x:"u"}]],{g:4}],[vs,[[tx,"Password"],[In,"",{type:"password",v:{$:"p"},x:"p"}]],{g:4}],[bt,"Login"]],{g:16}]}
 ```
 
 modal:
 ```javascript
-{s:{o:false},r:[V,[[B,"Open",{c:"o~"}],[D,[[V,[[T,"Title",{fw:700}],[T,"Content"],[B,"Close",{c:"o~"}]],{bg:"#fff",p:16,r:8,g:8}]],{show:"o",pos:"fix",w:"100vw",h:"100vh",bg:"#0008",jc:"c",ai:"c"}]],{g:8}]}
+{s:{o:false},r:[vs,[[bt,"Open",{c:"o~"}],[dv,[[vs,[[tx,"Title",{fw:700}],[tx,"Content"],[bt,"Close",{c:"o~"}]],{bg:"#fff",p:16,r:8,g:8}]],{show:"o",pos:"fix",w:"100vw",h:"100vh",bg:"#0008",jc:"c",ai:"c"}]],{g:8}]}
 ```
 
 ## rendering
@@ -65,7 +65,7 @@ modal:
 to render tooey specs:
 
 ```javascript
-import { render, V, H, T, B, I, D } from '@tooey/ui';
+import { render, vs, hs, tx, bt, In, dv } from '@tooey/ui';
 
 render(document.getElementById('app'), spec);
 ```

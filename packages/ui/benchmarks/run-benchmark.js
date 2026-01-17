@@ -28,7 +28,7 @@ global.HTMLElement = dom.window.HTMLElement;
 global.Event = dom.window.Event;
 
 // Import tooey after setting up DOM (use built ESM module)
-const { render, V, H, D, T, B, Li, Ul, signal, batch } = await import('../dist/tooey.esm.js');
+const { render, vs, hs, dv, tx, bt, li, ul, signal, batch } = await import('../dist/tooey.esm.js');
 
 // ============ Token Efficiency Examples ============
 
@@ -306,7 +306,7 @@ function runPerformanceBenchmarks() {
     for (let i = 0; i < iterations; i++) {
       const instance = render(container, {
         s: { items },
-        r: [Ul, [{ m: 'items', a: [Li, '$item'] }]]
+        r: [ul, [{ m: 'items', a: [li, '$item'] }]]
       });
       instance.destroy();
     }
@@ -331,7 +331,7 @@ function runPerformanceBenchmarks() {
   for (const updates of [100, 1000, 10000]) {
     const instance = render(container, {
       s: { count: 0 },
-      r: [T, { $: 'count' }]
+      r: [tx, { $: 'count' }]
     });
 
     const start = performance.now();
@@ -363,18 +363,18 @@ function runPerformanceBenchmarks() {
   for (let i = 0; i < complexIterations; i++) {
     const instance = render(container, {
       s: { tab: 0, items: ['a', 'b', 'c', 'd', 'e'] },
-      r: [V, [
-        [H, [
-          [B, 'Tab 1', { c: 'tab!0' }],
-          [B, 'Tab 2', { c: 'tab!1' }],
-          [B, 'Tab 3', { c: 'tab!2' }]
+      r: [vs, [
+        [hs, [
+          [bt, 'Tab 1', { c: 'tab!0' }],
+          [bt, 'Tab 2', { c: 'tab!1' }],
+          [bt, 'Tab 3', { c: 'tab!2' }]
         ], { g: 8 }],
-        { '?': 'tab', is: 0, t: [V, [
-          [T, 'Tab 1 Content', { fw: 'bold' }],
-          { m: 'items', a: [D, [[T, '$index: '], [T, '$item']], { p: 8, bg: '#f0f0f0' }] }
+        { '?': 'tab', is: 0, t: [vs, [
+          [tx, 'Tab 1 Content', { fw: 'bold' }],
+          { m: 'items', a: [dv, [[tx, '$index: '], [tx, '$item']], { p: 8, bg: '#f0f0f0' }] }
         ], { g: 8 }] },
-        { '?': 'tab', is: 1, t: [T, 'Tab 2 Content'] },
-        { '?': 'tab', is: 2, t: [T, 'Tab 3 Content'] }
+        { '?': 'tab', is: 1, t: [tx, 'Tab 2 Content'] },
+        { '?': 'tab', is: 2, t: [tx, 'Tab 3 Content'] }
       ], { g: 16 }]
     });
     instance.destroy();
@@ -563,8 +563,8 @@ All benchmarks run in JSDOM environment. Times in milliseconds unless noted.
 
 | Feature | Tooey | React |
 |---------|-------|-------|
-| Component names | \`V\`, \`H\`, \`T\`, \`B\` | \`div\`, \`span\`, \`button\` |
-| Flex column | \`[V, [...]]\` | \`<div style={{display:'flex',flexDirection:'column'}}>\` |
+| Component names | \`vs\`, \`hs\`, \`tx\`, \`bt\` | \`div\`, \`span\`, \`button\` |
+| Flex column | \`[vs, [...]]\` | \`<div style={{display:'flex',flexDirection:'column'}}>\` |
 | Click handler | \`{c:"count+"}\` | \`onClick={()=>setCount(c=>c+1)}\` |
 | Conditional | \`{?:"show",t:[...],e:[...]}\` | \`{show ? (...) : (...)}\` |
 | List render | \`{m:"items",a:[...]}\` | \`{items.map((x,i)=>(...))}\` |

@@ -95,20 +95,20 @@ Generate the code in {{FORMAT}} format.`;
 export const TOOEY_SYSTEM_PROMPT = `You are a tooey code generator. Tooey is a token-efficient UI library.
 
 ## Component Reference
-- V: vertical flex container (column)
-- H: horizontal flex container (row)
-- D: plain div
-- G: grid container
-- T: text/span
-- B: button
-- I: text input
-- Ta: textarea
-- S: select dropdown
-- C: checkbox
-- R: radio
-- Tb: table, Th: thead, Tbd: tbody, Tr: tr, Td: td, Tc: th
-- Ul: unordered list, Ol: ordered list, Li: list item
-- L: link, M: image
+- vs: vertical flex container (column)
+- hs: horizontal flex container (row)
+- dv: plain div
+- gr: grid container
+- tx: text/span
+- bt: button
+- In: text input
+- ta: textarea
+- sl: select dropdown
+- cb: checkbox
+- rd: radio
+- tb: table, th: thead, bd: tbody, Tr: tr, Td: td, tc: th
+- ul: unordered list, ol: ordered list, li: list item
+- ln: link, im: image
 
 ## Spec Format
 {
@@ -143,7 +143,7 @@ export const TOOEY_SYSTEM_PROMPT = `You are a tooey code generator. Tooey is a t
 
 Output ONLY valid tooey JSON spec, no explanation.`;
 
-export const TOOEY_MINIMAL_PROMPT = `Tooey: V=column, H=row, T=text, B=button, I=input.
+export const TOOEY_MINIMAL_PROMPT = `Tooey: vs=column, hs=row, tx=text, bt=button, In=input.
 State: s:{key:val}, display: {$:"key"}, click: c:"key+"/c:"key-"/c:"key~"
 Conditionals: {?:"key",t:[...],e:[...]}, Lists: {m:"arr",a:[...]}
 Output: {s:{...},r:[Component,content,{props}]}`;
@@ -193,8 +193,8 @@ export function validateTooeySyntax(code: string): { valid: boolean; error?: str
       return { valid: false, error: `unbalanced curly braces: ${braces}` };
     }
 
-    // check for common tooey patterns - handles both JS syntax [V, and JSON ["V",
-    const hasComponent = /\["?(?:V|H|D|G|T|B|I|Ta|S|C|R|Tb|Th|Tbd|Tr|Td|Tc|Ul|Ol|Li|L|M|Sv)"?\s*[,\]]/.test(trimmed);
+    // check for common tooey patterns - handles both JS syntax [vs, and JSON ["vs",
+    const hasComponent = /\["?(?:vs|hs|dv|gr|tx|bt|In|ta|sl|cb|rd|tb|th|bd|Tr|Td|tc|ul|ol|li|ln|im|sv)"?\s*[,\]]/.test(trimmed);
     const hasControlFlow = /"?[?m]"?\s*:/.test(trimmed);
 
     if (!hasComponent && !hasControlFlow) {
@@ -317,13 +317,13 @@ export const CORPUS_TRANSFER_EXPERIMENTS: CorpusTransferExperiment[] = [
 ## Examples
 
 Counter:
-{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:"n-"}],[B,"+",{c:"n+"}]],{g:8}]],{g:8}]}
+{s:{n:0},r:[vs,[[tx,{$:"n"}],[hs,[[bt,"-",{c:"n-"}],[bt,"+",{c:"n+"}]],{g:8}]],{g:8}]}
 
 Todo List:
-{s:{txt:"",items:[]},r:[V,[[H,[[I,"",{v:{$:"txt"},x:"txt"}],[B,"+",{c:add}]],{g:8}],[Ul,[{m:"items",a:[Li,"$item"]}]]],{g:12}]}
+{s:{txt:"",items:[]},r:[vs,[[hs,[[In,"",{v:{$:"txt"},x:"txt"}],[bt,"+",{c:add}]],{g:8}],[ul,[{m:"items",a:[li,"$item"]}]]],{g:12}]}
 
 Tabs:
-{s:{tab:0},r:[V,[[H,[[B,"A",{c:"tab!0"}],[B,"B",{c:"tab!1"}]]],{?:"tab",is:0,t:[T,"Tab A"]},{?:"tab",is:1,t:[T,"Tab B"]}]]}`,
+{s:{tab:0},r:[vs,[[hs,[[bt,"A",{c:"tab!0"}],[bt,"B",{c:"tab!1"}]]],{?:"tab",is:0,t:[tx,"Tab A"]},{?:"tab",is:1,t:[tx,"Tab B"]}]]}`,
     hypothesizedAccuracy: 0.9
   }
 ];

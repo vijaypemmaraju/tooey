@@ -1,13 +1,13 @@
 /**
  * tooey - token-efficient ui library for llms
  *
- * component types:
- *   layout: V (vstack), H (hstack), D (div), G (grid)
- *   text & buttons: T (text/span), B (button)
- *   inputs: I (input), Ta (textarea), S (select), C (checkbox), R (radio)
- *   tables: Tb (table), Th (thead), Tbd (tbody), Tr (tr), Td (td), Tc (th)
- *   lists: Ul (ul), Ol (ol), Li (li)
- *   media & links: M (image), L (link), Sv (svg)
+ * component types (2-letter abbreviations):
+ *   layout: vs (vstack), hs (hstack), dv (div), gr (grid)
+ *   text & buttons: tx (text/span), bt (button)
+ *   inputs: in (input), ta (textarea), sl (select), cb (checkbox), rd (radio)
+ *   tables: tb (table), th (thead), bd (tbody), tr (tr), td (td), tc (th)
+ *   lists: ul (ul), ol (ol), li (li)
+ *   media & links: im (image), ln (link), sv (svg)
  *
  * props (short keys):
  *   spacing: g (gap), p (padding), m (margin), w (width), h (height), mw, mh
@@ -162,12 +162,12 @@ interface Props {
 }
 
 type ComponentType =
-  | 'V' | 'H' | 'D' | 'G'
-  | 'T' | 'B'
-  | 'I' | 'Ta' | 'S' | 'C' | 'R'
-  | 'Tb' | 'Th' | 'Tbd' | 'Tr' | 'Td' | 'Tc'
-  | 'Ul' | 'Ol' | 'Li'
-  | 'M' | 'L' | 'Sv';
+  | 'vs' | 'hs' | 'dv' | 'gr'
+  | 'tx' | 'bt'
+  | 'in' | 'ta' | 'sl' | 'cb' | 'rd'
+  | 'tb' | 'th' | 'bd' | 'tr' | 'td' | 'tc'
+  | 'ul' | 'ol' | 'li'
+  | 'im' | 'ln' | 'sv';
 
 // function component type - returns a NodeSpec
 type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
@@ -972,17 +972,17 @@ function createElement(
   let el: HTMLElement;
 
   switch (type) {
-    case 'V':
+    case 'vs':
       el = document.createElement('div');
       el.style.display = 'flex';
       el.style.flexDirection = 'column';
       break;
-    case 'H':
+    case 'hs':
       el = document.createElement('div');
       el.style.display = 'flex';
       el.style.flexDirection = 'row';
       break;
-    case 'G':
+    case 'gr':
       el = document.createElement('div');
       el.style.display = 'grid';
       if (props.cols) {
@@ -994,28 +994,28 @@ function createElement(
           ? `repeat(${props.rows}, 1fr)` : props.rows;
       }
       break;
-    case 'D':
+    case 'dv':
       el = document.createElement('div');
       break;
-    case 'T':
+    case 'tx':
       el = document.createElement('span');
       break;
-    case 'B':
+    case 'bt':
       el = document.createElement('button');
       break;
-    case 'I':
+    case 'in':
       el = document.createElement('input');
       (el as HTMLInputElement).type = props.type || 'text';
       if (props.ph) (el as HTMLInputElement).placeholder = props.ph;
       if (props.ro) (el as HTMLInputElement).readOnly = true;
       break;
-    case 'Ta':
+    case 'ta':
       el = document.createElement('textarea');
       if (props.ph) (el as HTMLTextAreaElement).placeholder = props.ph;
       if (props.rw) (el as HTMLTextAreaElement).rows = props.rw;
       if (props.ro) (el as HTMLTextAreaElement).readOnly = true;
       break;
-    case 'S':
+    case 'sl':
       el = document.createElement('select');
       if (props.opts) {
         props.opts.forEach(opt => {
@@ -1026,46 +1026,46 @@ function createElement(
         });
       }
       break;
-    case 'C':
+    case 'cb':
       el = document.createElement('input');
       (el as HTMLInputElement).type = 'checkbox';
       break;
-    case 'R':
+    case 'rd':
       el = document.createElement('input');
       (el as HTMLInputElement).type = 'radio';
       break;
-    case 'Tb':
+    case 'tb':
       el = document.createElement('table');
       break;
-    case 'Th':
+    case 'th':
       el = document.createElement('thead');
       break;
-    case 'Tbd':
+    case 'bd':
       el = document.createElement('tbody');
       break;
-    case 'Tr':
+    case 'tr':
       el = document.createElement('tr');
       break;
-    case 'Td':
+    case 'td':
       el = document.createElement('td');
       if (props.sp) (el as HTMLTableCellElement).colSpan = props.sp;
       if (props.rsp) (el as HTMLTableCellElement).rowSpan = props.rsp;
       break;
-    case 'Tc':
+    case 'tc':
       el = document.createElement('th');
       if (props.sp) (el as HTMLTableCellElement).colSpan = props.sp;
       if (props.rsp) (el as HTMLTableCellElement).rowSpan = props.rsp;
       break;
-    case 'Ul':
+    case 'ul':
       el = document.createElement('ul');
       break;
-    case 'Ol':
+    case 'ol':
       el = document.createElement('ol');
       break;
-    case 'Li':
+    case 'li':
       el = document.createElement('li');
       break;
-    case 'M':
+    case 'im':
       el = document.createElement('img');
       if (props.src) {
         const safeSrc = sanitizeUrl(props.src, 'src');
@@ -1073,14 +1073,14 @@ function createElement(
       }
       if (props.alt) (el as HTMLImageElement).alt = props.alt;
       break;
-    case 'L':
+    case 'ln':
       el = document.createElement('a');
       if (props.href) {
         const safeHref = sanitizeUrl(props.href, 'href');
         if (safeHref) (el as HTMLAnchorElement).href = safeHref;
       }
       break;
-    case 'Sv':
+    case 'sv':
       el = document.createElementNS('http://www.w3.org/2000/svg', 'svg') as unknown as HTMLElement;
       break;
     default:
@@ -1107,11 +1107,11 @@ function createElement(
     } else if (isStateRef(content)) {
       effect(() => {
         const val = resolveValue(content, state);
-        if (type === 'I') {
+        if (type === 'in') {
           (el as HTMLInputElement).value = String(val ?? '');
-        } else if (type === 'Ta') {
+        } else if (type === 'ta') {
           (el as HTMLTextAreaElement).value = String(val ?? '');
-        } else if (type === 'C' || type === 'R') {
+        } else if (type === 'cb' || type === 'rd') {
           (el as HTMLInputElement).checked = Boolean(val);
         } else {
           // textContent provides XSS protection by not parsing HTML
@@ -1131,11 +1131,11 @@ function createElement(
         textContent = textContent.replace(/\$index/g, String(itemContext.index));
       }
       // xss protection for static content
-      if (type === 'I') {
+      if (type === 'in') {
         (el as HTMLInputElement).value = textContent;
-      } else if (type === 'Ta') {
+      } else if (type === 'ta') {
         (el as HTMLTextAreaElement).value = textContent;
-      } else if (type !== 'S') {
+      } else if (type !== 'sl') {
         // don't set textContent for select (would clear options)
         el.textContent = textContent;
       }
@@ -1146,9 +1146,9 @@ function createElement(
   if (props.v !== undefined && isStateRef(props.v)) {
     effect(() => {
       const val = resolveValue(props.v!, state);
-      if (type === 'I' || type === 'S' || type === 'Ta') {
+      if (type === 'in' || type === 'sl' || type === 'ta') {
         (el as HTMLInputElement).value = String(val ?? '');
-      } else if (type === 'C' || type === 'R') {
+      } else if (type === 'cb' || type === 'rd') {
         (el as HTMLInputElement).checked = Boolean(val);
       }
     }, ctx);
@@ -1173,7 +1173,7 @@ function createElement(
   };
 
   // get button text for implicit operation inference
-  const buttonText = type === 'B' && (typeof content === 'string' || typeof content === 'number')
+  const buttonText = type === 'bt' && (typeof content === 'string' || typeof content === 'number')
     ? String(content)
     : undefined;
 
@@ -1204,7 +1204,7 @@ function createElement(
         const sig = state[stateKey];
         if (sig) {
           const target = e.target as HTMLInputElement;
-          const val = (type === 'C' || type === 'R') ? target.checked : target.value;
+          const val = (type === 'cb' || type === 'rd') ? target.checked : target.value;
           applyOp(sig, op, val);
         }
       }
@@ -1390,30 +1390,30 @@ function $(name: string): StateRef {
   return { $: name };
 }
 
-// component type constants
-const V = 'V' as const;
-const H = 'H' as const;
-const D = 'D' as const;
-const G = 'G' as const;
-const T = 'T' as const;
-const B = 'B' as const;
-const I = 'I' as const;
-const Ta = 'Ta' as const;
-const S = 'S' as const;
-const C = 'C' as const;
-const R = 'R' as const;
-const Tb = 'Tb' as const;
-const Th = 'Th' as const;
-const Tbd = 'Tbd' as const;
-const Tr = 'Tr' as const;
-const Td = 'Td' as const;
-const Tc = 'Tc' as const;
-const Ul = 'Ul' as const;
-const Ol = 'Ol' as const;
-const Li = 'Li' as const;
-const M = 'M' as const;
-const L = 'L' as const;
-const Sv = 'Sv' as const;
+// component type constants (2-letter abbreviations)
+const vs = 'vs' as const;
+const hs = 'hs' as const;
+const dv = 'dv' as const;
+const gr = 'gr' as const;
+const tx = 'tx' as const;
+const bt = 'bt' as const;
+const In = 'in' as const; // capitalized export to avoid JS reserved word
+const ta = 'ta' as const;
+const sl = 'sl' as const;
+const cb = 'cb' as const;
+const rd = 'rd' as const;
+const tb = 'tb' as const;
+const th = 'th' as const;
+const bd = 'bd' as const;
+const Tr = 'tr' as const; // capitalized export to avoid collision with transform prop
+const Td = 'td' as const; // capitalized for consistency with Tr
+const tc = 'tc' as const;
+const ul = 'ul' as const;
+const ol = 'ol' as const;
+const li = 'li' as const;
+const im = 'im' as const;
+const ln = 'ln' as const;
+const sv = 'sv' as const;
 
 export {
   render,
@@ -1424,12 +1424,12 @@ export {
   computed,
   async$,
   $,
-  V, H, D, G,
-  T, B,
-  I, Ta, S, C, R,
-  Tb, Th, Tbd, Tr, Td, Tc,
-  Ul, Ol, Li,
-  M, L, Sv,
+  vs, hs, dv, gr,
+  tx, bt,
+  In, ta, sl, cb, rd,
+  tb, th, bd, Tr, Td, tc,
+  ul, ol, li,
+  im, ln, sv,
   TooeySpec,
   NodeSpec,
   Props,

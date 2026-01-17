@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   render,
-  V, H, D,
-  T, B,
-  L, M
+  vs, hs, dv,
+  tx, bt,
+  In,
+  ln, im
 } from '../src/tooey';
 
 describe('security', () => {
@@ -25,7 +26,7 @@ describe('security', () => {
     it('escapes HTML in text content', () => {
       const instance = render(container, {
         s: { html: '<script>alert("xss")</script>' },
-        r: [T, { $: 'html' }]
+        r: [tx, { $: 'html' }]
       });
       expect(container.innerHTML).not.toContain('<script>');
       expect(container.textContent).toContain('<script>');
@@ -34,7 +35,7 @@ describe('security', () => {
     it('escapes HTML entities', () => {
       render(container, {
         s: { text: '&lt;div&gt;' },
-        r: [T, { $: 'text' }]
+        r: [tx, { $: 'text' }]
       });
       expect(container.textContent).toBe('&lt;div&gt;');
     });
@@ -42,7 +43,7 @@ describe('security', () => {
     it('handles special characters safely', () => {
       render(container, {
         s: { text: '"quotes" & <tags>' },
-        r: [T, { $: 'text' }]
+        r: [tx, { $: 'text' }]
       });
       expect(container.textContent).toBe('"quotes" & <tags>');
     });
@@ -52,7 +53,7 @@ describe('security', () => {
     describe('href validation', () => {
       it('allows https URLs', () => {
         render(container, {
-          r: [L, 'Safe link', { href: 'https://example.com' }]
+          r: [ln, 'Safe link', { href: 'https://example.com' }]
         });
         const link = container.querySelector('a')!;
         expect(link.href).toBe('https://example.com/');
@@ -60,7 +61,7 @@ describe('security', () => {
 
       it('allows http URLs', () => {
         render(container, {
-          r: [L, 'HTTP link', { href: 'http://example.com' }]
+          r: [ln, 'HTTP link', { href: 'http://example.com' }]
         });
         const link = container.querySelector('a')!;
         expect(link.href).toBe('http://example.com/');
@@ -68,7 +69,7 @@ describe('security', () => {
 
       it('allows mailto URLs', () => {
         render(container, {
-          r: [L, 'Email', { href: 'mailto:test@example.com' }]
+          r: [ln, 'Email', { href: 'mailto:test@example.com' }]
         });
         const link = container.querySelector('a')!;
         expect(link.href).toBe('mailto:test@example.com');
@@ -76,7 +77,7 @@ describe('security', () => {
 
       it('allows tel URLs', () => {
         render(container, {
-          r: [L, 'Phone', { href: 'tel:+1234567890' }]
+          r: [ln, 'Phone', { href: 'tel:+1234567890' }]
         });
         const link = container.querySelector('a')!;
         expect(link.href).toBe('tel:+1234567890');
@@ -84,7 +85,7 @@ describe('security', () => {
 
       it('allows relative URLs', () => {
         render(container, {
-          r: [L, 'Relative', { href: '/path/to/page' }]
+          r: [ln, 'Relative', { href: '/path/to/page' }]
         });
         const link = container.querySelector('a')!;
         expect(link.href).toContain('/path/to/page');
@@ -92,7 +93,7 @@ describe('security', () => {
 
       it('allows anchor links', () => {
         render(container, {
-          r: [L, 'Anchor', { href: '#section' }]
+          r: [ln, 'Anchor', { href: '#section' }]
         });
         const link = container.querySelector('a')!;
         expect(link.href).toContain('#section');
@@ -100,7 +101,7 @@ describe('security', () => {
 
       it('blocks javascript: URLs', () => {
         render(container, {
-          r: [L, 'XSS', { href: 'javascript:alert(1)' }]
+          r: [ln, 'XSS', { href: 'javascript:alert(1)' }]
         });
         const link = container.querySelector('a')!;
         expect(link.href).toBe('');
@@ -111,7 +112,7 @@ describe('security', () => {
 
       it('blocks data: URLs', () => {
         render(container, {
-          r: [L, 'Data', { href: 'data:text/html,<script>alert(1)</script>' }]
+          r: [ln, 'Data', { href: 'data:text/html,<script>alert(1)</script>' }]
         });
         const link = container.querySelector('a')!;
         expect(link.href).toBe('');
@@ -119,7 +120,7 @@ describe('security', () => {
 
       it('blocks vbscript: URLs', () => {
         render(container, {
-          r: [L, 'VBScript', { href: 'vbscript:msgbox("xss")' }]
+          r: [ln, 'VBScript', { href: 'vbscript:msgbox("xss")' }]
         });
         const link = container.querySelector('a')!;
         expect(link.href).toBe('');
@@ -127,7 +128,7 @@ describe('security', () => {
 
       it('blocks case-insensitive javascript: URLs', () => {
         render(container, {
-          r: [L, 'XSS', { href: 'JAVASCRIPT:alert(1)' }]
+          r: [ln, 'XSS', { href: 'JAVASCRIPT:alert(1)' }]
         });
         const link = container.querySelector('a')!;
         expect(link.href).toBe('');
@@ -135,7 +136,7 @@ describe('security', () => {
 
       it('blocks javascript URLs with leading whitespace', () => {
         render(container, {
-          r: [L, 'XSS', { href: '  javascript:alert(1)' }]
+          r: [ln, 'XSS', { href: '  javascript:alert(1)' }]
         });
         const link = container.querySelector('a')!;
         // The URL should be blocked
@@ -146,7 +147,7 @@ describe('security', () => {
     describe('src validation', () => {
       it('allows https image sources', () => {
         render(container, {
-          r: [M, '', { src: 'https://example.com/image.jpg', alt: 'test' }]
+          r: [im, '', { src: 'https://example.com/image.jpg', alt: 'test' }]
         });
         const img = container.querySelector('img')!;
         expect(img.src).toBe('https://example.com/image.jpg');
@@ -154,7 +155,7 @@ describe('security', () => {
 
       it('allows relative image sources', () => {
         render(container, {
-          r: [M, '', { src: '/images/test.jpg', alt: 'test' }]
+          r: [im, '', { src: '/images/test.jpg', alt: 'test' }]
         });
         const img = container.querySelector('img')!;
         expect(img.src).toContain('/images/test.jpg');
@@ -162,7 +163,7 @@ describe('security', () => {
 
       it('blocks javascript: in src', () => {
         render(container, {
-          r: [M, '', { src: 'javascript:alert(1)', alt: 'test' }]
+          r: [im, '', { src: 'javascript:alert(1)', alt: 'test' }]
         });
         const img = container.querySelector('img')!;
         expect(img.src).toBe('');
@@ -170,7 +171,7 @@ describe('security', () => {
 
       it('blocks data: in src', () => {
         render(container, {
-          r: [M, '', { src: 'data:text/html,<script>alert(1)</script>', alt: 'test' }]
+          r: [im, '', { src: 'data:text/html,<script>alert(1)</script>', alt: 'test' }]
         });
         const img = container.querySelector('img')!;
         expect(img.src).toBe('');
@@ -185,12 +186,12 @@ describe('security', () => {
 
       const instance1 = render(container, {
         s: { count: 1 },
-        r: [T, { $: 'count' }]
+        r: [tx, { $: 'count' }]
       });
 
       const instance2 = render(container2, {
         s: { count: 100 },
-        r: [T, { $: 'count' }]
+        r: [tx, { $: 'count' }]
       });
 
       expect(instance1.get('count')).toBe(1);
@@ -208,7 +209,7 @@ describe('security', () => {
     it('destroy removes event listeners', () => {
       let clickCount = 0;
       const instance = render(container, {
-        r: [B, 'Click', { c: () => { clickCount++; } }]
+        r: [bt, 'Click', { c: () => { clickCount++; } }]
       });
 
       const button = container.querySelector('button')!;
@@ -226,9 +227,9 @@ describe('security', () => {
     it('input values are properly bound', () => {
       const instance = render(container, {
         s: { text: '<script>' },
-        r: [V, [
-          ['I', '', { v: { $: 'text' } }],
-          [T, { $: 'text' }]
+        r: [vs, [
+          [In, '', { v: { $: 'text' } }],
+          [tx, { $: 'text' }]
         ]]
       });
 
@@ -257,8 +258,8 @@ describe('error boundaries', () => {
     render(container, {
       r: {
         boundary: true,
-        child: [T, 'Normal content'],
-        fallback: [T, 'Error occurred']
+        child: [tx, 'Normal content'],
+        fallback: [tx, 'Error occurred']
       } as any
     });
     expect(container.textContent).toBe('Normal content');
@@ -269,8 +270,8 @@ describe('error boundaries', () => {
     // We can test the error boundary structure exists
     const errorBoundarySpec = {
       boundary: true,
-      child: [T, 'Content'],
-      fallback: [T, 'Fallback']
+      child: [tx, 'Content'],
+      fallback: [tx, 'Fallback']
     };
 
     expect(errorBoundarySpec.boundary).toBe(true);
@@ -281,7 +282,7 @@ describe('error boundaries', () => {
     let errorCalled = false;
     const errorBoundarySpec = {
       boundary: true,
-      child: [T, 'Content'],
+      child: [tx, 'Content'],
       onError: () => { errorCalled = true; }
     };
 

@@ -212,168 +212,6 @@ export const API_DATA = {
   ],
   "components": [
     {
-      "id": "B",
-      "name": "B",
-      "fullName": "Button",
-      "category": "text",
-      "element": "button",
-      "description": "Button component",
-      "example": "[B, \"content\", { }]"
-    },
-    {
-      "id": "C",
-      "name": "C",
-      "fullName": "Checkbox",
-      "category": "form",
-      "element": "input[checkbox]",
-      "description": "Checkbox component",
-      "example": "[C, \"content\", { }]"
-    },
-    {
-      "id": "D",
-      "name": "D",
-      "fullName": "Div",
-      "category": "layout",
-      "element": "div",
-      "description": "Div component",
-      "example": "[D, \"content\", { }]"
-    },
-    {
-      "id": "G",
-      "name": "G",
-      "fullName": "Grid",
-      "category": "layout",
-      "element": "div",
-      "description": "Grid component",
-      "example": "[G, \"content\", { }]"
-    },
-    {
-      "id": "H",
-      "name": "H",
-      "fullName": "HStack",
-      "category": "layout",
-      "element": "div",
-      "description": "HStack component",
-      "example": "[H, \"content\", { }]"
-    },
-    {
-      "id": "I",
-      "name": "I",
-      "fullName": "Input",
-      "category": "form",
-      "element": "input",
-      "description": "Input component",
-      "example": "[I, \"content\", { }]"
-    },
-    {
-      "id": "L",
-      "name": "L",
-      "fullName": "Link",
-      "category": "media",
-      "element": "a",
-      "description": "Link component",
-      "example": "[L, \"content\", { }]"
-    },
-    {
-      "id": "Li",
-      "name": "Li",
-      "fullName": "ListItem",
-      "category": "list",
-      "element": "li",
-      "description": "ListItem component",
-      "example": "[Li, \"content\", { }]"
-    },
-    {
-      "id": "M",
-      "name": "M",
-      "fullName": "Image",
-      "category": "media",
-      "element": "img",
-      "description": "Image component",
-      "example": "[M, \"content\", { }]"
-    },
-    {
-      "id": "Ol",
-      "name": "Ol",
-      "fullName": "OrderedList",
-      "category": "list",
-      "element": "ol",
-      "description": "OrderedList component",
-      "example": "[Ol, \"content\", { }]"
-    },
-    {
-      "id": "R",
-      "name": "R",
-      "fullName": "Radio",
-      "category": "form",
-      "element": "input[radio]",
-      "description": "Radio component",
-      "example": "[R, \"content\", { }]"
-    },
-    {
-      "id": "S",
-      "name": "S",
-      "fullName": "Select",
-      "category": "form",
-      "element": "select",
-      "description": "Select component",
-      "example": "[S, \"content\", { }]"
-    },
-    {
-      "id": "Sv",
-      "name": "Sv",
-      "fullName": "SVG",
-      "category": "media",
-      "element": "svg",
-      "description": "SVG component",
-      "example": "[Sv, \"content\", { }]"
-    },
-    {
-      "id": "T",
-      "name": "T",
-      "fullName": "Text",
-      "category": "text",
-      "element": "span",
-      "description": "Text component",
-      "example": "[T, \"content\", { }]"
-    },
-    {
-      "id": "Ta",
-      "name": "Ta",
-      "fullName": "Textarea",
-      "category": "form",
-      "element": "textarea",
-      "description": "Textarea component",
-      "example": "[Ta, \"content\", { }]"
-    },
-    {
-      "id": "Tb",
-      "name": "Tb",
-      "fullName": "Table",
-      "category": "table",
-      "element": "table",
-      "description": "Table component",
-      "example": "[Tb, \"content\", { }]"
-    },
-    {
-      "id": "Tbd",
-      "name": "Tbd",
-      "fullName": "TableBody",
-      "category": "table",
-      "element": "tbody",
-      "description": "TableBody component",
-      "example": "[Tbd, \"content\", { }]"
-    },
-    {
-      "id": "Tc",
-      "name": "Tc",
-      "fullName": "TableHeaderCell",
-      "category": "table",
-      "element": "th",
-      "description": "TableHeaderCell component",
-      "example": "[Tc, \"content\", { }]"
-    },
-    {
       "id": "Td",
       "name": "Td",
       "fullName": "TableCell",
@@ -383,15 +221,6 @@ export const API_DATA = {
       "example": "[Td, \"content\", { }]"
     },
     {
-      "id": "Th",
-      "name": "Th",
-      "fullName": "TableHead",
-      "category": "table",
-      "element": "thead",
-      "description": "TableHead component",
-      "example": "[Th, \"content\", { }]"
-    },
-    {
       "id": "Tr",
       "name": "Tr",
       "fullName": "TableRow",
@@ -399,24 +228,6 @@ export const API_DATA = {
       "element": "tr",
       "description": "TableRow component",
       "example": "[Tr, \"content\", { }]"
-    },
-    {
-      "id": "Ul",
-      "name": "Ul",
-      "fullName": "UnorderedList",
-      "category": "list",
-      "element": "ul",
-      "description": "UnorderedList component",
-      "example": "[Ul, \"content\", { }]"
-    },
-    {
-      "id": "V",
-      "name": "V",
-      "fullName": "VStack",
-      "category": "layout",
-      "element": "div",
-      "description": "VStack component",
-      "example": "[V, \"content\", { }]"
     }
   ],
   "props": [

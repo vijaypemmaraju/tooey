@@ -5,12 +5,12 @@ import {
   effect,
   batch,
   $,
-  V, H, D, G,
-  T, B,
-  I, Ta, S, C, R,
-  L, M,
-  Ul, Ol, Li,
-  Tb, Th, Tbd, Tr, Td, Tc
+  vs, hs, dv, gr,
+  tx, bt,
+  In, ta, sl, cb, rd,
+  ln, im,
+  ul, ol, li,
+  tb, th, bd, Tr, Td, tc
 } from '../src/tooey';
 
 describe('browser compatibility', () => {
@@ -231,10 +231,10 @@ describe('browser compatibility', () => {
   describe('tooey rendering', () => {
     it('renders all layout components', () => {
       render(container, {
-        r: [V, [
-          [H, [[T, 'H']]],
-          [D, [[T, 'D']]],
-          [G, [[T, 'G']], { cols: 2 }]
+        r: [vs, [
+          [hs, [[tx, 'H']]],
+          [dv, [[tx, 'D']]],
+          [gr, [[tx, 'G']], { cols: 2 }]
         ]]
       });
       expect(container.querySelectorAll('div').length).toBeGreaterThan(0);
@@ -242,12 +242,12 @@ describe('browser compatibility', () => {
 
     it('renders all form components', () => {
       render(container, {
-        r: [V, [
-          [I, '', { ph: 'input' }],
-          [Ta, '', { ph: 'textarea' }],
-          [S, '', { opts: [{ v: '1', l: 'One' }] }],
-          [C, ''],
-          [R, '']
+        r: [vs, [
+          [In, '', { ph: 'input' }],
+          [ta, '', { ph: 'textarea' }],
+          [sl, '', { opts: [{ v: '1', l: 'One' }] }],
+          [cb, ''],
+          [rd, '']
         ]]
       });
       expect(container.querySelector('input[type="text"]')).not.toBeNull();
@@ -259,9 +259,9 @@ describe('browser compatibility', () => {
 
     it('renders table components', () => {
       render(container, {
-        r: [Tb, [
-          [Th, [[Tr, [[Tc, 'H1']]]]],
-          [Tbd, [[Tr, [[Td, 'C1']]]]]
+        r: [tb, [
+          [th, [[Tr, [[tc, 'H1']]]]],
+          [bd, [[Tr, [[Td, 'C1']]]]]
         ]]
       });
       expect(container.querySelector('table')).not.toBeNull();
@@ -271,9 +271,9 @@ describe('browser compatibility', () => {
 
     it('renders list components', () => {
       render(container, {
-        r: [V, [
-          [Ul, [[Li, 'Item 1']]],
-          [Ol, [[Li, 'Item 2']]]
+        r: [vs, [
+          [ul, [[li, 'Item 1']]],
+          [ol, [[li, 'Item 2']]]
         ]]
       });
       expect(container.querySelector('ul')).not.toBeNull();
@@ -282,9 +282,9 @@ describe('browser compatibility', () => {
 
     it('renders media components', () => {
       render(container, {
-        r: [V, [
-          [M, '', { src: 'test.jpg', alt: 'test' }],
-          [L, 'Link', { href: 'https://example.com' }]
+        r: [vs, [
+          [im, '', { src: 'test.jpg', alt: 'test' }],
+          [ln, 'Link', { href: 'https://example.com' }]
         ]]
       });
       expect(container.querySelector('img')).not.toBeNull();

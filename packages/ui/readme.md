@@ -27,19 +27,19 @@ or via CDN:
 ```javascript
 tooey.render(document.getElementById('app'), {
   s: {n: 0},
-  r: [V,[[T,{$:"n"}],[H,[[B,"-",{c:"n"}],[B,"+",{c:"n"}]],{g:8}]],{g:8}]
+  r: [vs,[[tx,{$:"n"}],[hs,[[bt,"-",{c:"n"}],[bt,"+",{c:"n"}]],{g:8}]],{g:8}]
 });
 ```
 
 ## components
 
 ```
-layout    V H D G
-text      T B
-input     I Ta S C R
-table     Tb Th Tbd Tr Td Tc
-list      Ul Ol Li
-media     M L Sv
+layout    vs hs dv gr
+text      tx bt
+input     In ta sl cb rd
+table     tb th bd Tr Td tc
+list      ul ol li
+media     im ln sv
 ```
 
 ## props
@@ -95,15 +95,15 @@ sub submit
 
 ```javascript
 // long form
-{if: "show", then: [T, "yes"], else: [T, "no"]}
-{map: "items", as: [Li, "$item"]}
+{if: "show", then: [tx, "yes"], else: [tx, "no"]}
+{map: "items", as: [li, "$item"]}
 
 // short form (saves tokens)
-{?: "show", t: [T, "yes"], e: [T, "no"]}
-{m: "items", a: [Li, "$item"]}
+{?: "show", t: [tx, "yes"], e: [tx, "no"]}
+{m: "items", a: [li, "$item"]}
 
 // equality check
-{?: "step", is: 0, t: [T, "step 1"]}
+{?: "step", is: 0, t: [tx, "step 1"]}
 ```
 
 ## function components
@@ -111,20 +111,20 @@ sub submit
 create reusable components with functions:
 
 ```javascript
-import { Component, V, T, H, B } from '@tooey/ui';
+import { Component, vs, tx, hs, bt } from '@tooey/ui';
 
 // simple component
-const Card = (props, children) => [V, children, { bg: '#fff', p: 16, r: 8, ...props }];
+const Card = (props, children) => [vs, children, { bg: '#fff', p: 16, r: 8, ...props }];
 
 // component with props
 const Alert = ({ type = 'info', message }) =>
-  [V, [[T, message]], { bg: type === 'error' ? '#fee' : '#eef', p: 12 }];
+  [vs, [[tx, message]], { bg: type === 'error' ? '#fee' : '#eef', p: 12 }];
 
 // usage
 render(container, {
   s: {},
-  r: [V, [
-    [Card, [[T, 'Hello']]],
+  r: [vs, [
+    [Card, [[tx, 'Hello']]],
     [Alert, '', { type: 'error', message: 'Error!' }]
   ]]
 });
@@ -199,19 +199,19 @@ copy this into your system prompt for llms to generate tooey specs:
 
 ```
 tooey: token-efficient UI lib. spec={s:{state},r:[component,content?,props?]}
-components: V(vstack) H(hstack) D(div) G(grid) T(text) B(button) I(input) Ta(textarea) S(select) C(checkbox) R(radio) Tb/Th/Tbd/Tr/Td/Tc(table) Ul/Ol/Li(list) M(img) L(a) Sv(svg)
+components: vs(vstack) hs(hstack) dv(div) gr(grid) tx(text) bt(button) In(input) ta(textarea) sl(select) cb(checkbox) rd(radio) tb/th/bd/Tr/Td/tc(table) ul/ol/li(list) im(img) ln(a) sv(svg)
 props: g(gap) p(padding) m(margin) w(width) h(height) mw mh bg(background) fg(color) o(opacity) r(radius) bw bc bs pos(position:rel/abs/fix) z t l rt b fs(font-size) fw ff ta td lh ls ai(align-items) jc(justify-content) flw cols rows cur ov sh tr pe us v(value) ph(placeholder) type href src alt dis(disabled) ch(checked) ro(readonly) opts cls id show(conditional display)
 layout shortcuts: c=center sb=space-between fe=flex-end fs=flex-start st=stretch
 events: c(click) x(input) f(focus) bl(blur) k(keydown) e(mouseenter) lv(mouseleave) sub(submit)
 state ops: "key+"(inc) "key-"(dec) "key~"(toggle) "key!val"(set) or ["key","op",val?] where op=+/-/!/~/</>/X/.
 control: {?:"key",t:[...],e:[...]} {?:"key",is:val,t:[...]} {m:"arr",a:[...]}
 state ref: {$:"key"} | in map: $item $index $item.prop
-function components: const Comp=(props,children)=>[V,children,{...props}] | use: [Comp,content,props]
+function components: const Comp=(props,children)=>[vs,children,{...props}] | use: [Comp,content,props]
 examples:
-- counter: {s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:"n-"}],[B,"+",{c:"n+"}]],{g:8}]],{g:8}]}
-- toggle: {s:{v:false},r:[V,[[T,{$:"v"}],[B,"Toggle",{c:"v~"}]],{g:8}]}
-- input: {s:{t:""},r:[V,[[I,"",{v:{$:"t"},x:"t"}],[T,{$:"t"}]],{g:8}]}
-- modal: {s:{o:false},r:[V,[[B,"Open",{c:"o~"}],[D,[[V,[[T,"Title",{fw:700}],[T,"Content"],[B,"Close",{c:"o~"}]],{bg:"#fff",p:16,r:8,g:8}]],{show:"o",pos:"fix",w:"100vw",h:"100vh",bg:"#0008",jc:"c",ai:"c"}]],{g:8}]}
+- counter: {s:{n:0},r:[vs,[[tx,{$:"n"}],[hs,[[bt,"-",{c:"n-"}],[bt,"+",{c:"n+"}]],{g:8}]],{g:8}]}
+- toggle: {s:{v:false},r:[vs,[[tx,{$:"v"}],[bt,"Toggle",{c:"v~"}]],{g:8}]}
+- input: {s:{t:""},r:[vs,[[In,"",{v:{$:"t"},x:"t"}],[tx,{$:"t"}]],{g:8}]}
+- modal: {s:{o:false},r:[vs,[[bt,"Open",{c:"o~"}],[dv,[[vs,[[tx,"Title",{fw:700}],[tx,"Content"],[bt,"Close",{c:"o~"}]],{bg:"#fff",p:16,r:8,g:8}]],{show:"o",pos:"fix",w:"100vw",h:"100vh",bg:"#0008",jc:"c",ai:"c"}]],{g:8}]}
 ```
 
 ### claude code users

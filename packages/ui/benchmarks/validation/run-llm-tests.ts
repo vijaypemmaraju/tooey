@@ -37,23 +37,23 @@ const TOOEY_PROMPT = TOOEY_SYSTEM_PROMPT + `
 ## Examples
 
 ### Counter
-{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:"n-"}],[B,"+",{c:"n+"}]],{g:8}]],{g:8}]}
+{s:{n:0},r:[vs,[[tx,{$:"n"}],[hs,[[bt,"-",{c:"n-"}],[bt,"+",{c:"n+"}]],{g:8}]],{g:8}]}
 
 ### Todo List
-{s:{txt:"",items:[]},r:[V,[[H,[[I,"",{v:{$:"txt"},x:"txt",ph:"new item"}],[B,"+",{c:"add"}]],{g:8}],[Ul,[{m:"items",a:[Li,"$item"]}]]],{g:12}]}
+{s:{txt:"",items:[]},r:[vs,[[hs,[[In,"",{v:{$:"txt"},x:"txt",ph:"new item"}],[bt,"+",{c:"add"}]],{g:8}],[ul,[{m:"items",a:[li,"$item"]}]]],{g:12}]}
 
 ### Tabs
-{s:{t:0},r:[V,[[H,[[B,"A",{c:"t!0"}],[B,"B",{c:"t!1"}]],{g:8}],{?:"t",is:0,t:[T,"Tab A content"]},{?:"t",is:1,t:[T,"Tab B content"]}],{g:12}]}
+{s:{t:0},r:[vs,[[hs,[[bt,"A",{c:"t!0"}],[bt,"B",{c:"t!1"}]],{g:8}],{?:"t",is:0,t:[tx,"Tab A content"]},{?:"t",is:1,t:[tx,"Tab B content"]}],{g:12}]}
 
 ### Form
-{s:{name:"",email:""},r:[V,[[V,[[T,"Name"],[I,"",{v:{$:"name"},x:"name",ph:"name"}]],{g:4}],[V,[[T,"Email"],[I,"",{type:"email",v:{$:"email"},x:"email",ph:"email"}]],{g:4}]],{g:16}]}
+{s:{name:"",email:""},r:[vs,[[vs,[[tx,"Name"],[In,"",{v:{$:"name"},x:"name",ph:"name"}]],{g:4}],[vs,[[tx,"Email"],[In,"",{type:"email",v:{$:"email"},x:"email",ph:"email"}]],{g:4}]],{g:16}]}
 
 ### Modal (using show prop for cleaner nesting)
-{s:{o:false},r:[V,[[B,"Open",{c:"o~"}],[D,[[D,[[T,"Title",{fw:700}],[T,"Content"],[B,"Close",{c:"o~"}]],{bg:"#fff",p:16,r:8,g:8}]],{show:"o",pos:"fix",w:"100vw",h:"100vh",bg:"#0008",jc:"c",ai:"c"}]],{g:8}]}
+{s:{o:false},r:[vs,[[bt,"Open",{c:"o~"}],[dv,[[dv,[[tx,"Title",{fw:700}],[tx,"Content"],[bt,"Close",{c:"o~"}]],{bg:"#fff",p:16,r:8,g:8}]],{show:"o",pos:"fix",w:"100vw",h:"100vh",bg:"#0008",jc:"c",ai:"c"}]],{g:8}]}
 
 IMPORTANT:
 - Output compact tooey on a single line with no whitespace or newlines
-- Use bare component identifiers (V, H, T, B, etc.) NOT strings ("V", "H")
+- Use bare component identifiers (vs, hs, tx, bt, etc.) NOT strings ("vs", "hs")
 - Do not use JSON formatting with quoted keys`;
 
 const REACT_PROMPT = `You are a React expert. Generate React functional components using hooks.
@@ -132,13 +132,13 @@ function countTokens(code: string): number {
 function checkTooeyStructure(code: string, id: string): boolean {
   const checks: Record<string, () => boolean> = {
     '001': () => /c\s*:\s*["']?n?[+-]/.test(code) && /\$/.test(code),
-    '002': () => /~/.test(code) && /[TB]/.test(code),
-    '003': () => /v\s*:\s*\{/.test(code) && /I/.test(code),
-    '004': () => /Ul/.test(code) && /Li/.test(code),
+    '002': () => /~/.test(code) && /(?:tx|bt)/.test(code),
+    '003': () => /v\s*:\s*\{/.test(code) && /In/.test(code),
+    '004': () => /ul/.test(code) && /li/.test(code),
     '005': () => /\?/.test(code) && /is\s*:\s*[01]/.test(code) && /!\d/.test(code), // conditional with is:0/1 and set operations
-    '006': () => /I/.test(code) && /password/i.test(code),
+    '006': () => /In/.test(code) && /password/i.test(code),
     '007': () => (/\?/.test(code) || /show/.test(code)) && /~/.test(code), // conditional (? or show) with toggle
-    '008': () => /Ol/.test(code) && /Li/.test(code),
+    '008': () => /ol/.test(code) && /li/.test(code),
   };
   return checks[id]?.() ?? false;
 }

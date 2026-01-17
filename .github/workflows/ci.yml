@@ -75,6 +75,14 @@ jobs:
           cd packages/ui
           pnpm exec tsx benchmarks/validation/run-llm-tests.ts
 
+      - name: Run abbreviation comprehension tests
+        if: env.GEMINI_API_KEY != ''
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          cd packages/ui
+          pnpm exec tsx benchmarks/validation/test-abbreviations.ts
+
       - name: Upload LLM test results
         if: always() && env.GEMINI_API_KEY != ''
         uses: actions/upload-artifact@v4
@@ -82,5 +90,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         with:
           name: llm-test-results
-          path: packages/ui/benchmarks/validation/LLM_TEST_RESULTS.md
+          path: |
+            packages/ui/benchmarks/validation/LLM_TEST_RESULTS.md
+            packages/ui/benchmarks/validation/ABBREVIATION_TEST_RESULTS.md
           if-no-files-found: ignore
