@@ -264,6 +264,48 @@ async function main() {
   const totalReactWithPrompt = totalReactTokens + (reactPromptTokens * results.length);
   const netSavings = totalReactWithPrompt > 0 ? Math.round((1 - totalTooeyWithPrompt / totalReactWithPrompt) * 100) : 0;
 
+  // scenario analysis: caching and sustained conversations
+  const n = results.length;
+  const avgTooeyOutput = totalTooeyTokens / n;
+  const avgReactOutput = totalReactTokens / n;
+
+  // scenario calculations (per generation)
+  const scenarios = [
+    { name: 'no caching', cacheRate: 0 },
+    { name: '50% cache', cacheRate: 0.5 },
+    { name: '90% cache', cacheRate: 0.9 },
+    { name: 'sustained (prompt once)', cacheRate: 1, sustainedN: 10 },
+    { name: 'sustained (prompt once)', cacheRate: 1, sustainedN: 50 },
+    { name: 'sustained (prompt once)', cacheRate: 1, sustainedN: 100 },
+  ];
+
+  const scenarioResults = scenarios.map(s => {
+    if (s.sustainedN) {
+      // sustained: prompt sent once, then N generations
+      const tooeyTotal = tooeyPromptTokens + (avgTooeyOutput * s.sustainedN);
+      const reactTotal = reactPromptTokens + (avgReactOutput * s.sustainedN);
+      const perGen = { tooey: tooeyTotal / s.sustainedN, react: reactTotal / s.sustainedN };
+      const savings = Math.round((1 - perGen.tooey / perGen.react) * 100);
+      return { ...s, tooeyPerGen: Math.round(perGen.tooey), reactPerGen: Math.round(perGen.react), savings, sustainedN: s.sustainedN };
+    } else {
+      // caching: prompt cost reduced by cache rate
+      const effectiveTooeyPrompt = tooeyPromptTokens * (1 - s.cacheRate);
+      const effectiveReactPrompt = reactPromptTokens * (1 - s.cacheRate);
+      const tooeyPerGen = effectiveTooeyPrompt + avgTooeyOutput;
+      const reactPerGen = effectiveReactPrompt + avgReactOutput;
+      const savings = Math.round((1 - tooeyPerGen / reactPerGen) * 100);
+      return { ...s, tooeyPerGen: Math.round(tooeyPerGen), reactPerGen: Math.round(reactPerGen), savings };
+    }
+  });
+
+  // break-even analysis: how many generations in sustained mode until tooey wins
+  // tooeyPrompt + n*tooeyOutput < reactPrompt + n*reactOutput
+  // tooeyPrompt - reactPrompt < n*(reactOutput - tooeyOutput)
+  // n > (tooeyPrompt - reactPrompt) / (reactOutput - tooeyOutput)
+  const promptDiff = tooeyPromptTokens - reactPromptTokens;
+  const outputDiff = avgReactOutput - avgTooeyOutput;
+  const breakEvenN = outputDiff > 0 ? Math.ceil(promptDiff / outputDiff) : Infinity;
+
   console.log(`\n${'='.repeat(50)}`);
   console.log(`\n--- summary ---\n`);
   console.log(`tooey: ${tooeyValid}/${results.length} syntax valid, ${tooeyCorrect}/${results.length} structure correct`);
@@ -271,7 +313,13 @@ async function main() {
   console.log(`\noutput tokens: tooey ${totalTooeyTokens} vs react ${totalReactTokens} (${avgSavings}% savings)`);
   console.log(`prompt tokens: tooey ${tooeyPromptTokens} vs react ${reactPromptTokens}`);
   console.log(`total (prompt × ${results.length} + output): tooey ${totalTooeyWithPrompt} vs react ${totalReactWithPrompt}`);
-  console.log(`net savings: ${netSavings}%\n`);
+  console.log(`net savings: ${netSavings}%`);
+  console.log(`\n--- scenario analysis (per generation) ---\n`);
+  for (const s of scenarioResults) {
+    const label = s.sustainedN ? `${s.name} n=${s.sustainedN}` : s.name;
+    console.log(`${label.padEnd(28)} tooey: ${String(s.tooeyPerGen).padStart(4)} react: ${String(s.reactPerGen).padStart(4)} savings: ${s.savings}%`);
+  }
+  console.log(`\nbreak-even point: ${breakEvenN} generations in sustained conversation\n`);
 
   // write report
   let report = `# tooey vs react llm generation test results
@@ -291,6 +339,25 @@ date: ${new Date().toISOString().split('T')[0]}
 
 **output savings: ${avgSavings}%**
 **net savings (including prompts): ${netSavings}%**
+
+## scenario analysis
+
+shows how token efficiency changes with prompt caching and sustained conversations.
+
+| scenario | tooey/gen | react/gen | savings |
+|----------|-----------|-----------|---------|
+${scenarioResults.map(s => {
+  const label = s.sustainedN ? `sustained (n=${s.sustainedN})` : s.name;
+  return `| ${label} | ${s.tooeyPerGen} | ${s.reactPerGen} | ${s.savings}% |`;
+}).join('\n')}
+
+**break-even point: ${breakEvenN} generations** in a sustained conversation before tooey becomes more efficient than react.
+
+### interpretation
+
+- **no caching**: each generation pays full prompt cost. tooey loses due to large prompt overhead.
+- **with caching**: as cache rate increases, prompt cost amortizes and tooey's output efficiency shines.
+- **sustained conversation**: prompt sent once at start, then multiple generations. after ${breakEvenN} generations, tooey wins.
 
 ## per-test comparison
 
