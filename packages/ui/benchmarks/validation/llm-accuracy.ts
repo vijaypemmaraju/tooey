@@ -164,13 +164,13 @@ export function validateTooeySyntax(code: string): { valid: boolean; error?: str
       return { valid: false, error: 'must be an object (start with { and end with })' };
     }
 
-    // must have 'r:' or 'r :' (root node)
-    if (!/\br\s*:/.test(trimmed)) {
+    // must have 'r:' or '"r":' (root node) - handles both JS and JSON syntax
+    if (!/"?r"?\s*:/.test(trimmed)) {
       return { valid: false, error: 'missing root node (r)' };
     }
 
     // root should be followed by [ (component) or { (control flow)
-    if (!/\br\s*:\s*[\[{]/.test(trimmed)) {
+    if (!/"?r"?\s*:\s*[\[{]/.test(trimmed)) {
       return { valid: false, error: 'root must be array or object' };
     }
 
@@ -193,9 +193,9 @@ export function validateTooeySyntax(code: string): { valid: boolean; error?: str
       return { valid: false, error: `unbalanced curly braces: ${braces}` };
     }
 
-    // check for common tooey patterns
-    const hasComponent = /\[(?:V|H|D|G|T|B|I|Ta|S|C|R|Tb|Th|Tbd|Tr|Td|Tc|Ul|Ol|Li|L|M|Sv)\s*[,\]]/.test(trimmed);
-    const hasControlFlow = /[?m]\s*:/.test(trimmed);
+    // check for common tooey patterns - handles both JS syntax [V, and JSON ["V",
+    const hasComponent = /\["?(?:V|H|D|G|T|B|I|Ta|S|C|R|Tb|Th|Tbd|Tr|Td|Tc|Ul|Ol|Li|L|M|Sv)"?\s*[,\]]/.test(trimmed);
+    const hasControlFlow = /"?[?m]"?\s*:/.test(trimmed);
 
     if (!hasComponent && !hasControlFlow) {
       return { valid: false, error: 'no valid component or control flow found' };
