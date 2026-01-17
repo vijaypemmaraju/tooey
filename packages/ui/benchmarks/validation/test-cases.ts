@@ -30,7 +30,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'basic',
     complexity: 'trivial',
     description: 'single static text element',
-    tooey: `{r:[T,"hello world"]}`,
+    tooey: `{r:[tx,"hello world"]}`,
     react: `function App() { return <span>hello world</span>; }`,
     expectedElements: ['span'],
     semanticIntent: ['greeting', 'static-content']
@@ -41,7 +41,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'basic',
     complexity: 'trivial',
     description: 'div inside div',
-    tooey: `{r:[D,[[D,[[T,"nested"]]]]]}`,
+    tooey: `{r:[dv,[[dv,[[tx,"nested"]]]]]}`,
     react: `function App() { return <div><div><span>nested</span></div></div>; }`,
     expectedElements: ['div', 'div', 'span'],
     semanticIntent: ['container', 'wrapper']
@@ -52,7 +52,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'basic',
     complexity: 'simple',
     description: 'increment/decrement counter',
-    tooey: `{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:"n-"}],[B,"+",{c:"n+"}]],{g:8}]],{g:8}]}`,
+    tooey: `{s:{n:0},r:[vs,[[tx,{$:"n"}],[hs,[[bt,"-",{c:"n-"}],[bt,"+",{c:"n+"}]],{g:8}]],{g:8}]}`,
     react: `function Counter() {
   const [n, setN] = useState(0);
   return (
@@ -75,7 +75,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'basic',
     complexity: 'simple',
     description: 'boolean toggle with display',
-    tooey: `{s:{on:false},r:[V,[[T,{$:"on"}],[B,"toggle",{c:"on~"}]],{g:8}]}`,
+    tooey: `{s:{on:false},r:[vs,[[tx,{$:"on"}],[bt,"toggle",{c:"on~"}]],{g:8}]}`,
     react: `function Toggle() {
   const [on, setOn] = useState(false);
   return (
@@ -97,7 +97,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'forms',
     complexity: 'simple',
     description: 'text input with binding',
-    tooey: `{s:{txt:""},r:[V,[[I,"",{v:{$:"txt"},x:"txt",ph:"type here"}],[T,{$:"txt"}]],{g:8}]}`,
+    tooey: `{s:{txt:""},r:[vs,[[In,"",{v:{$:"txt"},x:"txt",ph:"type here"}],[tx,{$:"txt"}]],{g:8}]}`,
     react: `function Input() {
   const [txt, setTxt] = useState('');
   return (
@@ -117,7 +117,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'forms',
     complexity: 'moderate',
     description: 'username/password with submit',
-    tooey: `{s:{user:"",pass:"",err:""},r:[V,[[V,[[T,"username"],[I,"",{v:{$:"user"},x:"user",ph:"username"}]],{g:4}],[V,[[T,"password"],[I,"",{type:"password",v:{$:"pass"},x:"pass",ph:"password"}]],{g:4}],{?:"err",t:[T,{$:"err"},{fg:"red"}]},{e:null},[B,"login",{c:submit}]],{g:16}]}`,
+    tooey: `{s:{user:"",pass:"",err:""},r:[vs,[[vs,[[tx,"username"],[In,"",{v:{$:"user"},x:"user",ph:"username"}]],{g:4}],[vs,[[tx,"password"],[In,"",{type:"password",v:{$:"pass"},x:"pass",ph:"password"}]],{g:4}],{?:"err",t:[tx,{$:"err"},{fg:"red"}]},{e:null},[bt,"login",{c:submit}]],{g:16}]}`,
     react: `function Login() {
   const [user, setUser] = useState('');
   const [pass, setPass] = useState('');
@@ -147,7 +147,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'forms',
     complexity: 'simple',
     description: 'select with options',
-    tooey: `{s:{sel:"a"},r:[V,[[S,"",{v:{$:"sel"},x:"sel",opts:[{v:"a",l:"Option A"},{v:"b",l:"Option B"},{v:"c",l:"Option C"}]}],[T,{$:"sel"}]],{g:8}]}`,
+    tooey: `{s:{sel:"a"},r:[vs,[[sl,"",{v:{$:"sel"},x:"sel",opts:[{v:"a",l:"Option A"},{v:"b",l:"Option B"},{v:"c",l:"Option C"}]}],[tx,{$:"sel"}]],{g:8}]}`,
     react: `function Dropdown() {
   const [sel, setSel] = useState('a');
   return (
@@ -171,7 +171,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'forms',
     complexity: 'moderate',
     description: 'multiple checkboxes',
-    tooey: `{s:{a:false,b:true,c:false},r:[V,[[H,[[C,"",{ch:{$:"a"},x:"a~"}],[T,"Option A"]],{g:8,ai:"c"}],[H,[[C,"",{ch:{$:"b"},x:"b~"}],[T,"Option B"]],{g:8,ai:"c"}],[H,[[C,"",{ch:{$:"c"},x:"c~"}],[T,"Option C"]],{g:8,ai:"c"}]],{g:8}]}`,
+    tooey: `{s:{a:false,b:true,c:false},r:[vs,[[hs,[[cb,"",{ch:{$:"a"},x:"a~"}],[tx,"Option A"]],{g:8,ai:"c"}],[hs,[[cb,"",{ch:{$:"b"},x:"b~"}],[tx,"Option B"]],{g:8,ai:"c"}],[hs,[[cb,"",{ch:{$:"c"},x:"c~"}],[tx,"Option C"]],{g:8,ai:"c"}]],{g:8}]}`,
     react: `function Checkboxes() {
   const [a, setA] = useState(false);
   const [b, setB] = useState(true);
@@ -205,7 +205,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'navigation',
     complexity: 'moderate',
     description: 'tab navigation with content',
-    tooey: `{s:{tab:0},r:[V,[[H,[[B,"Home",{c:"tab!0"}],[B,"About",{c:"tab!1"}],[B,"Contact",{c:"tab!2"}]],{g:4}],{?:"tab",is:0,t:[T,"Home content"]},{?:"tab",is:1,t:[T,"About content"]},{?:"tab",is:2,t:[T,"Contact content"]}],{g:16}]}`,
+    tooey: `{s:{tab:0},r:[vs,[[hs,[[bt,"Home",{c:"tab!0"}],[bt,"About",{c:"tab!1"}],[bt,"Contact",{c:"tab!2"}]],{g:4}],{?:"tab",is:0,t:[tx,"Home content"]},{?:"tab",is:1,t:[tx,"About content"]},{?:"tab",is:2,t:[tx,"Contact content"]}],{g:16}]}`,
     react: `function Tabs() {
   const [tab, setTab] = useState(0);
   return (
@@ -231,7 +231,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'navigation',
     complexity: 'moderate',
     description: 'collapsible sections',
-    tooey: `{s:{open:null},r:[V,[[V,[[B,"Section 1",{c:["open","!",0]}],{?:{$:"open"},is:0,t:[T,"Content 1"]}],{g:4}],[V,[[B,"Section 2",{c:["open","!",1]}],{?:{$:"open"},is:1,t:[T,"Content 2"]}],{g:4}],[V,[[B,"Section 3",{c:["open","!",2]}],{?:{$:"open"},is:2,t:[T,"Content 3"]}],{g:4}]],{g:8}]}`,
+    tooey: `{s:{open:null},r:[vs,[[vs,[[bt,"Section 1",{c:["open","!",0]}],{?:{$:"open"},is:0,t:[tx,"Content 1"]}],{g:4}],[vs,[[bt,"Section 2",{c:["open","!",1]}],{?:{$:"open"},is:1,t:[tx,"Content 2"]}],{g:4}],[vs,[[bt,"Section 3",{c:["open","!",2]}],{?:{$:"open"},is:2,t:[tx,"Content 3"]}],{g:4}]],{g:8}]}`,
     react: `function Accordion() {
   const [open, setOpen] = useState(null);
   return (
@@ -261,7 +261,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'navigation',
     complexity: 'simple',
     description: 'breadcrumb navigation',
-    tooey: `{s:{path:["Home","Products","Shoes"]},r:[H,[{m:"path",a:[H,[[L,"$item",{href:"#"}],[T,"/"]],{g:4}]}],{g:4}]}`,
+    tooey: `{s:{path:["Home","Products","Shoes"]},r:[hs,[{m:"path",a:[hs,[[ln,"$item",{href:"#"}],[tx,"/"]],{g:4}]}],{g:4}]}`,
     react: `function Breadcrumb() {
   const path = ["Home","Products","Shoes"];
   return (
@@ -287,7 +287,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'data',
     complexity: 'simple',
     description: 'unordered list rendering',
-    tooey: `{s:{items:["apple","banana","cherry"]},r:[Ul,[{m:"items",a:[Li,"$item"]}]]}`,
+    tooey: `{s:{items:["apple","banana","cherry"]},r:[ul,[{m:"items",a:[li,"$item"]}]]}`,
     react: `function List() {
   const items = ["apple","banana","cherry"];
   return (
@@ -306,7 +306,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'data',
     complexity: 'moderate',
     description: 'table with header and body',
-    tooey: `{s:{rows:[{name:"Alice",age:30},{name:"Bob",age:25}]},r:[Tb,[[Th,[[Tr,[[Tc,"Name"],[Tc,"Age"]]]]],[Tbd,[{m:"rows",a:[Tr,[[Td,"$item.name"],[Td,"$item.age"]]]}]]]]}`,
+    tooey: `{s:{rows:[{name:"Alice",age:30},{name:"Bob",age:25}]},r:[tb,[[th,[[Tr,[[tc,"Name"],[tc,"Age"]]]]],[bd,[{m:"rows",a:[Tr,[[Td,"$item.name"],[Td,"$item.age"]]]}]]]]}`,
     react: `function Table() {
   const rows = [{name:"Alice",age:30},{name:"Bob",age:25}];
   return (
@@ -330,7 +330,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'data',
     complexity: 'moderate',
     description: 'grid of cards',
-    tooey: `{s:{cards:[{title:"Card 1",desc:"Description 1"},{title:"Card 2",desc:"Description 2"}]},r:[G,[{m:"cards",a:[V,[[T,"$item.title",{fw:700}],[T,"$item.desc"]],{p:16,bg:"#f0f0f0",r:8,g:8}]}],{cols:2,g:16}]}`,
+    tooey: `{s:{cards:[{title:"Card 1",desc:"Description 1"},{title:"Card 2",desc:"Description 2"}]},r:[gr,[{m:"cards",a:[vs,[[tx,"$item.title",{fw:700}],[tx,"$item.desc"]],{p:16,bg:"#f0f0f0",r:8,g:8}]}],{cols:2,g:16}]}`,
     react: `function CardGrid() {
   const cards = [{title:"Card 1",desc:"Description 1"},{title:"Card 2",desc:"Description 2"}];
   return (
@@ -356,7 +356,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'interactive',
     complexity: 'moderate',
     description: 'add/remove items',
-    tooey: `{s:{txt:"",items:[]},r:[V,[[H,[[I,"",{v:{$:"txt"},x:"txt",ph:"new item"}],[B,"+",{c:add}]],{g:8}],[Ul,[{m:"items",a:[Li,[[T,"$item"],[B,"x",{c:del}]]]}]]],{g:12}]}`,
+    tooey: `{s:{txt:"",items:[]},r:[vs,[[hs,[[In,"",{v:{$:"txt"},x:"txt",ph:"new item"}],[bt,"+",{c:add}]],{g:8}],[ul,[{m:"items",a:[li,[[tx,"$item"],[bt,"x",{c:del}]]]}]]],{g:12}]}`,
     react: `function TodoList() {
   const [txt, setTxt] = useState('');
   const [items, setItems] = useState([]);
@@ -388,7 +388,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'interactive',
     complexity: 'moderate',
     description: 'modal with overlay',
-    tooey: `{s:{open:false},r:[D,[[B,"Open Modal",{c:"open~"}],{?:"open",t:[D,[[D,[[T,"Modal Title",{fs:18,fw:700}],[T,"Modal content goes here"],[B,"Close",{c:"open~"}]],{bg:"#fff",p:24,r:8,g:16}]],{pos:"fix",t:0,l:0,w:"100%",h:"100%",bg:"rgba(0,0,0,0.5)",jc:"c",ai:"c",s:{display:"flex"}}]}]]}`,
+    tooey: `{s:{open:false},r:[dv,[[bt,"Open Modal",{c:"open~"}],{?:"open",t:[dv,[[dv,[[tx,"Modal Title",{fs:18,fw:700}],[tx,"Modal content goes here"],[bt,"Close",{c:"open~"}]],{bg:"#fff",p:24,r:8,g:16}]],{pos:"fix",t:0,l:0,w:"100%",h:"100%",bg:"rgba(0,0,0,0.5)",jc:"c",ai:"c",s:{display:"flex"}}]}]]}`,
     react: `function Modal() {
   const [open, setOpen] = useState(false);
   return (
@@ -416,7 +416,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'interactive',
     complexity: 'complex',
     description: 'cart with quantity controls',
-    tooey: `{s:{items:[{name:"Widget",price:10,qty:1},{name:"Gadget",price:25,qty:2}]},r:[V,[[V,[{m:"items",a:[H,[[T,"$item.name",{w:100}],[H,[[B,"-",{c:dec}],[T,"$item.qty"],[B,"+",{c:inc}]],{g:4}],[T,"$item.price",{w:60,ta:"right"}]],{jc:"sb",ai:"c"}]}],{g:8}],[H,[[T,"Total:"],[T,{$:"total"}]],{jc:"sb",fw:700}]],{g:16}]}`,
+    tooey: `{s:{items:[{name:"Widget",price:10,qty:1},{name:"Gadget",price:25,qty:2}]},r:[vs,[[vs,[{m:"items",a:[hs,[[tx,"$item.name",{w:100}],[hs,[[bt,"-",{c:dec}],[tx,"$item.qty"],[bt,"+",{c:inc}]],{g:4}],[tx,"$item.price",{w:60,ta:"right"}]],{jc:"sb",ai:"c"}]}],{g:8}],[hs,[[tx,"Total:"],[tx,{$:"total"}]],{jc:"sb",fw:700}]],{g:16}]}`,
     react: `function Cart() {
   const [items, setItems] = useState([{name:"Widget",price:10,qty:1},{name:"Gadget",price:25,qty:2}]);
   const updateQty = (i,d) => setItems(items.map((x,j)=>j===i?{...x,qty:Math.max(0,x.qty+d)}:x));
@@ -455,7 +455,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'layout',
     complexity: 'simple',
     description: 'sidebar + main layout',
-    tooey: `{r:[H,[[V,[[T,"Sidebar"]],{w:200,bg:"#f0f0f0",p:16}],[V,[[T,"Main Content"]],{s:{flex:1},p:16}]],{h:"100vh"}]}`,
+    tooey: `{r:[hs,[[vs,[[tx,"Sidebar"]],{w:200,bg:"#f0f0f0",p:16}],[vs,[[tx,"Main Content"]],{s:{flex:1},p:16}]],{h:"100vh"}]}`,
     react: `function TwoColumn() {
   return (
     <div style={{display:'flex',height:'100vh'}}>
@@ -477,7 +477,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'layout',
     complexity: 'simple',
     description: 'full page layout',
-    tooey: `{r:[V,[[D,[[T,"Header"]],{bg:"#333",fg:"#fff",p:16}],[D,[[T,"Content"]],{s:{flex:1},p:16}],[D,[[T,"Footer"]],{bg:"#333",fg:"#fff",p:16}]],{h:"100vh"}]}`,
+    tooey: `{r:[vs,[[dv,[[tx,"Header"]],{bg:"#333",fg:"#fff",p:16}],[dv,[[tx,"Content"]],{s:{flex:1},p:16}],[dv,[[tx,"Footer"]],{bg:"#333",fg:"#fff",p:16}]],{h:"100vh"}]}`,
     react: `function Layout() {
   return (
     <div style={{display:'flex',flexDirection:'column',height:'100vh'}}>
@@ -498,7 +498,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'edge',
     complexity: 'simple',
     description: 'conditional empty state',
-    tooey: `{s:{items:[]},r:[D,[{?:{$:"items"},is:[],t:[T,"No items yet"],e:{m:"items",a:[Li,"$item"]}}]]}`,
+    tooey: `{s:{items:[]},r:[dv,[{?:{$:"items"},is:[],t:[tx,"No items yet"],e:{m:"items",a:[li,"$item"]}}]]}`,
     react: `function EmptyState() {
   const [items] = useState([]);
   return (
@@ -521,7 +521,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'edge',
     complexity: 'moderate',
     description: '5 levels of nesting',
-    tooey: `{r:[D,[[D,[[D,[[D,[[D,[[T,"deep"]]]]]]]]]]]}`,
+    tooey: `{r:[dv,[[dv,[[dv,[[dv,[[dv,[[tx,"deep"]]]]]]]]]]]}`,
     react: `function Deep() {
   return <div><div><div><div><div><span>deep</span></div></div></div></div></div>;
 }`,
@@ -534,7 +534,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'edge',
     complexity: 'simple',
     description: '10 sibling elements',
-    tooey: `{r:[V,[[T,"1"],[T,"2"],[T,"3"],[T,"4"],[T,"5"],[T,"6"],[T,"7"],[T,"8"],[T,"9"],[T,"10"]],{g:4}]}`,
+    tooey: `{r:[vs,[[tx,"1"],[tx,"2"],[tx,"3"],[tx,"4"],[tx,"5"],[tx,"6"],[tx,"7"],[tx,"8"],[tx,"9"],[tx,"10"]],{g:4}]}`,
     react: `function Siblings() {
   return (
     <div style={{display:'flex',flexDirection:'column',gap:4}}>
@@ -552,7 +552,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'edge',
     complexity: 'trivial',
     description: 'text with special chars',
-    tooey: `{r:[T,"Hello <world> & \"friends\"!"]}`,
+    tooey: `{r:[tx,"Hello <world> & \"friends\"!"]}`,
     react: `function Special() { return <span>Hello &lt;world&gt; &amp; "friends"!</span>; }`,
     expectedElements: ['span'],
     semanticIntent: ['text-content', 'special-characters', 'escaping']
@@ -563,7 +563,7 @@ export const TEST_CASES: TestCase[] = [
     category: 'edge',
     complexity: 'moderate',
     description: 'display based on multiple state values',
-    tooey: `{s:{a:5,b:3},r:[V,[[H,[[T,"A:"],[T,{$:"a"}]],{g:4}],[H,[[T,"B:"],[T,{$:"b"}]],{g:4}],[H,[[T,"Sum:"],[T,{$:"sum"}]],{g:4}]],{g:8}]}`,
+    tooey: `{s:{a:5,b:3},r:[vs,[[hs,[[tx,"A:"],[tx,{$:"a"}]],{g:4}],[hs,[[tx,"B:"],[tx,{$:"b"}]],{g:4}],[hs,[[tx,"Sum:"],[tx,{$:"sum"}]],{g:4}]],{g:8}]}`,
     react: `function Computed() {
   const [a] = useState(5);
   const [b] = useState(3);

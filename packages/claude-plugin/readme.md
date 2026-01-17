@@ -76,7 +76,7 @@ tooey is a token-efficient ui library that uses ~75% fewer output tokens than re
 
 ```javascript
 // tooey counter (53 tokens)
-{s:{n:0},r:[V,[[T,{$:"n"}],[H,[[B,"-",{c:"n-"}],[B,"+",{c:"n+"}]],{g:8}]],{g:8}]}
+{s:{n:0},r:[vs,[[tx,{$:"n"}],[hs,[[bt,"-",{c:"n-"}],[bt,"+",{c:"n+"}]],{g:8}]],{g:8}]}
 
 // equivalent react (142 tokens)
 const Counter = () => {
@@ -94,7 +94,7 @@ const Counter = () => {
 ## rendering tooey specs
 
 ```javascript
-import { render, V, H, T, B } from '@tooey/ui';
+import { render, vs, hs, tx, bt } from '@tooey/ui';
 
 render(document.getElementById('app'), spec);
 ```

@@ -35,7 +35,7 @@ function render(container: HTMLElement, spec: TooeySpec): TooeyInstance
 ```javascript
 const app = tooey.render(document.getElementById('app'), {
   s: { count: 0 },
-  r: [V, [[T, { $: 'count' }], [B, '+', { c: 'count+' }]], { g: 8 }]
+  r: [vs, [[tx, { $: 'count' }], [bt, '+', { c: 'count+' }]], { g: 8 }]
 });
 ```
 
@@ -148,7 +148,7 @@ interface TooeyFactory {
 **example:**
 
 ```javascript
-import { createTooey, V, T, B } from '@tooey/ui';
+import { createTooey, vs, tx, bt } from '@tooey/ui';
 
 const tooey = createTooey({
   colors: { primary: '#007bff', success: '#28a745' },
@@ -158,9 +158,9 @@ const tooey = createTooey({
 // all renders automatically use the theme
 tooey.render(container, {
   s: { count: 0 },
-  r: [V, [
-    [T, { $: 'count' }, { fg: '$primary' }],
-    [B, '+', { c: 'count+', bg: '$success', p: '$md' }]
+  r: [vs, [
+    [tx, { $: 'count' }, { fg: '$primary' }],
+    [bt, '+', { c: 'count+', bg: '$success', p: '$md' }]
   ], { g: '$sm' }]
 });
 ```
@@ -202,54 +202,54 @@ theme tokens can be used with these props:
 
 | code | element | description |
 |------|---------|-------------|
-| `V` | `<div>` | vertical stack (flex-direction: column) |
-| `H` | `<div>` | horizontal stack (flex-direction: row) |
-| `D` | `<div>` | plain div |
-| `G` | `<div>` | grid container |
+| `vs` | `<div>` | vertical stack (flex-direction: column) |
+| `hs` | `<div>` | horizontal stack (flex-direction: row) |
+| `dv` | `<div>` | plain div |
+| `gr` | `<div>` | grid container |
 
 ### text & buttons
 
 | code | element | description |
 |------|---------|-------------|
-| `T` | `<span>` | text/inline element |
-| `B` | `<button>` | button |
+| `tx` | `<span>` | text/inline element |
+| `bt` | `<button>` | button |
 
 ### form elements
 
 | code | element | description |
 |------|---------|-------------|
-| `I` | `<input>` | text input (default type="text") |
-| `Ta` | `<textarea>` | multi-line text input |
-| `S` | `<select>` | dropdown select |
-| `C` | `<input>` | checkbox (type="checkbox") |
-| `R` | `<input>` | radio button (type="radio") |
+| `In` | `<input>` | text input (default type="text") |
+| `ta` | `<textarea>` | multi-line text input |
+| `sl` | `<select>` | dropdown select |
+| `cb` | `<input>` | checkbox (type="checkbox") |
+| `rd` | `<input>` | radio button (type="radio") |
 
 ### table elements
 
 | code | element | description |
 |------|---------|-------------|
-| `Tb` | `<table>` | table |
-| `Th` | `<thead>` | table header |
-| `Tbd` | `<tbody>` | table body |
+| `tb` | `<table>` | table |
+| `th` | `<thead>` | table header |
+| `bd` | `<tbody>` | table body |
 | `Tr` | `<tr>` | table row |
 | `Td` | `<td>` | table cell |
-| `Tc` | `<th>` | table header cell |
+| `tc` | `<th>` | table header cell |
 
 ### list elements
 
 | code | element | description |
 |------|---------|-------------|
-| `Ul` | `<ul>` | unordered list |
-| `Ol` | `<ol>` | ordered list |
-| `Li` | `<li>` | list item |
+| `ul` | `<ul>` | unordered list |
+| `ol` | `<ol>` | ordered list |
+| `li` | `<li>` | list item |
 
 ### media & links
 
 | code | element | description |
 |------|---------|-------------|
-| `M` | `<img>` | image |
-| `L` | `<a>` | link/anchor |
-| `Sv` | `<svg>` | svg container |
+| `im` | `<img>` | image |
+| `ln` | `<a>` | link/anchor |
+| `sv` | `<svg>` | svg container |
 
 ## props reference
 
@@ -331,19 +331,19 @@ theme tokens can be used with these props:
 
 | prop | applies to | description |
 |------|------------|-------------|
-| `v` | `I`, `Ta`, `S` | value binding (state ref) |
-| `ph` | `I`, `Ta` | placeholder text |
-| `type` | `I` | input type (text, email, password, etc.) |
-| `href` | `L` | link url (validated for security) |
-| `src` | `M` | image source url (validated for security) |
-| `alt` | `M` | image alt text |
-| `dis` | `B`, `I` | disabled state |
-| `ch` | `C`, `R` | checked state binding |
-| `ro` | `I`, `Ta` | read-only |
-| `opts` | `S` | select options `[{ v: 'value', l: 'label' }]` |
-| `rw` | `Ta` | textarea rows |
-| `sp` | `Td`, `Tc` | column span |
-| `rsp` | `Td`, `Tc` | row span |
+| `v` | `In`, `ta`, `sl` | value binding (state ref) |
+| `ph` | `In`, `ta` | placeholder text |
+| `type` | `In` | input type (text, email, password, etc.) |
+| `href` | `ln` | link url (validated for security) |
+| `src` | `im` | image source url (validated for security) |
+| `alt` | `im` | image alt text |
+| `dis` | `bt`, `In` | disabled state |
+| `ch` | `cb`, `rd` | checked state binding |
+| `ro` | `In`, `ta` | read-only |
+| `opts` | `sl` | select options `[{ v: 'value', l: 'label' }]` |
+| `rw` | `ta` | textarea rows |
+| `sp` | `Td`, `tc` | column span |
+| `rsp` | `Td`, `tc` | row span |
 | `cls` | any | css class name |
 | `id` | any | element id |
 
@@ -401,32 +401,32 @@ theme tokens can be used with these props:
 
 ```javascript
 // long form
-{ if: 'show', then: [T, 'Visible'], else: [T, 'Hidden'] }
+{ if: 'show', then: [tx, 'Visible'], else: [tx, 'Hidden'] }
 
 // short form (saves tokens)
-{ '?': 'show', t: [T, 'Visible'], e: [T, 'Hidden'] }
+{ '?': 'show', t: [tx, 'Visible'], e: [tx, 'Hidden'] }
 
 // equality check
-{ '?': 'tab', is: 'home', t: [T, 'Home content'] }
+{ '?': 'tab', is: 'home', t: [tx, 'Home content'] }
 
 // with state ref
-{ '?': { $: 'tab' }, is: 'settings', t: [T, 'Settings'] }
+{ '?': { $: 'tab' }, is: 'settings', t: [tx, 'Settings'] }
 ```
 
 ### list rendering
 
 ```javascript
 // long form
-{ map: 'items', as: [Li, '$item'] }
+{ map: 'items', as: [li, '$item'] }
 
 // short form
-{ m: 'items', a: [Li, '$item'] }
+{ m: 'items', a: [li, '$item'] }
 
 // with index
-{ m: 'items', a: [Li, '$index: $item'] }
+{ m: 'items', a: [li, '$index: $item'] }
 
 // object properties
-{ m: 'users', a: [Li, '$item.name'] }
+{ m: 'users', a: [li, '$item.name'] }
 ```
 
 ### special variables in templates
@@ -450,15 +450,15 @@ type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => 
 ### basic example
 
 ```javascript
-import { Component, V, T, H, B } from '@tooey/ui';
+import { Component, vs, tx, hs, bt } from '@tooey/ui';
 
 // simple component with children
-const Card = (props, children) => [V, children, { bg: '#fff', p: 16, r: 8, ...props }];
+const Card = (props, children) => [vs, children, { bg: '#fff', p: 16, r: 8, ...props }];
 
 // usage
 render(container, {
   s: {},
-  r: [Card, [[T, 'Card content'], [T, 'More content']], { bg: '#f0f0f0' }]
+  r: [Card, [[tx, 'Card content'], [tx, 'More content']], { bg: '#f0f0f0' }]
 });
 ```
 
@@ -467,7 +467,7 @@ render(container, {
 ```javascript
 // component with typed props
 const Alert = ({ type = 'info', message }) =>
-  [V, [[T, message]], { bg: type === 'error' ? '#fee' : '#eef', p: 12, r: 4 }];
+  [vs, [[tx, message]], { bg: type === 'error' ? '#fee' : '#eef', p: 12, r: 4 }];
 
 // usage
 render(container, {
@@ -481,15 +481,15 @@ render(container, {
 function components can be nested:
 
 ```javascript
-const Button = (props) => [B, props?.label || 'Click', { bg: '#007bff', fg: '#fff', p: 8, r: 4, ...props }];
+const Button = (props) => [bt, props?.label || 'Click', { bg: '#007bff', fg: '#fff', p: 8, r: 4, ...props }];
 
-const ButtonGroup = (props, children) => [H, children, { g: 8, ...props }];
+const ButtonGroup = (props, children) => [hs, children, { g: 8, ...props }];
 
 render(container, {
   s: { count: 0 },
   r: [ButtonGroup, [
     [Button, '', { label: '-', c: 'count-' }],
-    [T, { $: 'count' }],
+    [tx, { $: 'count' }],
     [Button, '', { label: '+', c: 'count+' }]
   ]]
 });
@@ -500,20 +500,20 @@ render(container, {
 function components work with state references and control flow:
 
 ```javascript
-const Counter = (props) => [V, [
-  [T, { $: props?.stateKey || 'count' }],
-  [H, [[B, '-', { c: `${props?.stateKey || 'count'}-` }], [B, '+', { c: `${props?.stateKey || 'count'}+` }]], { g: 8 }]
+const Counter = (props) => [vs, [
+  [tx, { $: props?.stateKey || 'count' }],
+  [hs, [[bt, '-', { c: `${props?.stateKey || 'count'}-` }], [bt, '+', { c: `${props?.stateKey || 'count'}+` }]], { g: 8 }]
 ], { g: 8 }];
 
 const ConditionalDisplay = ({ condition }) => ({
   '?': condition,
-  t: [T, 'Condition is true'],
-  e: [T, 'Condition is false']
+  t: [tx, 'Condition is true'],
+  e: [tx, 'Condition is false']
 });
 
 render(container, {
   s: { count: 0, show: true },
-  r: [V, [
+  r: [vs, [
     [Counter, '', { stateKey: 'count' }],
     [ConditionalDisplay, '', { condition: 'show' }]
   ], { g: 16 }]
@@ -535,8 +535,8 @@ error boundaries catch errors during rendering and display fallback ui.
 // error boundary node
 {
   boundary: true,
-  child: [V, [[T, 'Risky content']]],
-  fallback: [T, 'Something went wrong'],
+  child: [vs, [[tx, 'Risky content']]],
+  fallback: [tx, 'Something went wrong'],
   onError: (error) => console.error(error)
 }
 ```

@@ -72,11 +72,11 @@ npm install @tooey/ui
 ```
 
 ```javascript
-import { render, V, H, T, B } from '@tooey/ui';
+import { render, vs, hs, tx, bt } from '@tooey/ui';
 
 render(document.getElementById('app'), {
   s: { n: 0 },
-  r: [V, [[T, { $: 'n' }], [H, [[B, '-', { c: 'n-' }], [B, '+', { c: 'n+' }]], { g: 8 }]], { g: 8 }]
+  r: [vs, [[tx, { $: 'n' }], [hs, [[bt, '-', { c: 'n-' }], [bt, '+', { c: 'n+' }]], { g: 8 }]], { g: 8 }]
 });
 ```
 
@@ -135,16 +135,16 @@ type Component<P = {}> = (props?: P, children?: NodeSpec[]) => NodeSpec;
 ```javascript
 // define a Card component
 const Card = (props = {}, children = []) => [
-  V,
+  vs,
   children,
   { bg: '#fff', p: 16, r: 8, sh: '0 2px 4px rgba(0,0,0,0.1)', ...props }
 ];
 
 // usage in spec (token-efficient)
-{ r: [Card, [[T, 'Hello']], { bg: '#f0f0f0' }] }
+{ r: [Card, [[tx, 'Hello']], { bg: '#f0f0f0' }] }
 
 // or with helper
-{ r: Card({ bg: '#f0f0f0' }, [[T, 'Hello']]) }
+{ r: Card({ bg: '#f0f0f0' }, [[tx, 'Hello']]) }
 ```
 
 #### component with state
@@ -155,10 +155,10 @@ const Counter = (props = {}) => ({
   // state contribution (merged with parent spec.s)
   s: { count: props.initial || 0 },
   // component tree
-  r: [H, [
-    [B, '-', { c: 'count-' }],
-    [T, { $: 'count' }],
-    [B, '+', { c: 'count+' }]
+  r: [hs, [
+    [bt, '-', { c: 'count-' }],
+    [tx, { $: 'count' }],
+    [bt, '+', { c: 'count+' }]
   ], { g: 8, ...props }]
 });
 
@@ -186,7 +186,7 @@ third-party packages export components following naming conventions.
 ```javascript
 import { Cd, Mdl, Al } from '@tooey/components';
 
-{ r: [Cd, [[T, 'Content']], { variant: 'outlined' }] }
+{ r: [Cd, [[tx, 'Content']], { variant: 'outlined' }] }
 ```
 
 ---
@@ -204,7 +204,7 @@ const theme = {
 };
 
 // apply via spread
-[V, [...], { ...theme.card, p: 24 }]
+[vs, [...], { ...theme.card, p: 24 }]
 ```
 
 #### option b: theme provider (runtime)
@@ -218,7 +218,7 @@ const { render, theme } = createTooey({
 });
 
 // usage with $ prefix for theme values
-[B, 'Save', { bg: '$primary', p: '$md', r: '$sm' }]
+[bt, 'Save', { bg: '$primary', p: '$md', r: '$sm' }]
 ```
 
 ---
@@ -292,19 +292,19 @@ for complex component composition.
 // component with slots
 const Layout = (props, children) => {
   const { header, footer, ...rest } = props;
-  return [V, [
-    header && [D, [header], { cls: 'header' }],
-    [D, children, { cls: 'main', s: { flex: 1 } }],
-    footer && [D, [footer], { cls: 'footer' }]
+  return [vs, [
+    header && [dv, [header], { cls: 'header' }],
+    [dv, children, { cls: 'main', s: { flex: 1 } }],
+    footer && [dv, [footer], { cls: 'footer' }]
   ], { h: '100vh', ...rest }];
 };
 
 // usage
 [Layout, [
-  [T, 'Main content']
+  [tx, 'Main content']
 ], {
-  header: [H, [[T, 'Logo'], [T, 'Nav']], { jc: 'sb' }],
-  footer: [T, '© 2024']
+  header: [hs, [[tx, 'Logo'], [tx, 'Nav']], { jc: 'sb' }],
+  footer: [tx, '© 2024']
 }]
 ```
 
@@ -334,9 +334,9 @@ const formState = (fields) => ({
 const form = formState(['email', 'password']);
 render(el, {
   s: { ...form.s, otherState: 123 },
-  r: [V, [
-    [I, '', { v: { $: 'values.email' }, x: form.actions.setValue.bind(null, 'email') }],
-    [B, 'Submit', { c: form.actions.submit }]
+  r: [vs, [
+    [In, '', { v: { $: 'values.email' }, x: form.actions.setValue.bind(null, 'email') }],
+    [bt, 'Submit', { c: form.actions.submit }]
   ]]
 });
 ```
@@ -382,15 +382,15 @@ function async$(promise, { loading, error }) {
 
 // usage
 const userSpec = async$(fetch('/api/user').then(r => r.json()), {
-  loading: [T, 'Loading...'],
-  error: [T, { $: 'error' }, { fg: 'red' }]
+  loading: [tx, 'Loading...'],
+  error: [tx, { $: 'error' }, { fg: 'red' }]
 });
 
 render(el, {
   s: userSpec.s,
   r: { '?': 'loading',
     t: userSpec.loading,
-    e: { '?': 'error', t: userSpec.error, e: [T, { $: 'data.name' }] }
+    e: { '?': 'error', t: userSpec.error, e: [tx, { $: 'data.name' }] }
   }
 });
 ```
@@ -414,7 +414,7 @@ const Card: Component<CardProps> = (props = {}, children = []) => {
     outlined: { bw: 1, bc: '#ddd' },
     elevated: { sh: '0 2px 8px rgba(0,0,0,0.1)' }
   };
-  return [V, children, {
+  return [vs, children, {
     ...styles[variant],
     r: 8,
     p: 16,

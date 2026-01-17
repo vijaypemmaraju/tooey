@@ -4209,113 +4209,8 @@
 			}
 		},
 		{
-			"id": 52,
-			"name": "B",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1399,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "B"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 56,
-			"name": "C",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1403,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "C"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 49,
-			"name": "D",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1396,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "D"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 50,
-			"name": "G",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1397,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "G"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 48,
-			"name": "H",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1395,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "H"
-			},
-			"defaultValue": "..."
-		},
-		{
 			"id": 53,
-			"name": "I",
+			"name": "In",
 			"variant": "declaration",
 			"kind": 32,
 			"flags": {
@@ -4330,259 +4225,7 @@
 			],
 			"type": {
 				"type": "literal",
-				"value": "I"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 68,
-			"name": "L",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1415,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "L"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 66,
-			"name": "Li",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1413,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "Li"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 67,
-			"name": "M",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1414,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "M"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 65,
-			"name": "Ol",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1412,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "Ol"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 57,
-			"name": "R",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1404,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "R"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 55,
-			"name": "S",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1402,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "S"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 69,
-			"name": "Sv",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1416,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "Sv"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 51,
-			"name": "T",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1398,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "T"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 54,
-			"name": "Ta",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1401,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "Ta"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 58,
-			"name": "Tb",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1405,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "Tb"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 60,
-			"name": "Tbd",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1407,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "Tbd"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 63,
-			"name": "Tc",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1410,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "Tc"
+				"value": "in"
 			},
 			"defaultValue": "..."
 		},
@@ -4603,28 +4246,7 @@
 			],
 			"type": {
 				"type": "literal",
-				"value": "Td"
-			},
-			"defaultValue": "..."
-		},
-		{
-			"id": 59,
-			"name": "Th",
-			"variant": "declaration",
-			"kind": 32,
-			"flags": {
-				"isConst": true
-			},
-			"sources": [
-				{
-					"fileName": "tooey.ts",
-					"line": 1406,
-					"character": 6
-				}
-			],
-			"type": {
-				"type": "literal",
-				"value": "Th"
+				"value": "td"
 			},
 			"defaultValue": "..."
 		},
@@ -4645,13 +4267,391 @@
 			],
 			"type": {
 				"type": "literal",
-				"value": "Tr"
+				"value": "tr"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 60,
+			"name": "bd",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1407,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "bd"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 52,
+			"name": "bt",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1399,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "bt"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 56,
+			"name": "cb",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1403,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "cb"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 49,
+			"name": "dv",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1396,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "dv"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 50,
+			"name": "gr",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1397,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "gr"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 48,
+			"name": "hs",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1395,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "hs"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 67,
+			"name": "im",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1414,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "im"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 66,
+			"name": "li",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1413,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "li"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 68,
+			"name": "ln",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1415,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "ln"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 65,
+			"name": "ol",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1412,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "ol"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 57,
+			"name": "rd",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1404,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "rd"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 55,
+			"name": "sl",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1402,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "sl"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 69,
+			"name": "sv",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1416,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "sv"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 54,
+			"name": "ta",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1401,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "ta"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 58,
+			"name": "tb",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1405,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "tb"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 63,
+			"name": "tc",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1410,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "tc"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 59,
+			"name": "th",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1406,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "th"
+			},
+			"defaultValue": "..."
+		},
+		{
+			"id": 51,
+			"name": "tx",
+			"variant": "declaration",
+			"kind": 32,
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "tooey.ts",
+					"line": 1398,
+					"character": 6
+				}
+			],
+			"type": {
+				"type": "literal",
+				"value": "tx"
 			},
 			"defaultValue": "..."
 		},
 		{
 			"id": 64,
-			"name": "Ul",
+			"name": "ul",
 			"variant": "declaration",
 			"kind": 32,
 			"flags": {
@@ -4666,13 +4666,13 @@
 			],
 			"type": {
 				"type": "literal",
-				"value": "Ul"
+				"value": "ul"
 			},
 			"defaultValue": "..."
 		},
 		{
 			"id": 47,
-			"name": "V",
+			"name": "vs",
 			"variant": "declaration",
 			"kind": 32,
 			"flags": {
@@ -4687,7 +4687,7 @@
 			],
 			"type": {
 				"type": "literal",
-				"value": "V"
+				"value": "vs"
 			},
 			"defaultValue": "..."
 		},
@@ -5541,27 +5541,27 @@
 		{
 			"title": "Variables",
 			"children": [
+				53,
+				62,
+				61,
+				60,
 				52,
 				56,
 				49,
 				50,
 				48,
-				53,
-				68,
-				66,
 				67,
+				66,
+				68,
 				65,
 				57,
 				55,
 				69,
-				51,
 				54,
 				58,
-				60,
 				63,
-				62,
 				59,
-				61,
+				51,
 				64,
 				47
 			]
@@ -5581,7 +5581,7 @@
 		}
 	],
 	"packageName": "@tooey/ui",
-	"packageVersion": "1.4.0",
+	"packageVersion": "2.0.0",
 	"symbolIdMap": {
 		"0": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
@@ -5773,59 +5773,59 @@
 		},
 		"47": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "V"
+			"qualifiedName": "vs"
 		},
 		"48": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "H"
+			"qualifiedName": "hs"
 		},
 		"49": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "D"
+			"qualifiedName": "dv"
 		},
 		"50": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "G"
+			"qualifiedName": "gr"
 		},
 		"51": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "T"
+			"qualifiedName": "tx"
 		},
 		"52": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "B"
+			"qualifiedName": "bt"
 		},
 		"53": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "I"
+			"qualifiedName": "In"
 		},
 		"54": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "Ta"
+			"qualifiedName": "ta"
 		},
 		"55": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "S"
+			"qualifiedName": "sl"
 		},
 		"56": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "C"
+			"qualifiedName": "cb"
 		},
 		"57": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "R"
+			"qualifiedName": "rd"
 		},
 		"58": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "Tb"
+			"qualifiedName": "tb"
 		},
 		"59": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "Th"
+			"qualifiedName": "th"
 		},
 		"60": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "Tbd"
+			"qualifiedName": "bd"
 		},
 		"61": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
@@ -5837,31 +5837,31 @@
 		},
 		"63": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "Tc"
+			"qualifiedName": "tc"
 		},
 		"64": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "Ul"
+			"qualifiedName": "ul"
 		},
 		"65": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "Ol"
+			"qualifiedName": "ol"
 		},
 		"66": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "Li"
+			"qualifiedName": "li"
 		},
 		"67": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "M"
+			"qualifiedName": "im"
 		},
 		"68": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "L"
+			"qualifiedName": "ln"
 		},
 		"69": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",
-			"qualifiedName": "Sv"
+			"qualifiedName": "sv"
 		},
 		"70": {
 			"sourceFileName": "../packages/ui/src/tooey.ts",

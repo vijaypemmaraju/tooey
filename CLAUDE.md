@@ -62,12 +62,12 @@ the entire library is in `packages/ui/src/tooey.ts`. intentional for simplicity,
 
 ### component abbreviations
 ```
-layout    V H D G       (vstack, hstack, div, grid)
-text      T B           (span, button)
-input     I Ta S C R    (input, textarea, select, checkbox, radio)
-table     Tb Th Tbd Tr Td Tc
-list      Ul Ol Li
-media     M L Sv        (img, link, svg)
+layout    vs hs dv gr       (vstack, hstack, div, grid)
+text      tx bt             (span, button)
+input     In ta sl cb rd    (input, textarea, select, checkbox, radio)
+table     tb th bd Tr Td tc
+list      ul ol li
+media     im ln sv          (img, link, svg)
 ```
 
 ### props abbreviations
@@ -136,13 +136,13 @@ short keys: `g` (gap), `p` (padding), `bg` (background), `fg` (color), etc.
 ### control flow
 ```javascript
 // conditional (short form)
-{ '?': 'show', t: [T, 'yes'], e: [T, 'no'] }
+{ '?': 'show', t: [tx, 'yes'], e: [tx, 'no'] }
 
 // equality check
-{ '?': 'tab', is: 'home', t: [T, 'Home'] }
+{ '?': 'tab', is: 'home', t: [tx, 'Home'] }
 
 // list rendering
-{ m: 'items', a: [Li, '$item'] }
+{ m: 'items', a: [li, '$item'] }
 ```
 
 ### error boundaries
@@ -150,7 +150,7 @@ short keys: `g` (gap), `p` (padding), `bg` (background), `fg` (color), etc.
 {
   boundary: true,
   child: [Component, ...],
-  fallback: [T, 'Error occurred'],
+  fallback: [tx, 'Error occurred'],
   onError: (error) => console.error(error)
 }
 ```

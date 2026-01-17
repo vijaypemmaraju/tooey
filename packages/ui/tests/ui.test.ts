@@ -11,12 +11,12 @@ import {
   signal,
   effect,
   batch,
-  V, H, D, G,
-  T, B,
-  I, Ta, S, C, R,
-  Tb, Th, Tbd, Tr, Td, Tc,
-  Ul, Ol, Li,
-  M, L, Sv,
+  vs, hs, dv, gr,
+  tx, bt,
+  In, ta, sl, cb, rd,
+  tb, th, bd, Tr, Td, tc,
+  ul, ol, li,
+  im, ln, sv,
   $
 } from '../src/tooey';
 
@@ -38,18 +38,18 @@ describe('Comprehensive UI Tests', () => {
 
   describe('Component Rendering', () => {
     describe('Layout Components', () => {
-      it('D creates a plain div', () => {
-        render(container, { r: [D, 'content'] });
+      it('dv creates a plain div', () => {
+        render(container, { r: [dv, 'content'] });
         const el = container.querySelector('div')!;
         expect(el).not.toBeNull();
         expect(el.textContent).toBe('content');
       });
 
-      it('V with nested H creates correct flex structure', () => {
+      it('vs with nested hs creates correct flex structure', () => {
         render(container, {
-          r: [V, [
-            [H, [[T, 'a'], [T, 'b']]],
-            [H, [[T, 'c'], [T, 'd']]]
+          r: [vs, [
+            [hs, [[tx, 'a'], [tx, 'b']]],
+            [hs, [[tx, 'c'], [tx, 'd']]]
           ]]
         });
         const divs = container.querySelectorAll('div');
@@ -58,21 +58,21 @@ describe('Comprehensive UI Tests', () => {
         expect(divs[2].style.flexDirection).toBe('row');
       });
 
-      it('G with rows creates grid with row template', () => {
-        render(container, { r: [G, [], { rows: 2 }] });
+      it('gr with rows creates grid with row template', () => {
+        render(container, { r: [gr, [], { rows: 2 }] });
         const el = container.querySelector('div')!;
         expect(el.style.display).toBe('grid');
         expect(el.style.gridTemplateRows).toBe('repeat(2, 1fr)');
       });
 
-      it('G with custom rows string', () => {
-        render(container, { r: [G, [], { rows: 'auto 1fr auto' }] });
+      it('gr with custom rows string', () => {
+        render(container, { r: [gr, [], { rows: 'auto 1fr auto' }] });
         const el = container.querySelector('div')!;
         expect(el.style.gridTemplateRows).toBe('auto 1fr auto');
       });
 
-      it('G with both cols and rows', () => {
-        render(container, { r: [G, [], { cols: 3, rows: 2 }] });
+      it('gr with both cols and rows', () => {
+        render(container, { r: [gr, [], { cols: 3, rows: 2 }] });
         const el = container.querySelector('div')!;
         expect(el.style.gridTemplateColumns).toBe('repeat(3, 1fr)');
         expect(el.style.gridTemplateRows).toBe('repeat(2, 1fr)');
@@ -80,15 +80,15 @@ describe('Comprehensive UI Tests', () => {
     });
 
     describe('SVG Component', () => {
-      it('Sv creates SVG element', () => {
-        render(container, { r: [Sv, []] });
+      it('sv creates SVG element', () => {
+        render(container, { r: [sv, []] });
         const svg = container.querySelector('svg');
         expect(svg).not.toBeNull();
         expect(svg?.namespaceURI).toBe('http://www.w3.org/2000/svg');
       });
 
-      it('Sv with styles', () => {
-        render(container, { r: [Sv, [], { w: 100, h: 100 }] });
+      it('sv with styles', () => {
+        render(container, { r: [sv, [], { w: 100, h: 100 }] });
         const svg = container.querySelector('svg')!;
         expect(svg.style.width).toBe('100px');
         expect(svg.style.height).toBe('100px');
@@ -96,29 +96,29 @@ describe('Comprehensive UI Tests', () => {
     });
 
     describe('Text and Button Components', () => {
-      it('T with number content', () => {
-        render(container, { r: [T, 42] });
+      it('tx with number content', () => {
+        render(container, { r: [tx, 42] });
         expect(container.textContent).toBe('42');
       });
 
-      it('T with empty string', () => {
-        render(container, { r: [T, ''] });
+      it('tx with empty string', () => {
+        render(container, { r: [tx, ''] });
         const span = container.querySelector('span')!;
         expect(span.textContent).toBe('');
       });
 
-      it('B with disabled state bound to signal', () => {
+      it('bt with disabled state bound to signal', () => {
         const instance = render(container, {
           s: { disabled: false },
-          r: [B, 'Click', { dis: true }]
+          r: [bt, 'Click', { dis: true }]
         });
         expect(container.querySelector('button')!.disabled).toBe(true);
       });
 
-      it('B click prevents default when needed', () => {
+      it('bt click prevents default when needed', () => {
         let clicked = false;
         render(container, {
-          r: [B, 'Submit', { c: () => { clicked = true; } }]
+          r: [bt, 'Submit', { c: () => { clicked = true; } }]
         });
         container.querySelector('button')!.click();
         expect(clicked).toBe(true);
@@ -130,17 +130,17 @@ describe('Comprehensive UI Tests', () => {
         const inputTypes = ['text', 'email', 'password', 'number', 'tel', 'url', 'search', 'date', 'time', 'datetime-local', 'color', 'range'];
 
         inputTypes.forEach(type => {
-          it(`I creates ${type} input`, () => {
-            render(container, { r: [I, '', { type }] });
+          it(`In creates ${type} input`, () => {
+            render(container, { r: [In, '', { type }] });
             const input = container.querySelector('input')!;
             expect(input.type).toBe(type);
           });
         });
       });
 
-      it('I with all attributes', () => {
+      it('In with all attributes', () => {
         render(container, {
-          r: [I, 'initial', { type: 'text', ph: 'Enter value', ro: true, dis: true }]
+          r: [In, 'initial', { type: 'text', ph: 'Enter value', ro: true, dis: true }]
         });
         const input = container.querySelector('input')!;
         expect(input.value).toBe('initial');
@@ -149,9 +149,9 @@ describe('Comprehensive UI Tests', () => {
         expect(input.disabled).toBe(true);
       });
 
-      it('Ta with all attributes', () => {
+      it('ta with all attributes', () => {
         render(container, {
-          r: [Ta, 'multi\nline', { rw: 10, ph: 'Description', ro: true, dis: true }]
+          r: [ta, 'multi\nline', { rw: 10, ph: 'Description', ro: true, dis: true }]
         });
         const textarea = container.querySelector('textarea')!;
         expect(textarea.value).toBe('multi\nline');
@@ -161,10 +161,10 @@ describe('Comprehensive UI Tests', () => {
         expect(textarea.disabled).toBe(true);
       });
 
-      it('S with initial selected value', () => {
+      it('sl with initial selected value', () => {
         const instance = render(container, {
           s: { selected: 'b' },
-          r: [S, '', {
+          r: [sl, '', {
             opts: [
               { v: 'a', l: 'Alpha' },
               { v: 'b', l: 'Beta' },
@@ -177,10 +177,10 @@ describe('Comprehensive UI Tests', () => {
         expect(select.value).toBe('b');
       });
 
-      it('S change event updates state', () => {
+      it('sl change event updates state', () => {
         const instance = render(container, {
           s: { selected: 'a' },
-          r: [S, '', {
+          r: [sl, '', {
             opts: [
               { v: 'a', l: 'Alpha' },
               { v: 'b', l: 'Beta' }
@@ -195,19 +195,19 @@ describe('Comprehensive UI Tests', () => {
         expect(instance.get('selected')).toBe('b');
       });
 
-      it('C with name attribute via cls', () => {
-        render(container, { r: [C, '', { cls: 'checkbox-cls', id: 'cb1' }] });
+      it('cb with name attribute via cls', () => {
+        render(container, { r: [cb, '', { cls: 'checkbox-cls', id: 'cb1' }] });
         const checkbox = container.querySelector('input')!;
         expect(checkbox.className).toBe('checkbox-cls');
         expect(checkbox.id).toBe('cb1');
       });
 
-      it('R radio buttons in a group', () => {
+      it('rd radio buttons in a group', () => {
         render(container, {
           s: { selected: 'opt1' },
-          r: [V, [
-            [R, '', { v: { $: 'selected' }, cls: 'radio-group' }],
-            [R, '', { v: { $: 'selected' }, cls: 'radio-group' }]
+          r: [vs, [
+            [rd, '', { v: { $: 'selected' }, cls: 'radio-group' }],
+            [rd, '', { v: { $: 'selected' }, cls: 'radio-group' }]
           ]]
         });
         const radios = container.querySelectorAll('input[type="radio"]');
@@ -218,15 +218,15 @@ describe('Comprehensive UI Tests', () => {
     describe('Table Elements', () => {
       it('complex table with multiple rows and columns', () => {
         render(container, {
-          r: [Tb, [
-            [Th, [
+          r: [tb, [
+            [th, [
               [Tr, [
-                [Tc, 'Name'],
-                [Tc, 'Age'],
-                [Tc, 'Email']
+                [tc, 'Name'],
+                [tc, 'Age'],
+                [tc, 'Email']
               ]]
             ]],
-            [Tbd, [
+            [bd, [
               [Tr, [
                 [Td, 'Alice'],
                 [Td, '30'],
@@ -245,8 +245,8 @@ describe('Comprehensive UI Tests', () => {
         expect(container.querySelectorAll('td').length).toBe(6);
       });
 
-      it('Tc with colspan and rowspan', () => {
-        render(container, { r: [Tc, 'Merged', { sp: 3, rsp: 2 }] });
+      it('tc with colspan and rowspan', () => {
+        render(container, { r: [tc, 'Merged', { sp: 3, rsp: 2 }] });
         const th = container.querySelector('th')!;
         expect(th.colSpan).toBe(3);
         expect(th.rowSpan).toBe(2);
@@ -256,16 +256,16 @@ describe('Comprehensive UI Tests', () => {
     describe('List Elements', () => {
       it('nested lists', () => {
         render(container, {
-          r: [Ul, [
-            [Li, 'Item 1'],
-            [Li, [
-              [T, 'Item 2 with sublist'],
-              [Ol, [
-                [Li, 'Subitem 2.1'],
-                [Li, 'Subitem 2.2']
+          r: [ul, [
+            [li, 'Item 1'],
+            [li, [
+              [tx, 'Item 2 with sublist'],
+              [ol, [
+                [li, 'Subitem 2.1'],
+                [li, 'Subitem 2.2']
               ]]
             ]],
-            [Li, 'Item 3']
+            [li, 'Item 3']
           ]]
         });
         expect(container.querySelector('ul')).not.toBeNull();
@@ -275,9 +275,9 @@ describe('Comprehensive UI Tests', () => {
     });
 
     describe('Media and Links', () => {
-      it('M image with all attributes', () => {
+      it('im image with all attributes', () => {
         render(container, {
-          r: [M, '', { src: 'photo.jpg', alt: 'Photo', w: 200, h: 150 }]
+          r: [im, '', { src: 'photo.jpg', alt: 'Photo', w: 200, h: 150 }]
         });
         const img = container.querySelector('img')!;
         expect(img.src).toContain('photo.jpg');
@@ -286,11 +286,11 @@ describe('Comprehensive UI Tests', () => {
         expect(img.style.height).toBe('150px');
       });
 
-      it('L link with nested content', () => {
+      it('ln link with nested content', () => {
         render(container, {
-          r: [L, [
-            [T, 'Click '],
-            [T, 'here', { fw: 'bold' }]
+          r: [ln, [
+            [tx, 'Click '],
+            [tx, 'here', { fw: 'bold' }]
           ], { href: 'https://example.com' }]
         });
         const link = container.querySelector('a')!;
@@ -307,20 +307,20 @@ describe('Comprehensive UI Tests', () => {
   describe('Styling', () => {
     describe('Position Properties', () => {
       it('applies bottom position', () => {
-        render(container, { r: [D, '', { pos: 'abs', b: 10 }] });
+        render(container, { r: [dv, '', { pos: 'abs', b: 10 }] });
         const el = container.querySelector('div')!;
         expect(el.style.position).toBe('absolute');
         expect(el.style.bottom).toBe('10px');
       });
 
       it('applies right position', () => {
-        render(container, { r: [D, '', { pos: 'abs', rt: 20 }] });
+        render(container, { r: [dv, '', { pos: 'abs', rt: 20 }] });
         const el = container.querySelector('div')!;
         expect(el.style.right).toBe('20px');
       });
 
       it('applies all position values', () => {
-        render(container, { r: [D, '', { pos: 'fix', t: 0, rt: 0, b: 0, l: 0 }] });
+        render(container, { r: [dv, '', { pos: 'fix', t: 0, rt: 0, b: 0, l: 0 }] });
         const el = container.querySelector('div')!;
         expect(el.style.position).toBe('fixed');
         expect(el.style.top).toBe('0px');
@@ -330,13 +330,13 @@ describe('Comprehensive UI Tests', () => {
       });
 
       it('sticky position', () => {
-        render(container, { r: [D, '', { pos: 'sticky', t: 0 }] });
+        render(container, { r: [dv, '', { pos: 'sticky', t: 0 }] });
         const el = container.querySelector('div')!;
         expect(el.style.position).toBe('sticky');
       });
 
       it('relative position', () => {
-        render(container, { r: [D, '', { pos: 'rel' }] });
+        render(container, { r: [dv, '', { pos: 'rel' }] });
         const el = container.querySelector('div')!;
         expect(el.style.position).toBe('relative');
       });
@@ -344,25 +344,25 @@ describe('Comprehensive UI Tests', () => {
 
     describe('Typography Properties', () => {
       it('applies text decoration', () => {
-        render(container, { r: [T, 'underlined', { td: 'underline' }] });
+        render(container, { r: [tx, 'underlined', { td: 'underline' }] });
         const el = container.querySelector('span')!;
         expect(el.style.textDecoration).toBe('underline');
       });
 
       it('applies line height as number', () => {
-        render(container, { r: [T, 'text', { lh: 1.5 }] });
+        render(container, { r: [tx, 'text', { lh: 1.5 }] });
         const el = container.querySelector('span')!;
         expect(el.style.lineHeight).toBe('1.5');
       });
 
       it('applies line height as string', () => {
-        render(container, { r: [T, 'text', { lh: '24px' }] });
+        render(container, { r: [tx, 'text', { lh: '24px' }] });
         const el = container.querySelector('span')!;
         expect(el.style.lineHeight).toBe('24px');
       });
 
       it('applies letter spacing', () => {
-        render(container, { r: [T, 'spaced', { ls: 2 }] });
+        render(container, { r: [tx, 'spaced', { ls: 2 }] });
         const el = container.querySelector('span')!;
         expect(el.style.letterSpacing).toBe('2px');
       });
@@ -370,19 +370,19 @@ describe('Comprehensive UI Tests', () => {
 
     describe('Visual Effects', () => {
       it('applies opacity', () => {
-        render(container, { r: [D, '', { o: 0.5 }] });
+        render(container, { r: [dv, '', { o: 0.5 }] });
         const el = container.querySelector('div')!;
         expect(el.style.opacity).toBe('0.5');
       });
 
       it('applies box shadow', () => {
-        render(container, { r: [D, '', { sh: '0 2px 4px rgba(0,0,0,0.1)' }] });
+        render(container, { r: [dv, '', { sh: '0 2px 4px rgba(0,0,0,0.1)' }] });
         const el = container.querySelector('div')!;
         expect(el.style.boxShadow).toBe('0 2px 4px rgba(0,0,0,0.1)');
       });
 
       it('applies transform', () => {
-        render(container, { r: [D, '', { tr: 'rotate(45deg)' }] });
+        render(container, { r: [dv, '', { tr: 'rotate(45deg)' }] });
         const el = container.querySelector('div')!;
         expect(el.style.transform).toBe('rotate(45deg)');
       });
@@ -390,32 +390,32 @@ describe('Comprehensive UI Tests', () => {
 
     describe('String Values for Dimensions', () => {
       it('width as string percentage', () => {
-        render(container, { r: [D, '', { w: '100%' }] });
+        render(container, { r: [dv, '', { w: '100%' }] });
         expect(container.querySelector('div')!.style.width).toBe('100%');
       });
 
       it('height as calc', () => {
-        render(container, { r: [D, '', { h: 'calc(100vh - 50px)' }] });
+        render(container, { r: [dv, '', { h: 'calc(100vh - 50px)' }] });
         expect(container.querySelector('div')!.style.height).toBe('calc(100vh - 50px)');
       });
 
       it('gap as em', () => {
-        render(container, { r: [V, [], { g: '1em' }] });
+        render(container, { r: [vs, [], { g: '1em' }] });
         expect(container.querySelector('div')!.style.gap).toBe('1em');
       });
 
       it('padding as multiple values', () => {
-        render(container, { r: [D, '', { p: '10px 20px' }] });
+        render(container, { r: [dv, '', { p: '10px 20px' }] });
         expect(container.querySelector('div')!.style.padding).toBe('10px 20px');
       });
 
       it('margin auto', () => {
-        render(container, { r: [D, '', { m: 'auto' }] });
+        render(container, { r: [dv, '', { m: 'auto' }] });
         expect(container.querySelector('div')!.style.margin).toBe('auto');
       });
 
       it('border radius percentage', () => {
-        render(container, { r: [D, '', { r: '50%' }] });
+        render(container, { r: [dv, '', { r: '50%' }] });
         expect(container.querySelector('div')!.style.borderRadius).toBe('50%');
       });
     });
@@ -423,7 +423,7 @@ describe('Comprehensive UI Tests', () => {
     describe('Custom Styles via s prop', () => {
       it('applies multiple custom styles', () => {
         render(container, {
-          r: [D, '', {
+          r: [dv, '', {
             s: {
               display: 'inline-flex',
               gap: '8px',
@@ -448,7 +448,7 @@ describe('Comprehensive UI Tests', () => {
       it('k handles keydown', () => {
         const instance = render(container, {
           s: { lastKey: '' },
-          r: [I, '', { k: ['lastKey', '!', 'keydown'] }]
+          r: [In, '', { k: ['lastKey', '!', 'keydown'] }]
         });
         container.querySelector('input')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
         expect(instance.get('lastKey')).toBe('keydown');
@@ -457,7 +457,7 @@ describe('Comprehensive UI Tests', () => {
       it('ku handles keyup', () => {
         const instance = render(container, {
           s: { keyReleased: false },
-          r: [I, '', { ku: ['keyReleased', '~'] }]
+          r: [In, '', { ku: ['keyReleased', '~'] }]
         });
         container.querySelector('input')!.dispatchEvent(new KeyboardEvent('keyup', { key: 'a' }));
         expect(instance.get('keyReleased')).toBe(true);
@@ -466,7 +466,7 @@ describe('Comprehensive UI Tests', () => {
       it('kp handles keypress', () => {
         const instance = render(container, {
           s: { pressed: 0 },
-          r: [I, '', { kp: ['pressed', '+'] }]
+          r: [In, '', { kp: ['pressed', '+'] }]
         });
         container.querySelector('input')!.dispatchEvent(new KeyboardEvent('keypress', { key: 'x' }));
         expect(instance.get('pressed')).toBe(1);
@@ -475,7 +475,7 @@ describe('Comprehensive UI Tests', () => {
       it('keyboard event with function handler', () => {
         let eventKey = '';
         render(container, {
-          r: [I, '', { k: () => { eventKey = 'handled'; } }]
+          r: [In, '', { k: () => { eventKey = 'handled'; } }]
         });
         container.querySelector('input')!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
         expect(eventKey).toBe('handled');
@@ -486,9 +486,9 @@ describe('Comprehensive UI Tests', () => {
       it('sub handles form submit and prevents default', () => {
         const instance = render(container, {
           s: { submitted: false },
-          r: [D, [
-            [I, ''],
-            [B, 'Submit']
+          r: [dv, [
+            [In, ''],
+            [bt, 'Submit']
           ], { sub: ['submitted', '~'] }]
         });
 
@@ -503,7 +503,7 @@ describe('Comprehensive UI Tests', () => {
       it('sub with function handler', () => {
         let formData = '';
         render(container, {
-          r: [D, [[I, '']], { sub: () => { formData = 'submitted'; } }]
+          r: [dv, [[In, '']], { sub: () => { formData = 'submitted'; } }]
         });
         container.querySelector('div')!.dispatchEvent(new Event('submit'));
         expect(formData).toBe('submitted');
@@ -514,7 +514,7 @@ describe('Comprehensive UI Tests', () => {
       it('handles focus and blur together', () => {
         const instance = render(container, {
           s: { focused: false },
-          r: [I, '', {
+          r: [In, '', {
             f: ['focused', '!', true],
             bl: ['focused', '!', false]
           }]
@@ -531,7 +531,7 @@ describe('Comprehensive UI Tests', () => {
       it('handles mouseenter and mouseleave together', () => {
         const instance = render(container, {
           s: { hovered: false },
-          r: [D, 'Hover me', {
+          r: [dv, 'Hover me', {
             e: ['hovered', '!', true],
             lv: ['hovered', '!', false]
           }]
@@ -548,7 +548,7 @@ describe('Comprehensive UI Tests', () => {
       it('click and keyboard on button', () => {
         const instance = render(container, {
           s: { clickCount: 0, keyCount: 0 },
-          r: [B, 'Action', {
+          r: [bt, 'Action', {
             c: ['clickCount', '+'],
             k: ['keyCount', '+']
           }]
@@ -567,7 +567,7 @@ describe('Comprehensive UI Tests', () => {
       it('click handler receives no extra context by default', () => {
         let eventReceived = false;
         render(container, {
-          r: [B, 'Click', { c: () => { eventReceived = true; } }]
+          r: [bt, 'Click', { c: () => { eventReceived = true; } }]
         });
         container.querySelector('button')!.click();
         expect(eventReceived).toBe(true);
@@ -584,7 +584,7 @@ describe('Comprehensive UI Tests', () => {
       it('increment by custom value', () => {
         const instance = render(container, {
           s: { n: 0 },
-          r: [B, '+10', { c: ['n', '+', 10] }]
+          r: [bt, '+10', { c: ['n', '+', 10] }]
         });
         container.querySelector('button')!.click();
         expect(instance.get('n')).toBe(10);
@@ -595,7 +595,7 @@ describe('Comprehensive UI Tests', () => {
       it('decrement by custom value', () => {
         const instance = render(container, {
           s: { n: 100 },
-          r: [B, '-25', { c: ['n', '-', 25] }]
+          r: [bt, '-25', { c: ['n', '-', 25] }]
         });
         container.querySelector('button')!.click();
         expect(instance.get('n')).toBe(75);
@@ -604,9 +604,9 @@ describe('Comprehensive UI Tests', () => {
       it('prepend and append in sequence', () => {
         const instance = render(container, {
           s: { items: ['middle'] },
-          r: [H, [
-            [B, 'prepend', { c: ['items', '>', 'first'] }],
-            [B, 'append', { c: ['items', '<', 'last'] }]
+          r: [hs, [
+            [bt, 'prepend', { c: ['items', '>', 'first'] }],
+            [bt, 'append', { c: ['items', '<', 'last'] }]
           ]]
         });
         const buttons = container.querySelectorAll('button');
@@ -619,9 +619,9 @@ describe('Comprehensive UI Tests', () => {
       it('set object property multiple times', () => {
         const instance = render(container, {
           s: { config: { theme: 'light' } },
-          r: [V, [
-            [B, 'dark', { c: ['config', '.', ['theme', 'dark']] }],
-            [B, 'add-lang', { c: ['config', '.', ['lang', 'en']] }]
+          r: [vs, [
+            [bt, 'dark', { c: ['config', '.', ['theme', 'dark']] }],
+            [bt, 'add-lang', { c: ['config', '.', ['lang', 'en']] }]
           ]]
         });
         const buttons = container.querySelectorAll('button');
@@ -634,7 +634,7 @@ describe('Comprehensive UI Tests', () => {
       it('X removes by predicate function', () => {
         const instance = render(container, {
           s: { items: [1, 2, 3, 4, 5] },
-          r: [B, 'remove evens', { c: ['items', 'X', (item: number) => item % 2 === 0] }]
+          r: [bt, 'remove evens', { c: ['items', 'X', (item: number) => item % 2 === 0] }]
         });
         container.querySelector('button')!.click();
         expect(instance.get('items')).toEqual([1, 3, 5]);
@@ -645,7 +645,7 @@ describe('Comprehensive UI Tests', () => {
       it('updates text when state changes via set', () => {
         const instance = render(container, {
           s: { message: 'Hello' },
-          r: [T, { $: 'message' }]
+          r: [tx, { $: 'message' }]
         });
         expect(container.textContent).toBe('Hello');
         instance.set('message', 'World');
@@ -655,9 +655,9 @@ describe('Comprehensive UI Tests', () => {
       it('updates multiple text elements from same state', () => {
         const instance = render(container, {
           s: { count: 0 },
-          r: [V, [
-            [T, { $: 'count' }],
-            [D, [[T, 'Count: '], [T, { $: 'count' }]]]
+          r: [vs, [
+            [tx, { $: 'count' }],
+            [dv, [[tx, 'Count: '], [tx, { $: 'count' }]]]
           ]]
         });
         instance.set('count', 42);
@@ -671,7 +671,7 @@ describe('Comprehensive UI Tests', () => {
       it('textarea two-way binding', () => {
         const instance = render(container, {
           s: { content: 'initial' },
-          r: [Ta, '', { v: { $: 'content' }, x: ['content', '!'] }]
+          r: [ta, '', { v: { $: 'content' }, x: ['content', '!'] }]
         });
         const textarea = container.querySelector('textarea')!;
         expect(textarea.value).toBe('initial');
@@ -684,7 +684,7 @@ describe('Comprehensive UI Tests', () => {
       it('select two-way binding', () => {
         const instance = render(container, {
           s: { selected: 'b' },
-          r: [S, '', {
+          r: [sl, '', {
             opts: [{ v: 'a', l: 'A' }, { v: 'b', l: 'B' }, { v: 'c', l: 'C' }],
             v: { $: 'selected' },
             x: ['selected', '!']
@@ -701,7 +701,7 @@ describe('Comprehensive UI Tests', () => {
       it('checkbox two-way binding with explicit handler', () => {
         const instance = render(container, {
           s: { agree: false },
-          r: [C, '', { ch: { $: 'agree' }, x: ['agree', '!'] }]
+          r: [cb, '', { ch: { $: 'agree' }, x: ['agree', '!'] }]
         });
         const checkbox = container.querySelector('input')!;
         expect(checkbox.checked).toBe(false);
@@ -714,7 +714,7 @@ describe('Comprehensive UI Tests', () => {
       it('radio button state binding', () => {
         const instance = render(container, {
           s: { choice: false },
-          r: [R, '', { ch: { $: 'choice' } }]
+          r: [rd, '', { ch: { $: 'choice' } }]
         });
         expect(container.querySelector('input')!.checked).toBe(false);
         instance.set('choice', true);
@@ -732,17 +732,17 @@ describe('Comprehensive UI Tests', () => {
       it('handles nested if/else', () => {
         const instance = render(container, {
           s: { level1: true, level2: true },
-          r: [D, [
+          r: [dv, [
             {
               if: 'level1',
-              then: [D, [
+              then: [dv, [
                 {
                   if: 'level2',
-                  then: [T, 'Both true'],
-                  else: [T, 'Level1 true, Level2 false']
+                  then: [tx, 'Both true'],
+                  else: [tx, 'Level1 true, Level2 false']
                 }
               ]],
-              else: [T, 'Level1 false']
+              else: [tx, 'Level1 false']
             }
           ]]
         });
@@ -759,11 +759,11 @@ describe('Comprehensive UI Tests', () => {
         // Test that multiple children in a branch render correctly
         const instance = render(container, {
           s: { mode: true },
-          r: [D, [
+          r: [dv, [
             {
               if: 'mode',
-              then: [[T, 'A'], [T, 'B'], [T, 'C']],
-              else: [[T, 'X'], [T, 'Y']]
+              then: [[tx, 'A'], [tx, 'B'], [tx, 'C']],
+              else: [[tx, 'X'], [tx, 'Y']]
             }
           ]]
         });
@@ -773,11 +773,11 @@ describe('Comprehensive UI Tests', () => {
       it('conditional toggle with single element branches', () => {
         const instance = render(container, {
           s: { mode: true },
-          r: [D, [
+          r: [dv, [
             {
               if: 'mode',
-              then: [T, 'TRUE'],
-              else: [T, 'FALSE']
+              then: [tx, 'TRUE'],
+              else: [tx, 'FALSE']
             }
           ]]
         });
@@ -793,8 +793,8 @@ describe('Comprehensive UI Tests', () => {
       it('shows nothing when condition is false', () => {
         const instance = render(container, {
           s: { show: false },
-          r: [D, [
-            { if: 'show', then: [T, 'Visible'] }
+          r: [dv, [
+            { if: 'show', then: [tx, 'Visible'] }
           ]]
         });
         expect(container.textContent?.trim()).toBe('');
@@ -808,8 +808,8 @@ describe('Comprehensive UI Tests', () => {
       it('treats empty string as falsy', () => {
         const instance = render(container, {
           s: { value: '' },
-          r: [D, [
-            { if: { $: 'value' }, then: [T, 'has value'], else: [T, 'empty'] }
+          r: [dv, [
+            { if: { $: 'value' }, then: [tx, 'has value'], else: [tx, 'empty'] }
           ]]
         });
         expect(container.textContent).toBe('empty');
@@ -821,8 +821,8 @@ describe('Comprehensive UI Tests', () => {
       it('treats 0 as falsy', () => {
         const instance = render(container, {
           s: { count: 0 },
-          r: [D, [
-            { if: { $: 'count' }, then: [T, 'has items'], else: [T, 'no items'] }
+          r: [dv, [
+            { if: { $: 'count' }, then: [tx, 'has items'], else: [tx, 'no items'] }
           ]]
         });
         expect(container.textContent).toBe('no items');
@@ -834,8 +834,8 @@ describe('Comprehensive UI Tests', () => {
       it('treats empty array as truthy', () => {
         const instance = render(container, {
           s: { items: [] as string[] },
-          r: [D, [
-            { if: { $: 'items' }, then: [T, 'array exists'], else: [T, 'no array'] }
+          r: [dv, [
+            { if: { $: 'items' }, then: [tx, 'array exists'], else: [tx, 'no array'] }
           ]]
         });
         // Arrays are truthy even when empty
@@ -858,11 +858,11 @@ describe('Comprehensive UI Tests', () => {
               { name: 'Group B', items: ['b1', 'b2', 'b3'] }
             ]
           },
-          r: [V, [
+          r: [vs, [
             {
               map: 'groups',
-              as: [D, [
-                [T, '$item.name'],
+              as: [dv, [
+                [tx, '$item.name'],
                 // Note: nested maps on same state require different approach
               ]]
             }
@@ -882,16 +882,16 @@ describe('Comprehensive UI Tests', () => {
               { id: 2, name: 'Banana', price: 0.75 }
             ]
           },
-          r: [Ul, [
+          r: [ul, [
             {
               map: 'products',
-              as: [Li, [
-                [T, '#'],
-                [T, '$item.id'],
-                [T, ' - '],
-                [T, '$item.name'],
-                [T, ': $'],
-                [T, '$item.price']
+              as: [li, [
+                [tx, '#'],
+                [tx, '$item.id'],
+                [tx, ' - '],
+                [tx, '$item.name'],
+                [tx, ': $'],
+                [tx, '$item.price']
               ]]
             }
           ]]
@@ -904,8 +904,8 @@ describe('Comprehensive UI Tests', () => {
       it('map with styled items', () => {
         render(container, {
           s: { colors: ['red', 'green', 'blue'] },
-          r: [V, [
-            { map: 'colors', as: [D, '$item', { bg: '#eee', p: 10, m: 5 }] }
+          r: [vs, [
+            { map: 'colors', as: [dv, '$item', { bg: '#eee', p: 10, m: 5 }] }
           ]]
         });
         // Find divs with the specific styling we applied
@@ -923,7 +923,7 @@ describe('Comprehensive UI Tests', () => {
       it('updates when items are added', () => {
         const instance = render(container, {
           s: { items: ['a'] },
-          r: [Ul, [{ map: 'items', as: [Li, '$item'] }]]
+          r: [ul, [{ map: 'items', as: [li, '$item'] }]]
         });
         expect(container.querySelectorAll('li').length).toBe(1);
 
@@ -934,7 +934,7 @@ describe('Comprehensive UI Tests', () => {
       it('updates when items are removed', () => {
         const instance = render(container, {
           s: { items: ['a', 'b', 'c'] },
-          r: [Ul, [{ map: 'items', as: [Li, '$item'] }]]
+          r: [ul, [{ map: 'items', as: [li, '$item'] }]]
         });
         expect(container.querySelectorAll('li').length).toBe(3);
 
@@ -946,7 +946,7 @@ describe('Comprehensive UI Tests', () => {
       it('updates when array is replaced entirely', () => {
         const instance = render(container, {
           s: { items: ['x', 'y'] },
-          r: [Ul, [{ map: 'items', as: [Li, '$item'] }]]
+          r: [ul, [{ map: 'items', as: [li, '$item'] }]]
         });
         instance.set('items', ['1', '2', '3', '4']);
         const lis = container.querySelectorAll('li');
@@ -958,7 +958,7 @@ describe('Comprehensive UI Tests', () => {
       it('handles transition from empty to non-empty', () => {
         const instance = render(container, {
           s: { items: [] as string[] },
-          r: [Ul, [{ map: 'items', as: [Li, '$item'] }]]
+          r: [ul, [{ map: 'items', as: [li, '$item'] }]]
         });
         expect(container.querySelectorAll('li').length).toBe(0);
 
@@ -971,12 +971,12 @@ describe('Comprehensive UI Tests', () => {
       it('$index in click handler for removal', () => {
         const instance = render(container, {
           s: { items: ['a', 'b', 'c', 'd'] },
-          r: [Ul, [
+          r: [ul, [
             {
               map: 'items',
-              as: [Li, [
-                [T, '$item'],
-                [B, 'X', { c: ['items', 'X', '$index'] }]
+              as: [li, [
+                [tx, '$item'],
+                [bt, 'X', { c: ['items', 'X', '$index'] }]
               ]]
             }
           ]]
@@ -1001,10 +1001,10 @@ describe('Comprehensive UI Tests', () => {
             ],
             selectedId: ''
           },
-          r: [V, [
+          r: [vs, [
             {
               map: 'users',
-              as: [B, '$item.name', { c: ['selectedId', '!', '$item.id'] }]
+              as: [bt, '$item.name', { c: ['selectedId', '!', '$item.id'] }]
             }
           ]]
         });
@@ -1157,10 +1157,10 @@ describe('Comprehensive UI Tests', () => {
       it('updates state without re-render', () => {
         const instance = render(container, {
           s: { a: 1, b: 2 },
-          r: [V, [[T, { $: 'a' }], [T, { $: 'b' }]]]
+          r: [vs, [[tx, { $: 'a' }], [tx, { $: 'b' }]]]
         });
 
-        instance.update({ s: { a: 10, b: 20 }, r: [V, [[T, { $: 'a' }], [T, { $: 'b' }]]] });
+        instance.update({ s: { a: 10, b: 20 }, r: [vs, [[tx, { $: 'a' }], [tx, { $: 'b' }]]] });
         expect(instance.get('a')).toBe(10);
         expect(instance.get('b')).toBe(20);
         expect(container.textContent).toBe('1020');
@@ -1169,21 +1169,21 @@ describe('Comprehensive UI Tests', () => {
       it('adds new state keys', () => {
         const instance = render(container, {
           s: { existing: 'value' },
-          r: [T, '']
+          r: [tx, '']
         });
 
-        instance.update({ s: { newKey: 'newValue' }, r: [T, ''] });
+        instance.update({ s: { newKey: 'newValue' }, r: [tx, ''] });
         expect(instance.get('newKey')).toBe('newValue');
         expect(instance.get('existing')).toBe('value');
       });
 
       it('re-renders with new root', () => {
         const instance = render(container, {
-          r: [T, 'Version 1']
+          r: [tx, 'Version 1']
         });
         expect(container.textContent).toBe('Version 1');
 
-        instance.update({ r: [D, [[T, 'Version 2'], [T, '!']]] });
+        instance.update({ r: [dv, [[tx, 'Version 2'], [tx, '!']]] });
         expect(container.textContent).toBe('Version 2!');
       });
     });
@@ -1192,7 +1192,7 @@ describe('Comprehensive UI Tests', () => {
       it('removes all DOM content', () => {
         const instance = render(container, {
           s: { items: [1, 2, 3] },
-          r: [Ul, [{ map: 'items', as: [Li, '$item'] }]]
+          r: [ul, [{ map: 'items', as: [li, '$item'] }]]
         });
         expect(container.querySelectorAll('li').length).toBe(3);
 
@@ -1203,7 +1203,7 @@ describe('Comprehensive UI Tests', () => {
       it('state updates after destroy do not throw', () => {
         const instance = render(container, {
           s: { value: 0 },
-          r: [T, { $: 'value' }]
+          r: [tx, { $: 'value' }]
         });
 
         instance.destroy();
@@ -1217,7 +1217,7 @@ describe('Comprehensive UI Tests', () => {
       it('get returns undefined for non-existent key', () => {
         const instance = render(container, {
           s: { exists: 'yes' },
-          r: [T, '']
+          r: [tx, '']
         });
         expect(instance.get('nonexistent')).toBeUndefined();
       });
@@ -1225,7 +1225,7 @@ describe('Comprehensive UI Tests', () => {
       it('set does nothing for non-existent key', () => {
         const instance = render(container, {
           s: { exists: 'yes' },
-          r: [T, '']
+          r: [tx, '']
         });
         // Should not throw
         expect(() => instance.set('nonexistent', 'value')).not.toThrow();
@@ -1234,7 +1234,7 @@ describe('Comprehensive UI Tests', () => {
       it('get returns current computed value', () => {
         const instance = render(container, {
           s: { count: 5 },
-          r: [B, 'inc', { c: ['count', '+'] }]
+          r: [bt, 'inc', { c: ['count', '+'] }]
         });
 
         container.querySelector('button')!.click();
@@ -1254,7 +1254,7 @@ describe('Comprehensive UI Tests', () => {
       it('renders undefined state value as empty', () => {
         const instance = render(container, {
           s: { value: undefined as unknown as string },
-          r: [T, { $: 'value' }]
+          r: [tx, { $: 'value' }]
         });
         expect(container.textContent).toBe('');
       });
@@ -1262,13 +1262,13 @@ describe('Comprehensive UI Tests', () => {
       it('renders null state value as empty', () => {
         const instance = render(container, {
           s: { value: null as unknown as string },
-          r: [T, { $: 'value' }]
+          r: [tx, { $: 'value' }]
         });
         expect(container.textContent).toBe('');
       });
 
       it('handles empty children array', () => {
-        render(container, { r: [V, []] });
+        render(container, { r: [vs, []] });
         const div = container.querySelector('div')!;
         expect(div.children.length).toBe(0);
       });
@@ -1276,7 +1276,7 @@ describe('Comprehensive UI Tests', () => {
       it('map handles empty array', () => {
         render(container, {
           s: { items: [] as string[] },
-          r: [Ul, [{ map: 'items', as: [Li, '$item'] }]]
+          r: [ul, [{ map: 'items', as: [li, '$item'] }]]
         });
         expect(container.querySelectorAll('li').length).toBe(0);
       });
@@ -1288,7 +1288,7 @@ describe('Comprehensive UI Tests', () => {
 
         // Empty array is an invalid spec (no component type)
         render(container, {
-          r: [V, [
+          r: [vs, [
             [] as any // Empty array - invalid
           ]]
         });
@@ -1305,7 +1305,7 @@ describe('Comprehensive UI Tests', () => {
 
         render(container, {
           s: { known: 'value' },
-          r: [T, { $: 'unknown' }]
+          r: [tx, { $: 'unknown' }]
         });
 
         expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('unknown state key'));
@@ -1317,7 +1317,7 @@ describe('Comprehensive UI Tests', () => {
 
         render(container, {
           s: { known: 0 },
-          r: [B, 'click', { c: ['unknown', '+'] }]
+          r: [bt, 'click', { c: ['unknown', '+'] }]
         });
 
         container.querySelector('button')!.click();
@@ -1331,7 +1331,7 @@ describe('Comprehensive UI Tests', () => {
       it('escapes HTML in text content from state', () => {
         render(container, {
           s: { text: '<script>alert("xss")</script>' },
-          r: [T, { $: 'text' }]
+          r: [tx, { $: 'text' }]
         });
         // The text should be escaped, not executed
         expect(container.querySelector('script')).toBeNull();
@@ -1340,7 +1340,7 @@ describe('Comprehensive UI Tests', () => {
 
       it('handles special characters in static text', () => {
         render(container, {
-          r: [T, '& < > " \' symbols']
+          r: [tx, '& < > " \' symbols']
         });
         expect(container.textContent).toBe('& < > " \' symbols');
       });
@@ -1349,12 +1349,12 @@ describe('Comprehensive UI Tests', () => {
     describe('Deep Nesting', () => {
       it('handles deeply nested components', () => {
         render(container, {
-          r: [V, [
-            [H, [
-              [D, [
-                [V, [
-                  [H, [
-                    [T, 'deep']
+          r: [vs, [
+            [hs, [
+              [dv, [
+                [vs, [
+                  [hs, [
+                    [tx, 'deep']
                   ]]
                 ]]
               ]]
@@ -1369,7 +1369,7 @@ describe('Comprehensive UI Tests', () => {
       it('handles many rapid updates', () => {
         const instance = render(container, {
           s: { count: 0 },
-          r: [T, { $: 'count' }]
+          r: [tx, { $: 'count' }]
         });
 
         for (let i = 1; i <= 100; i++) {
@@ -1383,7 +1383,7 @@ describe('Comprehensive UI Tests', () => {
       it('batched rapid updates only render once', () => {
         const instance = render(container, {
           s: { a: 0, b: 0, c: 0 },
-          r: [T, '']
+          r: [tx, '']
         });
 
         batch(() => {
@@ -1414,10 +1414,10 @@ describe('Comprehensive UI Tests', () => {
             input: '',
             nextId: 1
           },
-          r: [V, [
-            [H, [
-              [I, '', { v: { $: 'input' }, x: ['input', '!'], ph: 'Add todo...' }],
-              [B, 'Add', { c: () => {
+          r: [vs, [
+            [hs, [
+              [In, '', { v: { $: 'input' }, x: ['input', '!'], ph: 'Add todo...' }],
+              [bt, 'Add', { c: () => {
                 const input = instance.get('input') as string;
                 if (input.trim()) {
                   const todos = instance.get('todos') as Array<{id: number, text: string, done: boolean}>;
@@ -1428,13 +1428,13 @@ describe('Comprehensive UI Tests', () => {
                 }
               }}]
             ], { g: 8 }],
-            [Ul, [
+            [ul, [
               {
                 map: 'todos',
-                as: [Li, [
-                  [C, '', { c: () => {} }],
-                  [T, '$item.text'],
-                  [B, 'Delete', { c: ['todos', 'X', '$index'] }]
+                as: [li, [
+                  [cb, '', { c: () => {} }],
+                  [tx, '$item.text'],
+                  [bt, 'Delete', { c: ['todos', 'X', '$index'] }]
                 ]]
               }
             ]]
@@ -1473,15 +1473,15 @@ describe('Comprehensive UI Tests', () => {
       it('counter respects bounds', () => {
         const instance = render(container, {
           s: { count: 5, min: 0, max: 10 },
-          r: [V, [
-            [T, { $: 'count' }],
-            [H, [
-              [B, '-', { c: () => {
+          r: [vs, [
+            [tx, { $: 'count' }],
+            [hs, [
+              [bt, '-', { c: () => {
                 const count = instance.get('count') as number;
                 const min = instance.get('min') as number;
                 if (count > min) instance.set('count', count - 1);
               }}],
-              [B, '+', { c: () => {
+              [bt, '+', { c: () => {
                 const count = instance.get('count') as number;
                 const max = instance.get('max') as number;
                 if (count < max) instance.set('count', count + 1);
@@ -1519,8 +1519,8 @@ describe('Comprehensive UI Tests', () => {
             email: '',
             isValid: false
           },
-          r: [V, [
-            [I, '', {
+          r: [vs, [
+            [In, '', {
               v: { $: 'email' },
               x: ['email', '!'],
               type: 'email',
@@ -1528,10 +1528,10 @@ describe('Comprehensive UI Tests', () => {
             }],
             {
               if: { $: 'isValid' },
-              then: [T, 'Valid email!', { fg: 'green' }],
-              else: [T, 'Please enter a valid email', { fg: 'red' }]
+              then: [tx, 'Valid email!', { fg: 'green' }],
+              else: [tx, 'Please enter a valid email', { fg: 'red' }]
             },
-            [B, 'Validate', { c: () => {
+            [bt, 'Validate', { c: () => {
               const email = instance.get('email') as string;
               instance.set('isValid', email.includes('@') && email.includes('.'));
             }}]
@@ -1563,13 +1563,13 @@ describe('Comprehensive UI Tests', () => {
       it('switches between tabs', () => {
         const instance = render(container, {
           s: { activeTab: 'tab1' },
-          r: [V, [
-            [H, [
-              [B, 'Tab 1', { c: ['activeTab', '!', 'tab1'] }],
-              [B, 'Tab 2', { c: ['activeTab', '!', 'tab2'] }],
-              [B, 'Tab 3', { c: ['activeTab', '!', 'tab3'] }]
+          r: [vs, [
+            [hs, [
+              [bt, 'Tab 1', { c: ['activeTab', '!', 'tab1'] }],
+              [bt, 'Tab 2', { c: ['activeTab', '!', 'tab2'] }],
+              [bt, 'Tab 3', { c: ['activeTab', '!', 'tab3'] }]
             ], { g: 4 }],
-            [D, [
+            [dv, [
               { if: { $: 'activeTab' }, then: [
                 // Simplified: just show which tab is active
               ]}
@@ -1602,14 +1602,14 @@ describe('Comprehensive UI Tests', () => {
               { name: 'Charlie', age: 35 }
             ]
           },
-          r: [Tb, [
-            [Th, [
+          r: [tb, [
+            [th, [
               [Tr, [
-                [Tc, 'Name'],
-                [Tc, 'Age']
+                [tc, 'Name'],
+                [tc, 'Age']
               ]]
             ]],
-            [Tbd, [
+            [bd, [
               {
                 map: 'data',
                 as: [Tr, [
@@ -1636,14 +1636,14 @@ describe('Comprehensive UI Tests', () => {
       it('toggles sections', () => {
         const instance = render(container, {
           s: { open1: false, open2: false },
-          r: [V, [
-            [D, [
-              [B, 'Section 1', { c: ['open1', '~'] }],
-              { if: 'open1', then: [D, 'Content 1', { p: 10 }] }
+          r: [vs, [
+            [dv, [
+              [bt, 'Section 1', { c: ['open1', '~'] }],
+              { if: 'open1', then: [dv, 'Content 1', { p: 10 }] }
             ]],
-            [D, [
-              [B, 'Section 2', { c: ['open2', '~'] }],
-              { if: 'open2', then: [D, 'Content 2', { p: 10 }] }
+            [dv, [
+              [bt, 'Section 2', { c: ['open2', '~'] }],
+              { if: 'open2', then: [dv, 'Content 2', { p: 10 }] }
             ]]
           ], { g: 8 }]
         });
@@ -1676,7 +1676,7 @@ describe('Comprehensive UI Tests', () => {
     it('cleans up event listeners on destroy', () => {
       let clickCount = 0;
       const instance = render(container, {
-        r: [B, 'Click', { c: () => clickCount++ }]
+        r: [bt, 'Click', { c: () => clickCount++ }]
       });
 
       const button = container.querySelector('button')!;
@@ -1695,7 +1695,7 @@ describe('Comprehensive UI Tests', () => {
 
       const instance = render(container, {
         s: { value: 0 },
-        r: [T, { $: 'value' }]
+        r: [tx, { $: 'value' }]
       });
 
       instance.destroy();
@@ -1708,15 +1708,15 @@ describe('Comprehensive UI Tests', () => {
     it('re-render cleans up previous effects', () => {
       const instance = render(container, {
         s: { count: 0 },
-        r: [V, [
-          { map: { $: 'count' }, as: [T, 'x'] }
+        r: [vs, [
+          { map: { $: 'count' }, as: [tx, 'x'] }
         ]]
       });
 
       // This would create effects for the map
       instance.update({
         s: { count: 5 },
-        r: [T, 'simple']
+        r: [tx, 'simple']
       });
 
       expect(container.textContent).toBe('simple');
@@ -1725,13 +1725,13 @@ describe('Comprehensive UI Tests', () => {
     it('conditional re-renders clean up properly', () => {
       const instance = render(container, {
         s: { show: true },
-        r: [D, [
+        r: [dv, [
           {
             if: 'show',
-            then: [V, [
-              { map: { $: 'items' }, as: [T, '$item'] }
+            then: [vs, [
+              { map: { $: 'items' }, as: [tx, '$item'] }
             ]],
-            else: [T, 'hidden']
+            else: [tx, 'hidden']
           }
         ]],
       });
@@ -1751,7 +1751,7 @@ describe('Comprehensive UI Tests', () => {
 
   describe('Accessibility', () => {
     it('button maintains accessible defaults', () => {
-      render(container, { r: [B, 'Click me'] });
+      render(container, { r: [bt, 'Click me'] });
       const button = container.querySelector('button')!;
       expect(button.tagName).toBe('BUTTON');
       expect(button.textContent).toBe('Click me');
@@ -1759,9 +1759,9 @@ describe('Comprehensive UI Tests', () => {
 
     it('input with id and associated content', () => {
       render(container, {
-        r: [V, [
-          [T, 'Username:', { id: 'username-label' }],
-          [I, '', { id: 'username-input', ph: 'Enter username' }]
+        r: [vs, [
+          [tx, 'Username:', { id: 'username-label' }],
+          [In, '', { id: 'username-input', ph: 'Enter username' }]
         ]]
       });
 
@@ -1772,9 +1772,9 @@ describe('Comprehensive UI Tests', () => {
 
     it('disabled state is properly communicated', () => {
       render(container, {
-        r: [V, [
-          [B, 'Disabled', { dis: true }],
-          [I, '', { dis: true }]
+        r: [vs, [
+          [bt, 'Disabled', { dis: true }],
+          [In, '', { dis: true }]
         ]]
       });
 

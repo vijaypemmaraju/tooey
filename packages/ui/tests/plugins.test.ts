@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   render,
   createTooey,
-  V, T, B,
+  vs, tx, bt,
   TooeyPlugin,
   TooeyInstance,
   NodeSpec
@@ -25,7 +25,7 @@ describe('plugins', () => {
       };
 
       const instance = render(container, {
-        r: [T, 'hello']
+        r: [tx, 'hello']
       }, { plugins: [plugin] });
 
       expect(onInit).toHaveBeenCalledTimes(1);
@@ -40,7 +40,7 @@ describe('plugins', () => {
       };
 
       const instance = render(container, {
-        r: [T, 'hello']
+        r: [tx, 'hello']
       }, { plugins: [plugin] });
 
       expect(onDestroy).not.toHaveBeenCalled();
@@ -58,7 +58,7 @@ describe('plugins', () => {
       };
 
       const instance = render(container, {
-        r: [T, 'hello']
+        r: [tx, 'hello']
       }, { plugins: [plugin] });
 
       expect(calls).toEqual(['init']);
@@ -76,13 +76,13 @@ describe('plugins', () => {
       };
 
       render(container, {
-        r: [T, 'hello']
+        r: [tx, 'hello']
       }, { plugins: [plugin] });
 
       expect(beforeRender).toHaveBeenCalled();
-      // spec should be the [T, 'hello'] array
+      // spec should be the [tx, 'hello'] array
       const callArg = beforeRender.mock.calls[0][0];
-      expect(callArg).toEqual([T, 'hello']);
+      expect(callArg).toEqual([tx, 'hello']);
     });
 
     it('transforms spec in beforeRender', () => {
@@ -90,15 +90,15 @@ describe('plugins', () => {
         name: 'test-transform',
         beforeRender: (spec: NodeSpec) => {
           // change text content
-          if (Array.isArray(spec) && spec[0] === T && spec[1] === 'original') {
-            return [T, 'transformed'];
+          if (Array.isArray(spec) && spec[0] === tx && spec[1] === 'original') {
+            return [tx, 'transformed'];
           }
           return spec;
         }
       };
 
       render(container, {
-        r: [T, 'original']
+        r: [tx, 'original']
       }, { plugins: [plugin] });
 
       expect(container.textContent).toBe('transformed');
@@ -112,14 +112,14 @@ describe('plugins', () => {
       };
 
       render(container, {
-        r: [T, 'hello']
+        r: [tx, 'hello']
       }, { plugins: [plugin] });
 
       expect(afterRender).toHaveBeenCalled();
       const [el, spec] = afterRender.mock.calls[0];
       expect(el).toBeInstanceOf(HTMLElement);
       expect(el.tagName).toBe('SPAN');
-      expect(spec).toEqual([T, 'hello']);
+      expect(spec).toEqual([tx, 'hello']);
     });
 
     it('afterRender can modify element', () => {
@@ -131,7 +131,7 @@ describe('plugins', () => {
       };
 
       render(container, {
-        r: [T, 'hello']
+        r: [tx, 'hello']
       }, { plugins: [plugin] });
 
       const span = container.querySelector('span')!;
@@ -149,7 +149,7 @@ describe('plugins', () => {
 
       const instance = render(container, {
         s: { count: 0 },
-        r: [T, { $: 'count' }]
+        r: [tx, { $: 'count' }]
       }, { plugins: [plugin] });
 
       expect(onStateChange).not.toHaveBeenCalled();
@@ -168,7 +168,7 @@ describe('plugins', () => {
 
       const instance = render(container, {
         s: { value: 'test' },
-        r: [T, { $: 'value' }]
+        r: [tx, { $: 'value' }]
       }, { plugins: [plugin] });
 
       instance.set('value', 'test'); // same value
@@ -186,9 +186,9 @@ describe('plugins', () => {
 
       const instance = render(container, {
         s: { a: 1, b: 2 },
-        r: [V, [
-          [T, { $: 'a' }],
-          [T, { $: 'b' }]
+        r: [vs, [
+          [tx, { $: 'a' }],
+          [tx, { $: 'b' }]
         ]]
       }, { plugins: [plugin] });
 
@@ -216,7 +216,7 @@ describe('plugins', () => {
       };
 
       const instance = render(container, {
-        r: [T, 'test']
+        r: [tx, 'test']
       }, { plugins: [plugin] }) as TooeyInstance & { greet: () => string };
 
       expect(typeof instance.greet).toBe('function');
@@ -239,7 +239,7 @@ describe('plugins', () => {
 
       const instance = render(container, {
         s: { count: 5 },
-        r: [T, { $: 'count' }]
+        r: [tx, { $: 'count' }]
       }, { plugins: [plugin] }) as TooeyInstance & {
         getCount: () => number;
         incrementCount: () => void;
@@ -264,7 +264,7 @@ describe('plugins', () => {
 
       const instance = render(container, {
         s: { value: 10 },
-        r: [T, { $: 'value' }]
+        r: [tx, { $: 'value' }]
       }, { plugins: [plugin] }) as TooeyInstance & { add: (amount: number) => void };
 
       instance.add(5);
@@ -289,7 +289,7 @@ describe('plugins', () => {
       };
 
       const instance = render(container, {
-        r: [T, 'hello']
+        r: [tx, 'hello']
       }, { plugins: [plugin1, plugin2] });
 
       expect(calls).toEqual(['init1', 'init2']);
@@ -301,8 +301,8 @@ describe('plugins', () => {
       const plugin1: TooeyPlugin = {
         name: 'plugin1',
         beforeRender: (spec: NodeSpec) => {
-          if (Array.isArray(spec) && spec[0] === T && spec[1] === 'step1') {
-            return [T, 'step2'];
+          if (Array.isArray(spec) && spec[0] === tx && spec[1] === 'step1') {
+            return [tx, 'step2'];
           }
           return spec;
         }
@@ -311,15 +311,15 @@ describe('plugins', () => {
       const plugin2: TooeyPlugin = {
         name: 'plugin2',
         beforeRender: (spec: NodeSpec) => {
-          if (Array.isArray(spec) && spec[0] === T && spec[1] === 'step2') {
-            return [T, 'step3'];
+          if (Array.isArray(spec) && spec[0] === tx && spec[1] === 'step2') {
+            return [tx, 'step3'];
           }
           return spec;
         }
       };
 
       render(container, {
-        r: [T, 'step1']
+        r: [tx, 'step1']
       }, { plugins: [plugin1, plugin2] });
 
       expect(container.textContent).toBe('step3');
@@ -341,7 +341,7 @@ describe('plugins', () => {
 
       const instance = render(container, {
         s: { x: 0 },
-        r: [T, { $: 'x' }]
+        r: [tx, { $: 'x' }]
       }, { plugins: [plugin1, plugin2] });
 
       instance.set('x', 1);
@@ -366,7 +366,7 @@ describe('plugins', () => {
       };
 
       const instance = render(container, {
-        r: [T, 'test']
+        r: [tx, 'test']
       }, { plugins: [plugin1, plugin2] }) as TooeyInstance & {
         foo: () => string;
         bar: () => string;
@@ -386,7 +386,7 @@ describe('plugins', () => {
       };
 
       const tooey = createTooey({ plugins: [plugin] });
-      const instance = tooey.render(container, { r: [T, 'hello'] });
+      const instance = tooey.render(container, { r: [tx, 'hello'] });
 
       expect(onInit).toHaveBeenCalledWith(instance);
     });
@@ -404,7 +404,7 @@ describe('plugins', () => {
       });
 
       render(container, {
-        r: [T, 'hello', { fg: '$primary' }]
+        r: [tx, 'hello', { fg: '$primary' }]
       }, { theme: tooey.theme, plugins: tooey.plugins });
 
       expect(onInit).toHaveBeenCalled();
@@ -425,9 +425,9 @@ describe('plugins', () => {
 
       const instance = render(container, {
         s: { count: 0 },
-        r: [V, [
-          [T, { $: 'count' }],
-          [B, '+', { c: ['count', '+'] }]
+        r: [vs, [
+          [tx, { $: 'count' }],
+          [bt, '+', { c: ['count', '+'] }]
         ]]
       }, { plugins: [loggerPlugin] });
 
@@ -444,16 +444,16 @@ describe('plugins', () => {
       const analyticsPlugin: TooeyPlugin = {
         name: 'analytics',
         afterRender: (el, spec) => {
-          if (Array.isArray(spec) && spec[0] === B) {
+          if (Array.isArray(spec) && spec[0] === bt) {
             el.setAttribute('data-track', 'button-click');
           }
         }
       };
 
       render(container, {
-        r: [V, [
-          [B, 'click me'],
-          [T, 'text']
+        r: [vs, [
+          [bt, 'click me'],
+          [tx, 'text']
         ]]
       }, { plugins: [analyticsPlugin] });
 
@@ -481,7 +481,7 @@ describe('plugins', () => {
 
       const instance = render(container, {
         s: { count: 10 },
-        r: [T, { $: 'count' }]
+        r: [tx, { $: 'count' }]
       }, { plugins: [counterPlugin] }) as TooeyInstance & {
         increment: (key: string) => void;
         decrement: (key: string) => void;

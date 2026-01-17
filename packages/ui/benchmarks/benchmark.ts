@@ -305,7 +305,7 @@ function simulateReactRender(container: HTMLElement, count: number): void {
 }
 
 // Import tooey for performance tests
-import { render, V, H, T, B, Li, Ul } from '../src/tooey';
+import { render, vs, hs, tx, bt, li, ul } from '../src/tooey';
 
 function runPerformanceBenchmarks(): PerfResult[] {
   const results: PerfResult[] = [];
@@ -321,7 +321,7 @@ function runPerformanceBenchmarks(): PerfResult[] {
     const items = Array.from({length: 100}, (_, j) => `Item ${j}`);
     const instance = render(container, {
       s: { items },
-      r: [Ul, [{ m: 'items', a: [Li, '$item'] }]]
+      r: [ul, [{ m: 'items', a: [li, '$item'] }]]
     });
     instance.destroy();
   }
@@ -345,9 +345,9 @@ function runPerformanceBenchmarks(): PerfResult[] {
   const stateItems = Array.from({length: 50}, (_, j) => `Item ${j}`);
   const instance = render(container, {
     s: { items: stateItems, count: 0 },
-    r: [V, [
-      [T, { $: 'count' }],
-      { m: 'items', a: [Li, '$item'] }
+    r: [vs, [
+      [tx, { $: 'count' }],
+      { m: 'items', a: [li, '$item'] }
     ]]
   });
 
@@ -379,16 +379,16 @@ function runPerformanceBenchmarks(): PerfResult[] {
   for (let i = 0; i < 50; i++) {
     const inst = render(container, {
       s: { tab: 0, items: ['a', 'b', 'c'] },
-      r: [V, [
-        [H, [
-          [B, 'Tab 1', { c: 'tab!0' }],
-          [B, 'Tab 2', { c: 'tab!1' }]
+      r: [vs, [
+        [hs, [
+          [bt, 'Tab 1', { c: 'tab!0' }],
+          [bt, 'Tab 2', { c: 'tab!1' }]
         ], { g: 8 }],
-        { '?': 'tab', is: 0, t: [V, [
-          [T, 'Tab 1 Content'],
-          { m: 'items', a: [Li, '$item'] }
+        { '?': 'tab', is: 0, t: [vs, [
+          [tx, 'Tab 1 Content'],
+          { m: 'items', a: [li, '$item'] }
         ]] },
-        { '?': 'tab', is: 1, t: [T, 'Tab 2 Content'] }
+        { '?': 'tab', is: 1, t: [tx, 'Tab 2 Content'] }
       ], { g: 16 }]
     });
     inst.destroy();
@@ -534,7 +534,7 @@ The primary goal of Tooey is to reduce token usage when LLMs generate UI code.
 ## Key Advantages
 
 ### 1. Token Efficiency (~${totalSavings}% fewer tokens)
-- Single-letter component names: \`V\`, \`H\`, \`T\`, \`B\` vs \`div\`, \`span\`, \`button\`
+- Short component names: \`vs\`, \`hs\`, \`tx\`, \`bt\` vs \`div\`, \`span\`, \`button\`
 - Compact prop syntax: \`{g:8,p:16}\` vs \`style={{gap:8,padding:16}}\`
 - Short event handlers: \`{c:"n+"}\` vs \`onClick={()=>setN(n+1)}\`
 - Abbreviated control flow: \`{?:"x",t:[...],e:[...]}\` vs \`{x && (...) : (...)}\`

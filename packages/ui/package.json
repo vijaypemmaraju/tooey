@@ -1,6 +1,6 @@
 {
   "name": "@tooey/ui",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "Token-efficient UI library for LLMs",
   "main": "dist/tooey.js",
   "module": "dist/tooey.esm.js",

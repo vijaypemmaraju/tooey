@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { encode } from 'gpt-tokenizer';
 import {
   render,
-  V, H, D, T, B, Li, Ul,
+  vs, hs, dv, tx, bt, li, ul,
   signal
 } from '../src/tooey';
 
@@ -136,7 +136,7 @@ describe('Tooey vs React Benchmarks', () => {
       const start = performance.now();
       const instance = render(container, {
         s: { items },
-        r: [Ul, [{ m: 'items', a: [Li, '$item'] }]]
+        r: [ul, [{ m: 'items', a: [li, '$item'] }]]
       });
       const elapsed = performance.now() - start;
 
@@ -153,7 +153,7 @@ describe('Tooey vs React Benchmarks', () => {
       const start = performance.now();
       const instance = render(container, {
         s: { items },
-        r: [Ul, [{ m: 'items', a: [Li, '$item'] }]]
+        r: [ul, [{ m: 'items', a: [li, '$item'] }]]
       });
       const elapsed = performance.now() - start;
 
@@ -167,7 +167,7 @@ describe('Tooey vs React Benchmarks', () => {
     it('should handle rapid state updates', () => {
       const instance = render(container, {
         s: { count: 0 },
-        r: [T, { $: 'count' }]
+        r: [tx, { $: 'count' }]
       });
 
       const start = performance.now();
@@ -188,21 +188,21 @@ describe('Tooey vs React Benchmarks', () => {
 
       const instance = render(container, {
         s: { tab: 0, items: ['a', 'b', 'c', 'd', 'e'] },
-        r: [V, [
-          [H, [
-            [B, 'Tab 1', { c: 'tab!0' }],
-            [B, 'Tab 2', { c: 'tab!1' }],
-            [B, 'Tab 3', { c: 'tab!2' }]
+        r: [vs, [
+          [hs, [
+            [bt, 'Tab 1', { c: 'tab!0' }],
+            [bt, 'Tab 2', { c: 'tab!1' }],
+            [bt, 'Tab 3', { c: 'tab!2' }]
           ], { g: 8 }],
-          { '?': 'tab', is: 0, t: [V, [
-            [T, 'Tab 1 Content', { fw: 'bold' }],
-            { m: 'items', a: [D, [
-              [T, '$index: '],
-              [T, '$item']
+          { '?': 'tab', is: 0, t: [vs, [
+            [tx, 'Tab 1 Content', { fw: 'bold' }],
+            { m: 'items', a: [dv, [
+              [tx, '$index: '],
+              [tx, '$item']
             ], { p: 8, bg: '#f0f0f0' }] }
           ], { g: 8 }] },
-          { '?': 'tab', is: 1, t: [T, 'Tab 2 Content'] },
-          { '?': 'tab', is: 2, t: [T, 'Tab 3 Content'] }
+          { '?': 'tab', is: 1, t: [tx, 'Tab 2 Content'] },
+          { '?': 'tab', is: 2, t: [tx, 'Tab 3 Content'] }
         ], { g: 16 }]
       });
 
@@ -266,7 +266,7 @@ describe('Tooey vs React Benchmarks', () => {
     it('should cleanup properly after destroy', () => {
       const instance = render(container, {
         s: { items: Array.from({ length: 100 }, (_, i) => `Item ${i}`) },
-        r: [Ul, [{ m: 'items', a: [Li, '$item'] }]]
+        r: [ul, [{ m: 'items', a: [li, '$item'] }]]
       });
 
       expect(container.querySelectorAll('li').length).toBe(100);
@@ -280,7 +280,7 @@ describe('Tooey vs React Benchmarks', () => {
       for (let i = 0; i < 100; i++) {
         const instance = render(container, {
           s: { n: i },
-          r: [T, { $: 'n' }]
+          r: [tx, { $: 'n' }]
         });
         expect(container.textContent).toBe(String(i));
         instance.destroy();

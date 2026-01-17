@@ -1,13 +1,13 @@
 /**
  * tooey - token-efficient ui library for llms
  *
- * component types:
- *   layout: V (vstack), H (hstack), D (div), G (grid)
- *   text & buttons: T (text/span), B (button)
- *   inputs: I (input), Ta (textarea), S (select), C (checkbox), R (radio)
- *   tables: Tb (table), Th (thead), Tbd (tbody), Tr (tr), Td (td), Tc (th)
- *   lists: Ul (ul), Ol (ol), Li (li)
- *   media & links: M (image), L (link), Sv (svg)
+ * component types (2-letter abbreviations):
+ *   layout: vs (vstack), hs (hstack), dv (div), gr (grid)
+ *   text & buttons: tx (text/span), bt (button)
+ *   inputs: in (input), ta (textarea), sl (select), cb (checkbox), rd (radio)
+ *   tables: tb (table), th (thead), bd (tbody), tr (tr), td (td), tc (th)
+ *   lists: ul (ul), ol (ol), li (li)
+ *   media & links: im (image), ln (link), sv (svg)
  *
  * props (short keys):
  *   spacing: g (gap), p (padding), m (margin), w (width), h (height), mw, mh
@@ -130,7 +130,7 @@ interface Props {
     sub?: EventHandler;
     s?: Record<string, unknown>;
 }
-type ComponentType = 'V' | 'H' | 'D' | 'G' | 'T' | 'B' | 'I' | 'Ta' | 'S' | 'C' | 'R' | 'Tb' | 'Th' | 'Tbd' | 'Tr' | 'Td' | 'Tc' | 'Ul' | 'Ol' | 'Li' | 'M' | 'L' | 'Sv';
+type ComponentType = 'vs' | 'hs' | 'dv' | 'gr' | 'tx' | 'bt' | 'in' | 'ta' | 'sl' | 'cb' | 'rd' | 'tb' | 'th' | 'bd' | 'tr' | 'td' | 'tc' | 'ul' | 'ol' | 'li' | 'im' | 'ln' | 'sv';
 type Component<P extends Props = Props> = (props?: P, children?: NodeSpec[]) => NodeSpec;
 type StateRef = {
     $: string;
@@ -221,28 +221,28 @@ interface TooeyFactory {
 }
 declare function createTooey(themeOrOptions: Theme | CreateTooeyOptions): TooeyFactory;
 declare function $(name: string): StateRef;
-declare const V: "V";
-declare const H: "H";
-declare const D: "D";
-declare const G: "G";
-declare const T: "T";
-declare const B: "B";
-declare const I: "I";
-declare const Ta: "Ta";
-declare const S: "S";
-declare const C: "C";
-declare const R: "R";
-declare const Tb: "Tb";
-declare const Th: "Th";
-declare const Tbd: "Tbd";
-declare const Tr: "Tr";
-declare const Td: "Td";
-declare const Tc: "Tc";
-declare const Ul: "Ul";
-declare const Ol: "Ol";
-declare const Li: "Li";
-declare const M: "M";
-declare const L: "L";
-declare const Sv: "Sv";
-export { render, createTooey, signal, effect, batch, computed, async$, $, V, H, D, G, T, B, I, Ta, S, C, R, Tb, Th, Tbd, Tr, Td, Tc, Ul, Ol, Li, M, L, Sv, TooeySpec, NodeSpec, Props, StateRef, TooeyInstance, TooeyFactory, CreateTooeyOptions, IfNode, MapNode, ErrorBoundaryNode, ErrorInfo, ErrorHandler, Component, Theme, RenderOptions, TooeyPlugin, ComputedSignal, AsyncSpec };
+declare const vs: "vs";
+declare const hs: "hs";
+declare const dv: "dv";
+declare const gr: "gr";
+declare const tx: "tx";
+declare const bt: "bt";
+declare const In: "in";
+declare const ta: "ta";
+declare const sl: "sl";
+declare const cb: "cb";
+declare const rd: "rd";
+declare const tb: "tb";
+declare const th: "th";
+declare const bd: "bd";
+declare const Tr: "tr";
+declare const Td: "td";
+declare const tc: "tc";
+declare const ul: "ul";
+declare const ol: "ol";
+declare const li: "li";
+declare const im: "im";
+declare const ln: "ln";
+declare const sv: "sv";
+export { render, createTooey, signal, effect, batch, computed, async$, $, vs, hs, dv, gr, tx, bt, In, ta, sl, cb, rd, tb, th, bd, Tr, Td, tc, ul, ol, li, im, ln, sv, TooeySpec, NodeSpec, Props, StateRef, TooeyInstance, TooeyFactory, CreateTooeyOptions, IfNode, MapNode, ErrorBoundaryNode, ErrorInfo, ErrorHandler, Component, Theme, RenderOptions, TooeyPlugin, ComputedSignal, AsyncSpec };
 //# sourceMappingURL=tooey.d.ts.map

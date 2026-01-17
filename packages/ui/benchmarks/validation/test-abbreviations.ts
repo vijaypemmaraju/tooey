@@ -26,7 +26,7 @@ interface AbbrevScheme {
 
 const SCHEMES: AbbrevScheme[] = [
   {
-    name: 'single-letter (current)',
+    name: 'single-letter (old)',
     description: 'single uppercase letters',
     mappings: {
       'V': 'vertical stack / flex column container',
@@ -39,7 +39,7 @@ const SCHEMES: AbbrevScheme[] = [
     }
   },
   {
-    name: '2-letter semantic',
+    name: '2-letter semantic (current)',
     description: 'two-letter semantic abbreviations',
     mappings: {
       'vs': 'vertical stack / flex column container',
@@ -48,7 +48,7 @@ const SCHEMES: AbbrevScheme[] = [
       'bt': 'button',
       'dv': 'div / generic container',
       'gr': 'grid container',
-      'in': 'input field',
+      'In': 'input field',
     }
   },
   {
