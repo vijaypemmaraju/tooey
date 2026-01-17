@@ -1,12 +1,13 @@
 #!/usr/bin/env npx tsx
 /**
- * llm generation accuracy tests using gemini api
- * tests tooey generation with full context (examples included)
+ * llm generation accuracy tests - tooey vs react comparison
+ * compares token count and accuracy between tooey and react output
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { encode } from 'gpt-tokenizer';
 import { validateTooeySyntax, TOOEY_SYSTEM_PROMPT } from './llm-accuracy';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -15,10 +16,10 @@ const __dirname = path.dirname(__filename);
 // ============ config ============
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3-pro-preview';
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3-flash-preview';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
-// ============ prompt ============
+// ============ prompts ============
 
 const TOOEY_PROMPT = TOOEY_SYSTEM_PROMPT + `
 
@@ -37,6 +38,10 @@ const TOOEY_PROMPT = TOOEY_SYSTEM_PROMPT + `
 {s:{name:"",email:""},r:[V,[[V,[[T,"Name"],[I,"",{v:{$:"name"},x:"name",ph:"name"}]],{g:4}],[V,[[T,"Email"],[I,"",{type:"email",v:{$:"email"},x:"email",ph:"email"}]],{g:4}]],{g:16}]}
 
 IMPORTANT: Output compact tooey on a single line with no whitespace or newlines. Do not use JSON formatting.`;
+
+const REACT_PROMPT = `You are a React expert. Generate React functional components using hooks.
+
+IMPORTANT: Output compact React code on a single line with minimal whitespace. Do not include imports or exports - just the component function.`;
 
 // ============ test cases ============
 
@@ -61,12 +66,12 @@ interface GeminiResponse {
   error?: { message: string };
 }
 
-async function callGemini(prompt: string): Promise<string> {
+async function callGemini(systemPrompt: string, userPrompt: string): Promise<string> {
   const response = await fetch(GEMINI_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      contents: [{ role: 'user', parts: [{ text: `${TOOEY_PROMPT}\n\n${prompt}\n\nOutput tooey code only, compact, no explanation.` }] }],
+      contents: [{ role: 'user', parts: [{ text: `${systemPrompt}\n\n${userPrompt}\n\nOutput code only, compact, no explanation.` }] }],
       generationConfig: { temperature: 0.1, maxOutputTokens: 4096 }
     })
   });
@@ -77,12 +82,10 @@ async function callGemini(prompt: string): Promise<string> {
   const candidate = data.candidates?.[0];
   const text = candidate?.content?.parts?.[0]?.text || '';
 
-  // debug: log empty responses
   if (!text && process.env.DEBUG) {
     console.log('\n[DEBUG] empty response:', JSON.stringify(data, null, 2));
   }
 
-  // check for blocked/filtered responses
   if (candidate?.finishReason && candidate.finishReason !== 'STOP') {
     throw new Error(`response blocked: ${candidate.finishReason}`);
   }
@@ -91,14 +94,20 @@ async function callGemini(prompt: string): Promise<string> {
 }
 
 function extractCode(response: string): string {
-  const codeBlock = response.match(/```(?:javascript|json|tooey)?\s*([\s\S]*?)```/);
+  const codeBlock = response.match(/```(?:javascript|jsx|json|tooey|tsx|typescript)?\s*([\s\S]*?)```/);
   if (codeBlock) return codeBlock[1].trim();
   const obj = response.match(/\{[\s\S]*\}/);
   if (obj) return obj[0].trim();
   return response.trim();
 }
 
-function checkStructure(code: string, id: string): boolean {
+function countTokens(code: string): number {
+  return encode(code).length;
+}
+
+// ============ validators ============
+
+function checkTooeyStructure(code: string, id: string): boolean {
   const checks: Record<string, () => boolean> = {
     '001': () => /c\s*:\s*["']?n?[+-]/.test(code) && /\$/.test(code),
     '002': () => /~/.test(code) && /[TB]/.test(code),
@@ -112,16 +121,58 @@ function checkStructure(code: string, id: string): boolean {
   return checks[id]?.() ?? false;
 }
 
+function validateReactSyntax(code: string): { valid: boolean; error?: string } {
+  // basic checks for react component
+  if (!code || code.length < 10) {
+    return { valid: false, error: 'code too short' };
+  }
+  // should have function or arrow function
+  if (!/function|=>/.test(code)) {
+    return { valid: false, error: 'no function found' };
+  }
+  // should have return with jsx
+  if (!/return\s*[\(\<]/.test(code) && !/<\w+/.test(code)) {
+    return { valid: false, error: 'no jsx return found' };
+  }
+  return { valid: true };
+}
+
+function checkReactStructure(code: string, id: string): boolean {
+  const checks: Record<string, () => boolean> = {
+    '001': () => /useState/.test(code) && /onClick/.test(code) && /[+-]/.test(code),
+    '002': () => /useState/.test(code) && /(true|false)/.test(code),
+    '003': () => /useState/.test(code) && /onChange/.test(code) && /<input/i.test(code),
+    '004': () => /<ul/i.test(code) && /<li/i.test(code),
+    '005': () => /useState/.test(code) && /(Home|About)/i.test(code),
+    '006': () => /<input/i.test(code) && /password/i.test(code),
+    '007': () => /useState/.test(code) && /(open|modal|show)/i.test(code),
+    '008': () => /<ol/i.test(code) && /<li/i.test(code),
+  };
+  return checks[id]?.() ?? false;
+}
+
 // ============ main ============
 
 interface Result {
   id: string;
   name: string;
-  generated: string;
-  syntaxValid: boolean;
-  syntaxError?: string;
-  structureCorrect: boolean;
-  timeMs: number;
+  tooey: {
+    code: string;
+    tokens: number;
+    syntaxValid: boolean;
+    syntaxError?: string;
+    structureCorrect: boolean;
+    timeMs: number;
+  };
+  react: {
+    code: string;
+    tokens: number;
+    syntaxValid: boolean;
+    syntaxError?: string;
+    structureCorrect: boolean;
+    timeMs: number;
+  };
+  tokenSavings: number;
 }
 
 async function main() {
@@ -130,90 +181,111 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`\ntooey llm generation test\nmodel: ${GEMINI_MODEL}\n`);
+  console.log(`\ntooey vs react llm generation test\nmodel: ${GEMINI_MODEL}\n`);
 
   const results: Result[] = [];
 
   for (const test of TEST_PROMPTS) {
-    process.stdout.write(`${test.id} ${test.name}... `);
-    const start = Date.now();
+    console.log(`\n${test.id} ${test.name}`);
 
+    // generate tooey
+    process.stdout.write('  tooey: ');
+    const tooeyStart = Date.now();
+    let tooeyResult: Result['tooey'];
     try {
-      const raw = await callGemini(test.desc);
+      const raw = await callGemini(TOOEY_PROMPT, test.desc);
       const code = extractCode(raw);
       const validation = validateTooeySyntax(code);
-      const structure = checkStructure(code, test.id);
-      const timeMs = Date.now() - start;
-
-      results.push({
-        id: test.id,
-        name: test.name,
-        generated: code,
-        syntaxValid: validation.valid,
-        syntaxError: validation.error,
-        structureCorrect: structure,
-        timeMs
-      });
-
-      const status = validation.valid ? (structure ? '✓' : '~') : '✗';
-      console.log(`${status} ${timeMs}ms`);
+      const structure = checkTooeyStructure(code, test.id);
+      const tokens = countTokens(code);
+      const timeMs = Date.now() - tooeyStart;
+      tooeyResult = { code, tokens, syntaxValid: validation.valid, syntaxError: validation.error, structureCorrect: structure, timeMs };
+      console.log(`${validation.valid ? (structure ? '✓' : '~') : '✗'} ${tokens} tokens ${timeMs}ms`);
     } catch (e) {
-      const timeMs = Date.now() - start;
-      results.push({
-        id: test.id,
-        name: test.name,
-        generated: `ERROR: ${(e as Error).message}`,
-        syntaxValid: false,
-        syntaxError: (e as Error).message,
-        structureCorrect: false,
-        timeMs
-      });
+      const timeMs = Date.now() - tooeyStart;
+      tooeyResult = { code: `ERROR: ${(e as Error).message}`, tokens: 0, syntaxValid: false, syntaxError: (e as Error).message, structureCorrect: false, timeMs };
       console.log(`✗ error ${timeMs}ms`);
     }
+
+    await new Promise(r => setTimeout(r, 300));
+
+    // generate react
+    process.stdout.write('  react: ');
+    const reactStart = Date.now();
+    let reactResult: Result['react'];
+    try {
+      const raw = await callGemini(REACT_PROMPT, test.desc);
+      const code = extractCode(raw);
+      const validation = validateReactSyntax(code);
+      const structure = checkReactStructure(code, test.id);
+      const tokens = countTokens(code);
+      const timeMs = Date.now() - reactStart;
+      reactResult = { code, tokens, syntaxValid: validation.valid, syntaxError: validation.error, structureCorrect: structure, timeMs };
+      console.log(`${validation.valid ? (structure ? '✓' : '~') : '✗'} ${tokens} tokens ${timeMs}ms`);
+    } catch (e) {
+      const timeMs = Date.now() - reactStart;
+      reactResult = { code: `ERROR: ${(e as Error).message}`, tokens: 0, syntaxValid: false, syntaxError: (e as Error).message, structureCorrect: false, timeMs };
+      console.log(`✗ error ${timeMs}ms`);
+    }
+
+    const tokenSavings = reactResult.tokens > 0 ? Math.round((1 - tooeyResult.tokens / reactResult.tokens) * 100) : 0;
+    results.push({ id: test.id, name: test.name, tooey: tooeyResult, react: reactResult, tokenSavings });
 
     await new Promise(r => setTimeout(r, 300));
   }
 
   // summary
-  const valid = results.filter(r => r.syntaxValid).length;
-  const correct = results.filter(r => r.structureCorrect).length;
-  const avgTime = Math.round(results.reduce((s, r) => s + r.timeMs, 0) / results.length);
+  const tooeyValid = results.filter(r => r.tooey.syntaxValid).length;
+  const tooeyCorrect = results.filter(r => r.tooey.structureCorrect).length;
+  const reactValid = results.filter(r => r.react.syntaxValid).length;
+  const reactCorrect = results.filter(r => r.react.structureCorrect).length;
+  const totalTooeyTokens = results.reduce((s, r) => s + r.tooey.tokens, 0);
+  const totalReactTokens = results.reduce((s, r) => s + r.react.tokens, 0);
+  const avgSavings = totalReactTokens > 0 ? Math.round((1 - totalTooeyTokens / totalReactTokens) * 100) : 0;
 
-  console.log(`\n--- results ---`);
-  console.log(`syntax valid: ${valid}/${results.length} (${Math.round(valid/results.length*100)}%)`);
-  console.log(`structure correct: ${correct}/${results.length} (${Math.round(correct/results.length*100)}%)`);
-  console.log(`avg time: ${avgTime}ms\n`);
+  console.log(`\n${'='.repeat(50)}`);
+  console.log(`\n--- summary ---\n`);
+  console.log(`tooey: ${tooeyValid}/${results.length} syntax valid, ${tooeyCorrect}/${results.length} structure correct`);
+  console.log(`react: ${reactValid}/${results.length} syntax valid, ${reactCorrect}/${results.length} structure correct`);
+  console.log(`\ntotal tokens: tooey ${totalTooeyTokens} vs react ${totalReactTokens}`);
+  console.log(`token savings: ${avgSavings}%\n`);
 
   // write report
-  let report = `# tooey llm generation test results
+  let report = `# tooey vs react llm generation test results
 
 model: ${GEMINI_MODEL}
 date: ${new Date().toISOString().split('T')[0]}
 
 ## summary
 
-| metric | result |
-|--------|--------|
-| syntax valid | ${valid}/${results.length} (${Math.round(valid/results.length*100)}%) |
-| structure correct | ${correct}/${results.length} (${Math.round(correct/results.length*100)}%) |
-| avg time | ${avgTime}ms |
+| metric | tooey | react |
+|--------|-------|-------|
+| syntax valid | ${tooeyValid}/${results.length} (${Math.round(tooeyValid/results.length*100)}%) | ${reactValid}/${results.length} (${Math.round(reactValid/results.length*100)}%) |
+| structure correct | ${tooeyCorrect}/${results.length} (${Math.round(tooeyCorrect/results.length*100)}%) | ${reactCorrect}/${results.length} (${Math.round(reactCorrect/results.length*100)}%) |
+| total tokens | ${totalTooeyTokens} | ${totalReactTokens} |
 
-## results
+**token savings: ${avgSavings}%**
 
-| test | syntax | structure | time |
-|------|--------|-----------|------|
+## per-test comparison
+
+| test | tooey tokens | react tokens | savings | tooey ok | react ok |
+|------|-------------|--------------|---------|----------|----------|
 `;
 
   for (const r of results) {
-    report += `| ${r.name} | ${r.syntaxValid ? '✓' : '✗'} | ${r.structureCorrect ? '✓' : '✗'} | ${r.timeMs}ms |\n`;
+    const tooeyOk = r.tooey.syntaxValid && r.tooey.structureCorrect ? '✓' : (r.tooey.syntaxValid ? '~' : '✗');
+    const reactOk = r.react.syntaxValid && r.react.structureCorrect ? '✓' : (r.react.syntaxValid ? '~' : '✗');
+    report += `| ${r.name} | ${r.tooey.tokens} | ${r.react.tokens} | ${r.tokenSavings}% | ${tooeyOk} | ${reactOk} |\n`;
   }
 
   report += `\n## generated outputs\n\n`;
 
   for (const r of results) {
     report += `### ${r.name}\n\n`;
-    if (!r.syntaxValid) report += `**error:** ${r.syntaxError}\n\n`;
-    report += `\`\`\`javascript\n${r.generated}\n\`\`\`\n\n`;
+    report += `**tooey** (${r.tooey.tokens} tokens)${r.tooey.syntaxError ? ` - error: ${r.tooey.syntaxError}` : ''}:\n`;
+    report += `\`\`\`javascript\n${r.tooey.code}\n\`\`\`\n\n`;
+    report += `**react** (${r.react.tokens} tokens)${r.react.syntaxError ? ` - error: ${r.react.syntaxError}` : ''}:\n`;
+    report += `\`\`\`jsx\n${r.react.code}\n\`\`\`\n\n`;
   }
 
   fs.writeFileSync(path.join(__dirname, 'LLM_TEST_RESULTS.md'), report);
