@@ -506,6 +506,59 @@ describe('tooey', () => {
       });
       expect(container.textContent).toBe('ab');
     });
+
+    it('show prop renders when state is truthy', () => {
+      render(container, {
+        s: { visible: true },
+        r: [D, [
+          [T, 'always'],
+          [T, 'conditional', { show: 'visible' }]
+        ]]
+      });
+      expect(container.textContent).toBe('alwaysconditional');
+    });
+
+    it('show prop hides when state is falsy', () => {
+      render(container, {
+        s: { visible: false },
+        r: [D, [
+          [T, 'always'],
+          [T, 'conditional', { show: 'visible' }]
+        ]]
+      });
+      expect(container.textContent).toBe('always');
+    });
+
+    it('show prop updates reactively', () => {
+      const instance = render(container, {
+        s: { open: false },
+        r: [D, [
+          [B, 'toggle', { c: 'open~' }],
+          [D, [[T, 'modal content']], { show: 'open', bg: '#fff', p: 16 }]
+        ]]
+      });
+      expect(container.textContent).toBe('toggle');
+      instance.set('open', true);
+      expect(container.textContent).toBe('togglemodal content');
+      instance.set('open', false);
+      expect(container.textContent).toBe('toggle');
+    });
+
+    it('show prop works on nested components', () => {
+      render(container, {
+        s: { showModal: true },
+        r: [V, [
+          [D, [
+            [V, [
+              [T, 'Title'],
+              [T, 'Content'],
+              [B, 'Close']
+            ], { bg: '#fff', p: 16 }]
+          ], { show: 'showModal', pos: 'fix' }]
+        ]]
+      });
+      expect(container.textContent).toBe('TitleContentClose');
+    });
   });
 
   describe('map rendering', () => {

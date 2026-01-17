@@ -61,6 +61,7 @@ interface Signal<T> {
 type Op = '+' | '-' | '!' | '~' | '<' | '>' | 'X' | '.';
 type EventHandler = [string, Op, unknown?] | (() => void) | string;
 interface Props {
+    show?: string;
     g?: number | string;
     p?: number | string;
     m?: number | string;
