@@ -533,8 +533,10 @@ const init = () => {
       // sidebar
       [V, [
         [H, [Logo({ size: 32 }), [T, 'tooey', { cls: 'text-lg font-bold text-text-primary' }]], { cls: 'gap-2 items-center flex mb-6' }],
-        [V, [[I, '', { ph: 'search...', id: 'search', cls: 'bg-bg-tertiary text-text-primary px-3 py-2 rounded w-full border border-border outline-none focus:border-accent' }]], { cls: 'relative mb-4' }],
-        [D, '', { id: 'search-results' }],
+        [V, [
+          [I, '', { ph: 'search...', id: 'search', cls: 'bg-bg-tertiary text-text-primary px-3 py-2 rounded w-full border border-border outline-none focus:border-accent' }],
+          [D, '', { id: 'search-results' }]
+        ], { cls: 'relative mb-4' }],
         [V, navItems.map(item => [B, item.label, { cls: 'nav-btn bg-transparent text-text-secondary px-3 py-2 rounded w-full text-left text-sm cursor-pointer border-none hover:bg-bg-tertiary hover:text-accent transition-colors' }]), { cls: 'gap-0.5' }],
         [H, [[B, '', { id: 'theme-btn', cls: 'bg-transparent text-text-secondary p-2 rounded cursor-pointer border-none hover:text-accent transition-colors' }],
           [L, '', { href: 'https://github.com/vijaypemmaraju/tooey', id: 'github-link', cls: 'text-text-secondary p-2 hover:text-accent transition-colors' }]], { cls: 'gap-2 mt-auto' }]
