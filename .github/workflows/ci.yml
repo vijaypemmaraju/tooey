@@ -47,3 +47,39 @@ jobs:
 
       - name: Security audit
         run: pnpm audit --audit-level=moderate
+
+  llm-test:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run LLM generation tests
+        if: env.GEMINI_API_KEY != ''
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          cd packages/ui
+          pnpm exec tsx benchmarks/validation/run-llm-tests.ts
+
+      - name: Upload LLM test results
+        if: env.GEMINI_API_KEY != ''
+        uses: actions/upload-artifact@v4
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        with:
+          name: llm-test-results
+          path: packages/ui/benchmarks/validation/LLM_TEST_RESULTS.md
