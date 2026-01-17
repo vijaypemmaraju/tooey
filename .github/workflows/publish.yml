@@ -24,13 +24,6 @@ jobs:
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Configure npm for OIDC auth
-        run: |
-          # Create .npmrc with just the registry (no auth token)
-          # This allows npm to use OIDC for authentication via trusted publishers
-          echo "registry=https://registry.npmjs.org/" > ~/.npmrc
-          cat ~/.npmrc
-
       - name: Install dependencies
         run: pnpm install
 
@@ -69,6 +62,8 @@ jobs:
         if: steps.ui_version.outputs.should_publish == 'true'
         working-directory: packages/ui
         run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create git tag for @tooey/ui
         if: steps.ui_version.outputs.should_publish == 'true'
