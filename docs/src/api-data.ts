@@ -1221,58 +1221,103 @@ export const API_DATA = {
   ],
   "examples": [
     {
-      "name": "counter - tooey",
-      "file": "01-counter.html",
-      "tokens": "-45%",
-      "description": "counter - tooey"
+      "id": "counter",
+      "name": "counter",
+      "savings": "-45%",
+      "tooeyTokens": 56,
+      "reactTokens": 102,
+      "description": "increment / decrement buttons with state",
+      "tooeyCode": "{s:{n:0},r:[V,[[T,{$:\"n\"}],[H,[[B,\"-\",{c:[\"n\",\"-\"]}],[B,\"+\",{c:[\"n\",\"+\"]}]],{g:8}]],{g:8}]}",
+      "reactCode": "function Counter() {\n  const [n, setN] = useState(0);\n  return (\n    <div style={{display:'flex',flexDirection:'column',gap:8}}>\n      <span>{n}</span>\n      <div style={{display:'flex',gap:8}}>\n        <button onClick={()=>setN(n-1)}>-</button>\n        <button onClick={()=>setN(n+1)}>+</button>\n      </div>\n    </div>\n  );\n}",
+      "file": "01-counter.html"
     },
     {
-      "name": "todo list - tooey",
-      "file": "02-todo-list.html",
-      "tokens": "-55%",
-      "description": "todo list - tooey"
+      "id": "todo-list",
+      "name": "todo list",
+      "savings": "-55%",
+      "tooeyTokens": 92,
+      "reactTokens": 203,
+      "description": "add / remove items with input binding",
+      "tooeyCode": "{s:{txt:\"\",items:[]},r:[V,[\n  [H,[[I,\"\",{v:{$:\"txt\"},x:[\"txt\",\"!\"],ph:\"add...\"}],[B,\"+\",{c:add}]],{g:8}],\n  {map:\"items\",as:[H,[[T,\"$item\"],[B,\"x\",{c:del}]],{g:8}]}\n],{g:12}]}",
+      "reactCode": "function TodoList() {\n  const [txt, setTxt] = useState('');\n  const [items, setItems] = useState([]);\n  const add = () => {\n    if (txt) {\n      setItems([...items, txt]);\n      setTxt('');\n    }\n  };\n  return (\n    <div style={{display:'flex',flexDirection:'column',gap:12}}>\n      <div style={{display:'flex',gap:8}}>\n        <input value={txt} onChange={e=>setTxt(e.target.value)}\n          placeholder=\"add...\" />\n        <button onClick={add}>+</button>\n      </div>\n      {items.map((item, i) => (\n        <div key={i} style={{display:'flex',gap:8}}>\n          <span>{item}</span>\n          <button onClick={()=>setItems(items.filter((_,j)=>j!==i))}>x</button>\n        </div>\n      ))}\n    </div>\n  );\n}",
+      "file": "02-todo-list.html"
     },
     {
-      "name": "form - tooey",
-      "file": "03-form.html",
-      "tokens": "-7%",
-      "description": "form - tooey"
+      "id": "form",
+      "name": "form",
+      "savings": "-7%",
+      "tooeyTokens": 196,
+      "reactTokens": 211,
+      "description": "inputs, checkbox, validation",
+      "tooeyCode": "{s:{name:\"\",email:\"\",pw:\"\",agree:false},r:[V,[\n  [V,[[T,\"name\"],[I,\"\",{ph:\"your name\",v:{$:\"name\"},x:[\"name\",\"!\"]}]],{g:4}],\n  [V,[[T,\"email\"],[I,\"\",{type:\"email\",ph:\"you@example.com\",v:{$:\"email\"},x:[\"email\",\"!\"]}]],{g:4}],\n  [V,[[T,\"password\"],[I,\"\",{type:\"password\",ph:\"********\",v:{$:\"pw\"},x:[\"pw\",\"!\"]}]],{g:4}],\n  [H,[[C,\"\",{ch:{$:\"agree\"},x:[\"agree\",\"~\"]}],[T,\"i agree to terms\"]],{g:8,ai:\"center\"}],\n  [B,\"sign up\",{c:submit}]\n],{g:16}]}",
+      "reactCode": "function Form() {\n  const [name, setName] = useState('');\n  const [email, setEmail] = useState('');\n  const [pw, setPw] = useState('');\n  const [agree, setAgree] = useState(false);\n  return (\n    <div style={{display:'flex',flexDirection:'column',gap:16}}>\n      <div style={{display:'flex',flexDirection:'column',gap:4}}>\n        <label>name</label>\n        <input placeholder=\"your name\" value={name}\n          onChange={e=>setName(e.target.value)} />\n      </div>\n      <div style={{display:'flex',flexDirection:'column',gap:4}}>\n        <label>email</label>\n        <input type=\"email\" placeholder=\"you@example.com\"\n          value={email} onChange={e=>setEmail(e.target.value)} />\n      </div>\n      ...\n      <button onClick={submit}>sign up</button>\n    </div>\n  );\n}",
+      "file": "03-form.html"
     },
     {
-      "name": "temperature - tooey",
-      "file": "04-temperature-converter.html",
-      "tokens": "-59%",
-      "description": "temperature - tooey"
+      "id": "temperature",
+      "name": "temperature converter",
+      "savings": "-59%",
+      "tooeyTokens": 109,
+      "reactTokens": 269,
+      "description": "bidirectional binding between celsius and fahrenheit",
+      "tooeyCode": "{s:{c:0,f:32},r:[H,[\n  [V,[[T,\"celsius\"],[I,\"\",{type:\"number\",v:{$:\"c\"},x:onC}]],{g:4}],\n  [T,\"=\",{fs:24,fg:\"#0af\"}],\n  [V,[[T,\"fahrenheit\"],[I,\"\",{type:\"number\",v:{$:\"f\"},x:onF}]],{g:4}]\n],{g:16,ai:\"center\"}]}",
+      "reactCode": "function TempConverter() {\n  const [c, setC] = useState(0);\n  const [f, setF] = useState(32);\n  const onCelsiusChange = (e) => {\n    const val = parseFloat(e.target.value) || 0;\n    setC(val);\n    setF(val * 9/5 + 32);\n  };\n  const onFahrenheitChange = (e) => {\n    const val = parseFloat(e.target.value) || 0;\n    setF(val);\n    setC((val - 32) * 5/9);\n  };\n  return (\n    <div style={{display:'flex',gap:16,alignItems:'center'}}>\n      <div style={{display:'flex',flexDirection:'column',gap:4}}>\n        <span>celsius</span>\n        <input type=\"number\" value={c} onChange={onCelsiusChange}/>\n      </div>\n      <span style={{fontSize:24}}>=</span>\n      <div style={{display:'flex',flexDirection:'column',gap:4}}>\n        <span>fahrenheit</span>\n        <input type=\"number\" value={f} onChange={onFahrenheitChange}/>\n      </div>\n    </div>\n  );\n}",
+      "file": "04-temperature-converter.html"
     },
     {
-      "name": "data table - tooey",
-      "file": "05-data-table.html",
-      "tokens": "-52%",
-      "description": "data table - tooey"
+      "id": "data-table",
+      "name": "data table",
+      "savings": "-52%",
+      "tooeyTokens": 131,
+      "reactTokens": 275,
+      "description": "sortable, filterable table with search",
+      "tooeyCode": "{s:{q:\"\",sort:\"name\",asc:true,data:[...]},r:[V,[\n  [I,\"\",{ph:\"search...\",v:{$:\"q\"},x:[\"q\",\"!\"]}],\n  [Tb,[\n    [Th,[[Tr,[[Tc,\"name\",{c:sort}],[Tc,\"age\",{c:sort}],[Tc,\"role\",{c:sort}]]]]],\n    [Tbd,[{map:\"filtered\",as:[Tr,[[Td,\"$item.name\"],[Td,\"$item.age\"],[Td,\"$item.role\"]]]}]]\n  ]]\n],{g:12}]}",
+      "reactCode": "function DataTable() {\n  const [q, setQ] = useState('');\n  const [sort, setSort] = useState('name');\n  const [asc, setAsc] = useState(true);\n  const [data] = useState([...]);\n  const filtered = data\n    .filter(r => Object.values(r).some(v =>\n      String(v).toLowerCase().includes(q.toLowerCase())))\n    .sort((a,b) => {...});\n  return (\n    <div style={{display:'flex',flexDirection:'column',gap:12}}>\n      <input placeholder=\"search...\" value={q}\n        onChange={e=>setQ(e.target.value)} />\n      <table>\n        <thead>\n          <tr>\n            <th onClick={()=>toggleSort('name')}>name</th>\n            ...\n          </tr>\n        </thead>\n        <tbody>\n          {filtered.map((row,i) => (\n            <tr key={i}>\n              <td>{row.name}</td>\n              ...\n            </tr>\n          ))}\n        </tbody>\n      </table>\n    </div>\n  );\n}",
+      "file": "05-data-table.html"
     },
     {
-      "name": "tabs - tooey",
-      "file": "06-tabs.html",
-      "tokens": "-16%",
-      "description": "tabs - tooey"
+      "id": "tabs",
+      "name": "tabs",
+      "savings": "-16%",
+      "tooeyTokens": 107,
+      "reactTokens": 127,
+      "description": "conditional rendering with tab panels",
+      "tooeyCode": "{s:{tab:0},r:[V,[\n  [H,[[B,\"profile\",{c:[\"tab\",\"!\",0]}],[B,\"settings\",{c:[\"tab\",\"!\",1]}],[B,\"about\",{c:[\"tab\",\"!\",2]}]]],\n  {if:{$:\"tab\"},eq:0,then:[T,\"user profile content\"],else:{if:{$:\"tab\"},eq:1,then:[T,\"settings panel\"],else:[T,\"about section\"]}}\n],{g:0}]}",
+      "reactCode": "function Tabs() {\n  const [tab, setTab] = useState(0);\n  const panels = ['user profile content', 'settings panel', 'about section'];\n  return (\n    <div>\n      <div style={{display:'flex'}}>\n        {['profile','settings','about'].map((t,i) => (\n          <button key={i} onClick={()=>setTab(i)}\n            className={tab===i?'active':''}>{t}</button>\n        ))}\n      </div>\n      <div className=\"panel\">{panels[tab]}</div>\n    </div>\n  );\n}",
+      "file": "06-tabs.html"
     },
     {
-      "name": "modal - tooey",
-      "file": "07-modal.html",
-      "tokens": "-24%",
-      "description": "modal - tooey"
+      "id": "modal",
+      "name": "modal",
+      "savings": "-24%",
+      "tooeyTokens": 135,
+      "reactTokens": 178,
+      "description": "dialog / overlay with conditional visibility",
+      "tooeyCode": "{s:{open:false},r:[V,[\n  [B,\"open modal\",{c:[\"open\",\"~\"]}],\n  {if:\"open\",then:[D,[\n    [D,[[T,\"confirm action\",{fw:600}],[T,\"are you sure?\"],[B,\"close\",{c:[\"open\",\"~\"]}]],{bg:\"#1a1a1a\",p:24,r:8,g:12}]\n  ],{pos:\"abs\",t:0,l:0,w:\"100%\",h:\"100%\",bg:\"rgba(0,0,0,0.7)\",ai:\"center\",jc:\"center\"}]}\n]]}",
+      "reactCode": "function Modal() {\n  const [open, setOpen] = useState(false);\n  return (\n    <div>\n      <button onClick={()=>setOpen(true)}>open modal</button>\n      {open && (\n        <div style={{position:'absolute',top:0,left:0,width:'100%',\n          height:'100%',background:'rgba(0,0,0,0.7)',\n          display:'flex',alignItems:'center',justifyContent:'center'}}>\n          <div style={{background:'#1a1a1a',padding:24,borderRadius:8}}>\n            <h3 style={{fontWeight:600}}>confirm action</h3>\n            <p>are you sure?</p>\n            <button onClick={()=>setOpen(false)}>close</button>\n          </div>\n        </div>\n      )}\n    </div>\n  );\n}",
+      "file": "07-modal.html"
     },
     {
-      "name": "shopping cart - tooey",
-      "file": "08-shopping-cart.html",
-      "tokens": "-29%",
-      "description": "shopping cart - tooey"
+      "id": "shopping-cart",
+      "name": "shopping cart",
+      "savings": "-29%",
+      "tooeyTokens": 197,
+      "reactTokens": 279,
+      "description": "quantity controls with computed total",
+      "tooeyCode": "{s:{items:[{n:\"widget\",p:25,q:1},{n:\"gadget\",p:35,q:2}]},r:[V,[\n  {map:\"items\",as:[H,[\n    [T,\"$item.n\",{fg:\"#ccc\"}],\n    [H,[[B,\"-\",{c:dec}],[T,\"$item.q\"],[B,\"+\",{c:inc}]],{g:8,ai:\"center\"}],\n    [T,\"$item.price\",{fg:\"#0af\"}]\n  ],{jc:\"space-between\",ai:\"center\",p:\"8px 0\"}]},\n  [H,[[T,\"total:\"],[T,{$:\"total\"},{fg:\"#4f8\",fw:600}]],{jc:\"space-between\",p:\"16px 0\"}]\n],{g:0}]}",
+      "reactCode": "function Cart() {\n  const [items, setItems] = useState([\n    {n:\"widget\",p:25,q:1},\n    {n:\"gadget\",p:35,q:2}\n  ]);\n  const updateQty = (i, delta) => {\n    setItems(items.map((item, j) =>\n      j === i ? {...item, q: Math.max(0, item.q + delta)} : item\n    ).filter(item => item.q > 0));\n  };\n  const total = items.reduce((s,i) => s + i.p * i.q, 0);\n  return (\n    <div>\n      {items.map((item, i) => (\n        <div key={i} className=\"cart-item\">\n          <span className=\"name\">{item.n}</span>\n          <div className=\"qty\">\n            <button onClick={()=>updateQty(i,-1)}>-</button>\n            <span>{item.q}</span>\n            <button onClick={()=>updateQty(i,1)}>+</button>\n          </div>\n          <span className=\"price\">${item.p * item.q}</span>\n        </div>\n      ))}\n      <div className=\"total\">\n        <span>total:</span>\n        <span>${total}</span>\n      </div>\n    </div>\n  );\n}",
+      "file": "08-shopping-cart.html"
     },
     {
-      "name": "wizard - tooey",
-      "file": "09-wizard.html",
-      "tokens": "-26%",
-      "description": "wizard - tooey"
+      "id": "wizard",
+      "name": "wizard",
+      "savings": "-26%",
+      "tooeyTokens": 249,
+      "reactTokens": 338,
+      "description": "multi-step form with progress indicator",
+      "tooeyCode": "{s:{step:0,name:\"\",email:\"\"},r:[V,[\n  [H,[[D,{cls:\"step done\"}],[D,{cls:\"step\"}],[D,{cls:\"step\"}]],{g:4}],\n  {if:{$:\"step\"},eq:0,then:[V,[[T,\"step 1: name\"],[I,\"\",{v:{$:\"name\"},x:[\"name\",\"!\"],ph:\"your name\"}]],{g:12}]},\n  {if:{$:\"step\"},eq:1,then:[V,[[T,\"step 2: email\"],[I,\"\",{v:{$:\"email\"},x:[\"email\",\"!\"],ph:\"email\",type:\"email\"}]],{g:12}]},\n  {if:{$:\"step\"},eq:2,then:[V,[[T,\"done!\"],[T,\"thanks for signing up\"]],{g:12}]},\n  [H,[[B,\"back\",{c:[\"step\",\"-\"],dis:{$:\"step\"},eq:0}],[B,\"next\",{c:[\"step\",\"+\"]}]],{g:8,jc:\"flex-end\"}]\n],{g:16}]}",
+      "reactCode": "function Wizard() {\n  const [step, setStep] = useState(0);\n  const [name, setName] = useState('');\n  const [email, setEmail] = useState('');\n  return (\n    <div style={{display:'flex',flexDirection:'column',gap:16}}>\n      <div style={{display:'flex',gap:4}}>\n        {[0,1,2].map(i => (\n          <div key={i} className={'step'+(i<=step?' done':'')} />\n        ))}\n      </div>\n      {step === 0 && (\n        <div>\n          <h3>step 1: name</h3>\n          <input value={name} onChange={e=>setName(e.target.value)}\n            placeholder=\"your name\" />\n        </div>\n      )}\n      {step === 1 && (\n        <div>\n          <h3>step 2: email</h3>\n          <input type=\"email\" value={email}\n            onChange={e=>setEmail(e.target.value)} placeholder=\"email\" />\n        </div>\n      )}\n      {step === 2 && <div><h3>done!</h3><p>thanks for signing up</p></div>}\n      <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>\n        <button disabled={step===0} onClick={()=>setStep(s=>s-1)}>back</button>\n        <button onClick={()=>setStep(s=>Math.min(2,s+1))}>next</button>\n      </div>\n    </div>\n  );\n}",
+      "file": "09-wizard.html"
     }
   ]
 } as const;

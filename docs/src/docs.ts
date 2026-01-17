@@ -3,7 +3,7 @@
  * demonstrates the full tooey ecosystem: signals, computed, effects, plugins, theming, function components
  */
 
-import { render, signal, effect, V, H, D, G, T, B, I, L } from '@tooey/ui';
+import { render, signal, effect, V, H, D, G, T, B, I, L, Sv } from '@tooey/ui';
 import type { TooeySpec, NodeSpec, Props, TooeyPlugin } from '@tooey/ui';
 import { API_DATA, searchAPI, type SearchResult, type ApiItem } from './api-data';
 
@@ -61,6 +61,14 @@ const loggerPlugin: TooeyPlugin = {
 // function components
 // ============================================================================
 
+const Logo = (props: { size?: number }): NodeSpec => {
+  const size = props.size || 32;
+  return [Sv, [
+    { tag: 'rect', x: 24, y: 8, width: 16, height: 48, rx: 8, fill: 'currentColor' },
+    { tag: 'rect', x: 12, y: 20, width: 40, height: 14, rx: 7, fill: 'currentColor', transform: 'rotate(-20 32 27)' }
+  ], { w: size, h: size, vb: '0 0 64 64', fg: 'var(--accent)' }];
+};
+
 const Card = (_props: Props = {}, children: NodeSpec[] = []): NodeSpec =>
   [V, children, { bg: 'var(--bg-secondary)', p: 16, r: 8, s: { border: '1px solid var(--border)' } }];
 
@@ -101,7 +109,7 @@ type Page = 'home' | 'core-functions' | 'instance-methods' | 'components' | 'pro
 const pages: Record<Page, () => NodeSpec> = {
   'home': () => [V, [
     [V, [
-      [H, [[D, '', { w: 48, h: 48, r: 12, bg: 'var(--accent)', s: { boxShadow: '0 4px 20px rgba(0,170,255,0.3)' } }],
+      [H, [[D, [Logo({ size: 48 })], { w: 48, h: 48, s: { filter: 'drop-shadow(0 4px 20px rgba(0,170,255,0.3))' } }],
         [V, [[T, 'tooey', { fs: 28, fw: 700, fg: 'var(--text)' }], [T, 'token-efficient ui for llm output', { fs: 14, fg: 'var(--text-secondary)' }]], { g: 4 }]], { g: 16, ai: 'c' }],
       [H, [[T, '~39%', { fg: 'var(--accent)', fw: 600 }], [T, 'fewer tokens', { fg: 'var(--text-secondary)' }],
         [T, '|', { fg: 'var(--border)', m: '0 8px' }], [T, '~10kb', { fg: 'var(--accent)', fw: 600 }], [T, 'minified', { fg: 'var(--text-secondary)' }],
@@ -193,9 +201,32 @@ render(document.getElementById('app'), {
       [T, t.description, { fg: 'var(--text-secondary)', fs: 13, m: '8px 0' }], Code({ code: t.signature || '' })]))], { g: 16 }],
 
   'examples': () => [V, [Section({ title: 'examples', subtitle: 'interactive demos with token comparisons' }),
-    [V, API_DATA.examples.map(ex => Card({}, [[H, [[L, ex.name, { href: `examples/${ex.file}`, fg: 'var(--text)', fw: 500, s: { textDecoration: 'none', flex: '1' } }],
-      [T, ex.tokens, { fg: 'var(--success)', fw: 600, ff: 'monospace' }]], { jc: 'sb', ai: 'c' }],
-      [T, ex.description, { fg: 'var(--text-secondary)', fs: 13, m: '8px 0 0 0' }]])), { g: 8 }]], { g: 16 }]
+    [V, API_DATA.examples.map((ex: { id: string; name: string; file: string; savings: string; tooeyTokens: number; reactTokens: number; description: string; tooeyCode: string; reactCode: string }) => Card({}, [
+      [H, [
+        [T, ex.name, { fg: 'var(--text)', fw: 600, fs: 16 }],
+        [T, ex.savings, { fg: 'var(--success)', fw: 700, ff: 'monospace', fs: 14 }]
+      ], { jc: 'sb', ai: 'c' }],
+      [T, ex.description, { fg: 'var(--text-secondary)', fs: 13, m: '8px 0 16px 0' }],
+      [G, [
+        [V, [
+          [H, [[T, 'tooey', { fg: 'var(--accent)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
+            [T, `(${ex.tooeyTokens} tokens)`, { fg: 'var(--text-muted)', fs: 11 }]], { g: 8, ai: 'c' }],
+          Code({ code: ex.tooeyCode })
+        ], { g: 8 }],
+        [V, [
+          [H, [[T, 'react', { fg: 'var(--warning)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
+            [T, `(${ex.reactTokens} tokens)`, { fg: 'var(--text-muted)', fs: 11 }]], { g: 8, ai: 'c' }],
+          [D, [[T, ex.reactCode, { s: { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } }]], {
+            bg: 'var(--code-bg)', p: 8, r: 4, fs: 12, ff: 'ui-monospace, monospace', fg: 'var(--warning)', ov: 'auto', s: { maxHeight: '300px' }
+          }]
+        ], { g: 8 }]
+      ], { cols: 2, g: 16 }],
+      [V, [
+        [H, [[T, 'live demo', { fg: 'var(--text-muted)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
+          [L, 'open in new tab ↗', { href: `examples/${ex.file}`, fg: 'var(--accent)', fs: 11, s: { textDecoration: 'none' }, target: '_blank' }]], { jc: 'sb', ai: 'c' }],
+        [D, '', { s: { position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '8px', border: '1px solid var(--border)' }, cls: `demo-frame-wrapper demo-${ex.id}`, 'data-src': `examples/${ex.file}` }]
+      ], { g: 8, m: '16px 0 0 0' }]
+    ])), { g: 24 }]], { g: 16 }]
 };
 
 const navItems: Array<{ label: string; page: Page }> = [
@@ -234,6 +265,19 @@ const renderPage = () => {
     el.style.background = navItems[i].page === page ? 'var(--bg-tertiary)' : 'transparent';
     el.style.color = navItems[i].page === page ? 'var(--accent)' : 'var(--text-secondary)';
   });
+  // inject iframes for examples page demos
+  if (page === 'examples') {
+    document.querySelectorAll('.demo-frame-wrapper').forEach((wrapper) => {
+      const el = wrapper as HTMLElement;
+      const src = el.getAttribute('data-src');
+      if (src && !el.querySelector('iframe')) {
+        const iframe = document.createElement('iframe');
+        iframe.src = src;
+        iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
+        el.appendChild(iframe);
+      }
+    });
+  }
 };
 
 const renderSearchResults = () => {
@@ -270,7 +314,7 @@ const init = () => {
       [D, '', { id: 'sidebar-overlay', pos: 'fix', t: 0, l: 0, w: '100vw', h: '100vh', z: 999, bg: 'rgba(0,0,0,0.5)', s: { display: 'none' } }],
       // sidebar
       [V, [
-        [H, [[D, '', { w: 32, h: 32, r: 8, bg: 'var(--accent)', s: { flexShrink: '0' } }], [T, 'tooey', { fs: 18, fw: 700, fg: 'var(--text)' }]], { g: 8, ai: 'c', m: '0 0 24px 0' }],
+        [H, [Logo({ size: 32 }), [T, 'tooey', { fs: 18, fw: 700, fg: 'var(--text)' }]], { g: 8, ai: 'c', m: '0 0 24px 0' }],
         [V, [[I, '', { ph: 'search...', bg: 'var(--bg-tertiary)', fg: 'var(--text)', p: '8px 12px', r: 4, w: '100%', s: { border: '1px solid var(--border)', outline: 'none' }, id: 'search' }]], { pos: 'rel', m: '0 0 16px 0' }],
         [D, '', { id: 'search-results' }],
         [V, navItems.map(item => [B, item.label, { bg: 'transparent', fg: 'var(--text-secondary)', p: '8px 12px', r: 4, w: '100%', ta: 'left', fs: 13, cur: 'pointer', s: { border: 'none' }, cls: 'nav-btn' }]), { g: 2 }],
