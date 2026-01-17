@@ -384,6 +384,7 @@ interface ExampleData {
   tooeyCode: string;
   reactCode: string;
   demoSpec: string; // JSON stringified spec for live rendering
+  reactDemoCode: string; // JSX code that can be run with Babel
 }
 
 function getExamples(): ExampleData[] {
@@ -416,7 +417,19 @@ function getExamples(): ExampleData[] {
       demoSpec: JSON.stringify({
         s: { n: 0 },
         r: ['V', [['T', { $: 'n' }, { fs: 24, fg: '#0af' }], ['H', [['B', '-', { c: ['n', '-'] }], ['B', '+', { c: ['n', '+'] }]], { g: 8 }]], { g: 16, ai: 'c' }]
-      })
+      }),
+      reactDemoCode: `function Counter() {
+  const [n, setN] = React.useState(0);
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16,alignItems:'center'}}>
+      <span style={{fontSize:24,color:'#fa0'}}>{n}</span>
+      <div style={{display:'flex',gap:8}}>
+        <button onClick={()=>setN(n-1)}>-</button>
+        <button onClick={()=>setN(n+1)}>+</button>
+      </div>
+    </div>
+  );
+}`
     },
     '02-todo-list.html': {
       id: 'todo-list',
@@ -460,7 +473,26 @@ function getExamples(): ExampleData[] {
           ['H', [['I', '', { v: { $: 'txt' }, x: ['txt', '!'], ph: 'add item...' }], ['B', '+', { c: ['items', '<', { $: 'txt' }] }]], { g: 8 }],
           { m: 'items', a: ['H', [['T', '$item', { s: { flex: '1' } }], ['B', 'x', { c: ['items', 'X', '$index'] }]], { g: 8, p: '8px 0', s: { borderBottom: '1px solid #333' } }] }
         ], { g: 12 }]
-      })
+      }),
+      reactDemoCode: `function TodoList() {
+  const [txt, setTxt] = React.useState('');
+  const [items, setItems] = React.useState(['buy milk', 'walk dog']);
+  const add = () => { if (txt) { setItems([...items, txt]); setTxt(''); } };
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:12}}>
+      <div style={{display:'flex',gap:8}}>
+        <input value={txt} onChange={e=>setTxt(e.target.value)} placeholder="add item..." style={{flex:1,padding:'8px',background:'#0a0a0f',color:'#fff',border:'1px solid #333',borderRadius:4}} />
+        <button onClick={add}>+</button>
+      </div>
+      {items.map((item, i) => (
+        <div key={i} style={{display:'flex',gap:8,padding:'8px 0',borderBottom:'1px solid #333'}}>
+          <span style={{flex:1}}>{item}</span>
+          <button onClick={()=>setItems(items.filter((_,j)=>j!==i))}>x</button>
+        </div>
+      ))}
+    </div>
+  );
+}`
     },
     '03-form.html': {
       id: 'form',
@@ -506,7 +538,30 @@ function getExamples(): ExampleData[] {
           ['H', [['C', '', { ch: { $: 'agree' }, x: ['agree', '~'] }], ['T', 'i agree to terms', { fs: 13 }]], { g: 8, ai: 'c' }],
           ['B', 'sign up', { bg: '#0af', fg: '#000', p: '10px 20px', r: 4, s: { border: 'none', cursor: 'pointer' } }]
         ], { g: 16 }]
-      })
+      }),
+      reactDemoCode: `function Form() {
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [agree, setAgree] = React.useState(false);
+  const inputStyle = {padding:'8px',background:'#0a0a0f',color:'#fff',border:'1px solid #333',borderRadius:4,width:'100%'};
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <span style={{fontSize:12,color:'#888'}}>name</span>
+        <input placeholder="your name" value={name} onChange={e=>setName(e.target.value)} style={inputStyle} />
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <span style={{fontSize:12,color:'#888'}}>email</span>
+        <input type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} style={inputStyle} />
+      </div>
+      <div style={{display:'flex',gap:8,alignItems:'center'}}>
+        <input type="checkbox" checked={agree} onChange={e=>setAgree(e.target.checked)} />
+        <span style={{fontSize:13}}>i agree to terms</span>
+      </div>
+      <button style={{background:'#fa0',color:'#000',padding:'10px 20px',borderRadius:4,border:'none',cursor:'pointer'}}>sign up</button>
+    </div>
+  );
+}`
     },
     '04-temperature-converter.html': {
       id: 'temperature',
@@ -554,7 +609,27 @@ function getExamples(): ExampleData[] {
           ['T', '=', { fs: 24, fg: '#0af' }],
           ['V', [['T', 'fahrenheit', { fs: 12, fg: '#888' }], ['T', '68', { fs: 16 }]], { g: 4 }]
         ], { g: 16, ai: 'c' }]
-      })
+      }),
+      reactDemoCode: `function TempConverter() {
+  const [c, setC] = React.useState(20);
+  const [f, setF] = React.useState(68);
+  const inputStyle = {padding:'8px',background:'#0a0a0f',color:'#fff',border:'1px solid #333',borderRadius:4,width:80};
+  const onC = e => { const v = parseFloat(e.target.value)||0; setC(v); setF(Math.round(v*9/5+32)); };
+  const onF = e => { const v = parseFloat(e.target.value)||0; setF(v); setC(Math.round((v-32)*5/9)); };
+  return (
+    <div style={{display:'flex',gap:16,alignItems:'center'}}>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <span style={{fontSize:12,color:'#888'}}>celsius</span>
+        <input type="number" value={c} onChange={onC} style={inputStyle} />
+      </div>
+      <span style={{fontSize:24,color:'#fa0'}}>=</span>
+      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+        <span style={{fontSize:12,color:'#888'}}>fahrenheit</span>
+        <input type="number" value={f} onChange={onF} style={inputStyle} />
+      </div>
+    </div>
+  );
+}`
     },
     '05-data-table.html': {
       id: 'data-table',
@@ -610,7 +685,22 @@ function getExamples(): ExampleData[] {
             ['Tbd', [{ m: 'data', a: ['Tr', [['Td', '$item.name'], ['Td', '$item.age'], ['Td', '$item.role']]] }]]
           ]]
         ], { g: 12 }]
-      })
+      }),
+      reactDemoCode: `function DataTable() {
+  const data = [{name:'alice',age:28,role:'engineer'},{name:'bob',age:34,role:'designer'},{name:'carol',age:25,role:'manager'}];
+  const thStyle = {color:'#fa0',textAlign:'left',padding:'8px',borderBottom:'1px solid #333'};
+  const tdStyle = {padding:'8px',borderBottom:'1px solid #333'};
+  return (
+    <table style={{width:'100%',borderCollapse:'collapse'}}>
+      <thead>
+        <tr><th style={thStyle}>name</th><th style={thStyle}>age</th><th style={thStyle}>role</th></tr>
+      </thead>
+      <tbody>
+        {data.map((r,i) => <tr key={i}><td style={tdStyle}>{r.name}</td><td style={tdStyle}>{r.age}</td><td style={tdStyle}>{r.role}</td></tr>)}
+      </tbody>
+    </table>
+  );
+}`
     },
     '06-tabs.html': {
       id: 'tabs',
@@ -644,7 +734,21 @@ function getExamples(): ExampleData[] {
           ['H', [['B', 'profile', { c: ['tab', '!', 0] }], ['B', 'settings', { c: ['tab', '!', 1] }], ['B', 'about', { c: ['tab', '!', 2] }]], { g: 0, s: { borderBottom: '1px solid #333' } }],
           { '?': 'tab', is: 0, t: ['T', 'user profile content', { p: 16, fg: '#ccc' }], e: { '?': 'tab', is: 1, t: ['T', 'settings panel', { p: 16, fg: '#ccc' }], e: ['T', 'about section', { p: 16, fg: '#ccc' }] } }
         ], { g: 0 }]
-      })
+      }),
+      reactDemoCode: `function Tabs() {
+  const [tab, setTab] = React.useState(0);
+  const tabs = ['profile','settings','about'];
+  const panels = ['user profile content','settings panel','about section'];
+  const btnStyle = (i) => ({padding:'8px 16px',background:'transparent',border:'none',cursor:'pointer',color:i===tab?'#fa0':'#666',borderBottom:i===tab?'2px solid #fa0':'none'});
+  return (
+    <div>
+      <div style={{display:'flex',borderBottom:'1px solid #333'}}>
+        {tabs.map((t,i) => <button key={i} style={btnStyle(i)} onClick={()=>setTab(i)}>{t}</button>)}
+      </div>
+      <div style={{padding:16,color:'#ccc'}}>{panels[tab]}</div>
+    </div>
+  );
+}`
     },
     '07-modal.html': {
       id: 'modal',
@@ -686,7 +790,24 @@ function getExamples(): ExampleData[] {
             ['D', [['T', 'confirm action', { fw: 600, fg: '#fff', fs: 14 }], ['T', 'are you sure?', { fg: '#888', fs: 12 }], ['B', 'close', { c: ['open', '~'] }]], { bg: '#1a1a1a', p: 24, r: 8, g: 12, ta: 'c' }]
           ], { pos: 'abs', t: 0, l: 0, w: '100%', h: '100%', bg: 'rgba(0,0,0,0.7)', s: { display: 'flex', alignItems: 'center', justifyContent: 'center' } }] }
         ], { pos: 'rel', h: 150 }]
-      })
+      }),
+      reactDemoCode: `function Modal() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div style={{position:'relative',height:150}}>
+      <button onClick={()=>setOpen(true)}>open modal</button>
+      {open && (
+        <div style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',background:'rgba(0,0,0,0.7)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <div style={{background:'#1a1a1a',padding:24,borderRadius:8,textAlign:'center',display:'flex',flexDirection:'column',gap:12}}>
+            <span style={{fontWeight:600,color:'#fff',fontSize:14}}>confirm action</span>
+            <span style={{color:'#888',fontSize:12}}>are you sure?</span>
+            <button onClick={()=>setOpen(false)}>close</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}`
     },
     '08-shopping-cart.html': {
       id: 'shopping-cart',
@@ -741,7 +862,31 @@ function getExamples(): ExampleData[] {
           ['H', [['T', 'gadget', { fg: '#ccc', s: { flex: '1' } }], ['H', [['B', '-', { c: ['q2', '-'] }], ['T', { $: 'q2' }], ['B', '+', { c: ['q2', '+'] }]], { g: 8, ai: 'c' }], ['T', '$35', { fg: '#0af', w: 50, ta: 'rt' }]], { jc: 'sb', ai: 'c', p: '8px 0', s: { borderBottom: '1px solid #333' } }],
           ['H', [['T', 'total:', { fg: '#888' }], ['T', '$95', { fg: '#4f8', fw: 600 }]], { jc: 'sb', p: '16px 0' }]
         ], { g: 0 }]
-      })
+      }),
+      reactDemoCode: `function Cart() {
+  const [items, setItems] = React.useState([{n:'widget',p:25,q:1},{n:'gadget',p:35,q:2}]);
+  const update = (i,d) => setItems(items.map((it,j)=>j===i?{...it,q:Math.max(0,it.q+d)}:it).filter(it=>it.q>0));
+  const total = items.reduce((s,i)=>s+i.p*i.q,0);
+  return (
+    <div>
+      {items.map((it,i) => (
+        <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 0',borderBottom:'1px solid #333'}}>
+          <span style={{flex:1,color:'#ccc'}}>{it.n}</span>
+          <div style={{display:'flex',gap:8,alignItems:'center'}}>
+            <button onClick={()=>update(i,-1)}>-</button>
+            <span>{it.q}</span>
+            <button onClick={()=>update(i,1)}>+</button>
+          </div>
+          <span style={{color:'#fa0',width:50,textAlign:'right'}}>\${it.p*it.q}</span>
+        </div>
+      ))}
+      <div style={{display:'flex',justifyContent:'space-between',padding:'16px 0'}}>
+        <span style={{color:'#888'}}>total:</span>
+        <span style={{color:'#4f8',fontWeight:600}}>\${total}</span>
+      </div>
+    </div>
+  );
+}`
     },
     '09-wizard.html': {
       id: 'wizard',
@@ -797,7 +942,27 @@ function getExamples(): ExampleData[] {
           { '?': 'step', is: 0, t: ['V', [['T', 'step 1: name', { fw: 500, fg: '#fff' }], ['I', '', { v: { $: 'name' }, x: ['name', '!'], ph: 'your name' }]], { g: 12 }], e: { '?': 'step', is: 1, t: ['V', [['T', 'step 2: email', { fw: 500, fg: '#fff' }], ['I', '', { type: 'email', v: { $: 'email' }, x: ['email', '!'], ph: 'email' }]], { g: 12 }], e: ['V', [['T', 'done!', { fw: 600, fg: '#4f8', fs: 16 }], ['T', 'thanks for signing up', { fg: '#888' }]], { g: 8 }] } },
           ['H', [['B', 'back', { c: ['step', '-'] }], ['B', 'next', { c: ['step', '+'] }]], { g: 8, jc: 'fe' }]
         ], { g: 16 }]
-      })
+      }),
+      reactDemoCode: `function Wizard() {
+  const [step, setStep] = React.useState(0);
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const inputStyle = {padding:'8px',background:'#0a0a0f',color:'#fff',border:'1px solid #333',borderRadius:4,width:'100%'};
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:16}}>
+      <div style={{display:'flex',gap:4}}>
+        {[0,1,2].map(i => <div key={i} style={{width:40,height:4,borderRadius:2,background:i<=step?'#fa0':'#333'}} />)}
+      </div>
+      {step===0 && <div style={{display:'flex',flexDirection:'column',gap:12}}><span style={{fontWeight:500,color:'#fff'}}>step 1: name</span><input value={name} onChange={e=>setName(e.target.value)} placeholder="your name" style={inputStyle}/></div>}
+      {step===1 && <div style={{display:'flex',flexDirection:'column',gap:12}}><span style={{fontWeight:500,color:'#fff'}}>step 2: email</span><input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="email" style={inputStyle}/></div>}
+      {step===2 && <div style={{display:'flex',flexDirection:'column',gap:8}}><span style={{fontWeight:600,color:'#4f8',fontSize:16}}>done!</span><span style={{color:'#888'}}>thanks for signing up</span></div>}
+      <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
+        <button disabled={step===0} onClick={()=>setStep(s=>s-1)}>back</button>
+        <button onClick={()=>setStep(s=>Math.min(2,s+1))}>next</button>
+      </div>
+    </div>
+  );
+}`
     }
   };
 

@@ -201,7 +201,7 @@ render(document.getElementById('app'), {
       [T, t.description, { fg: 'var(--text-secondary)', fs: 13, m: '8px 0' }], Code({ code: t.signature || '' })]))], { g: 16 }],
 
   'examples': () => [V, [Section({ title: 'examples', subtitle: 'interactive demos with token comparisons' }),
-    [V, API_DATA.examples.map((ex: { id: string; name: string; file: string; savings: string; tooeyTokens: number; reactTokens: number; description: string; tooeyCode: string; reactCode: string; demoSpec: string }) => Card({}, [
+    [V, API_DATA.examples.map((ex: { id: string; name: string; file: string; savings: string; tooeyTokens: number; reactTokens: number; description: string; tooeyCode: string; reactCode: string; demoSpec: string; reactDemoCode: string }) => Card({}, [
       [H, [
         [T, ex.name, { fg: 'var(--text)', fw: 600, fs: 16 }],
         [T, ex.savings, { fg: 'var(--success)', fw: 700, ff: 'monospace', fs: 14 }]
@@ -221,11 +221,17 @@ render(document.getElementById('app'), {
           }]
         ], { g: 8 }]
       ], { cols: 2, g: 16 }],
-      [V, [
-        [H, [[T, 'live demo', { fg: 'var(--text-muted)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
-          [L, 'full example ↗', { href: `examples/${ex.file}`, fg: 'var(--accent)', fs: 11, s: { textDecoration: 'none' }, target: '_blank' }]], { jc: 'sb', ai: 'c' }],
-        [D, '', { id: `demo-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' }, 'data-spec': ex.demoSpec }]
-      ], { g: 8, m: '16px 0 0 0' }]
+      [T, 'live demos', { fg: 'var(--text-muted)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' }, m: '16px 0 8px 0' }],
+      [G, [
+        [V, [
+          [T, 'tooey', { fg: 'var(--accent)', fs: 10, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
+          [D, '', { id: `demo-tooey-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' }, 'data-spec': ex.demoSpec }]
+        ], { g: 8 }],
+        [V, [
+          [T, 'react', { fg: 'var(--warning)', fs: 10, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
+          [D, '', { id: `demo-react-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' }, 'data-react': ex.reactDemoCode }]
+        ], { g: 8 }]
+      ], { cols: 2, g: 16 }]
     ])), { g: 24 }]], { g: 16 }]
 };
 
@@ -255,6 +261,57 @@ const navigateTo = (page: Page) => {
   searchResults.set([]);
 };
 
+// load React and Babel from CDN for examples page
+let reactLoaded = false;
+const loadReact = (): Promise<void> => {
+  if (reactLoaded) return Promise.resolve();
+  return new Promise((resolve) => {
+    const react = document.createElement('script');
+    react.src = 'https://unpkg.com/react@18/umd/react.development.js';
+    react.crossOrigin = 'anonymous';
+    react.onload = () => {
+      const reactDom = document.createElement('script');
+      reactDom.src = 'https://unpkg.com/react-dom@18/umd/react-dom.development.js';
+      reactDom.crossOrigin = 'anonymous';
+      reactDom.onload = () => {
+        const babel = document.createElement('script');
+        babel.src = 'https://unpkg.com/@babel/standalone/babel.min.js';
+        babel.onload = () => {
+          reactLoaded = true;
+          resolve();
+        };
+        document.head.appendChild(babel);
+      };
+      document.head.appendChild(reactDom);
+    };
+    document.head.appendChild(react);
+  });
+};
+
+const renderReactDemo = (container: HTMLElement, code: string) => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Babel = (window as any).Babel;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const React = (window as any).React;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ReactDOM = (window as any).ReactDOM;
+    if (!Babel || !React || !ReactDOM) return;
+
+    // transpile JSX to JS
+    const transformed = Babel.transform(code, { presets: ['react'] }).code;
+    // create component function
+    const Component = new Function('React', `${transformed}; return ${code.match(/function\s+(\w+)/)?.[1] || 'Component'};`)(React);
+    // render to container
+    const root = ReactDOM.createRoot(container);
+    root.render(React.createElement(Component));
+    container.dataset.rendered = 'true';
+  } catch (e) {
+    console.warn('[tooey] failed to render react demo:', e);
+    container.textContent = 'failed to render';
+  }
+};
+
 const renderPage = () => {
   if (!pageContainer) return;
   const page = currentPage();
@@ -265,8 +322,9 @@ const renderPage = () => {
     el.style.background = navItems[i].page === page ? 'var(--bg-tertiary)' : 'transparent';
     el.style.color = navItems[i].page === page ? 'var(--accent)' : 'var(--text-secondary)';
   });
-  // render live demos using tooey
+  // render live demos
   if (page === 'examples') {
+    // render tooey demos
     document.querySelectorAll('[data-spec]').forEach((container) => {
       const el = container as HTMLElement;
       const specJson = el.getAttribute('data-spec');
@@ -279,6 +337,16 @@ const renderPage = () => {
           console.warn('[tooey] failed to render demo:', e);
         }
       }
+    });
+    // load react and render react demos
+    loadReact().then(() => {
+      document.querySelectorAll('[data-react]').forEach((container) => {
+        const el = container as HTMLElement;
+        const code = el.getAttribute('data-react');
+        if (code && !el.dataset.rendered) {
+          renderReactDemo(el, code);
+        }
+      });
     });
   }
 };
