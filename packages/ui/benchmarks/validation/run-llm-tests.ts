@@ -37,8 +37,8 @@ const TOOEY_PROMPT = TOOEY_SYSTEM_PROMPT + `
 ### Form
 {s:{name:"",email:""},r:[V,[[V,[[T,"Name"],[I,"",{v:{$:"name"},x:"name",ph:"name"}]],{g:4}],[V,[[T,"Email"],[I,"",{type:"email",v:{$:"email"},x:"email",ph:"email"}]],{g:4}]],{g:16}]}
 
-### Modal (deeply nested)
-{s:{o:false},r:[V,[[B,"Open",{c:"o~"}],{?:"o",t:[D,[[D,[[T,"Title",{fw:700}],[T,"Content here"],[B,"Close",{c:"o~"}]],{bg:"#fff",p:16,r:8,g:8}]],{pos:"fix",w:"100vw",h:"100vh",bg:"#0008",jc:"c",ai:"c"}]}],{g:8}]}
+### Modal (using show prop for cleaner nesting)
+{s:{o:false},r:[V,[[B,"Open",{c:"o~"}],[D,[[D,[[T,"Title",{fw:700}],[T,"Content"],[B,"Close",{c:"o~"}]],{bg:"#fff",p:16,r:8,g:8}]],{show:"o",pos:"fix",w:"100vw",h:"100vh",bg:"#0008",jc:"c",ai:"c"}]],{g:8}]}
 
 IMPORTANT:
 - Output compact tooey on a single line with no whitespace or newlines
@@ -126,7 +126,7 @@ function checkTooeyStructure(code: string, id: string): boolean {
     '004': () => /Ul/.test(code) && /Li/.test(code),
     '005': () => /\?/.test(code) && /is\s*:\s*[01]/.test(code) && /!\d/.test(code), // conditional with is:0/1 and set operations
     '006': () => /I/.test(code) && /password/i.test(code),
-    '007': () => /\?/.test(code) && /~/.test(code), // conditional with toggle
+    '007': () => (/\?/.test(code) || /show/.test(code)) && /~/.test(code), // conditional (? or show) with toggle
     '008': () => /Ol/.test(code) && /Li/.test(code),
   };
   return checks[id]?.() ?? false;

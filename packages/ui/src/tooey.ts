@@ -83,6 +83,8 @@ type Op = '+' | '-' | '!' | '~' | '<' | '>' | 'X' | '.';
 type EventHandler = [string, Op, unknown?] | (() => void) | string;
 
 interface Props {
+  // conditional rendering
+  show?: string; // state key - component only renders when state is truthy
   // spacing/sizing
   g?: number | string;
   p?: number | string;
@@ -929,6 +931,44 @@ function createElement(
   }
 
   const type = first as ComponentType;
+
+  // handle show prop - conditional rendering based on state
+  if (props.show !== undefined) {
+    const showKey = props.show;
+    const placeholder = document.createElement('div');
+    placeholder.style.display = 'contents';
+
+    let currentEl: HTMLElement | null = null;
+    let childCtx: RenderContext | null = null;
+
+    const updateShow = () => {
+      // cleanup previous render
+      if (childCtx) {
+        childCtx.cleanups.forEach(fn => fn());
+        childCtx.cleanups = [];
+      }
+      if (currentEl) {
+        placeholder.innerHTML = '';
+        currentEl = null;
+      }
+
+      const showValue = state[showKey]?.();
+      if (!showValue) return;
+
+      // create the element without the show prop to avoid infinite recursion
+      const { show: _, ...propsWithoutShow } = props;
+      childCtx = { cleanups: [], state, theme: ctx.theme, plugins: ctx.plugins };
+      currentEl = createElement([type, content, propsWithoutShow as Props], childCtx, itemContext);
+      if (currentEl) {
+        placeholder.appendChild(currentEl);
+        ctx.cleanups.push(...childCtx.cleanups);
+      }
+    };
+
+    effect(updateShow, ctx);
+    return placeholder;
+  }
+
   let el: HTMLElement;
 
   switch (type) {
