@@ -1,10 +1,19 @@
 /**
  * tooey documentation site
  * demonstrates the full tooey ecosystem: signals, computed, effects, plugins, theming, function components
+ * now also demonstrates advanced features: refs, context, portals, fragments, memo, devtools
  */
 
-import { render, signal, effect, V, H, D, G, T, B, I, L, Sv } from '@tooey/ui';
-import type { TooeySpec, NodeSpec, Props, TooeyPlugin } from '@tooey/ui';
+import {
+  render, signal, effect,
+  // 2-letter component abbreviations
+  vs, hs, dv, gr, fr,
+  tx, bt, In, ln, sv,
+  // advanced features
+  ref, cx, ux, devtools,
+  // types
+  type TooeySpec, type NodeSpec, type Props, type TooeyPlugin, type ProviderNode, type PortalNode
+} from '@tooey/ui';
 import { API_DATA, searchAPI, type SearchResult, type ApiItem } from './api-data';
 
 // ============================================================================
@@ -78,7 +87,7 @@ const loggerPlugin: TooeyPlugin = {
 
 const Logo = (props: { size?: number }): NodeSpec => {
   const size = props.size || 32;
-  return [D, '', {
+  return [dv, '', {
     w: size,
     h: size,
     s: {
@@ -102,7 +111,7 @@ const renderLogos = () => {
 };
 
 const Card = (_props: Props = {}, children: NodeSpec[] = []): NodeSpec =>
-  [V, children, { cls: 'bg-bg-secondary p-4 rounded-lg border border-border' }];
+  [vs, children, { cls: 'bg-bg-secondary p-4 rounded-lg border border-border' }];
 
 // store code blocks for later rendering with Prism
 const codeBlocks: Map<string, { code: string; lang: string }> = new Map();
@@ -110,7 +119,7 @@ const codeBlocks: Map<string, { code: string; lang: string }> = new Map();
 const Code = (props: { code: string; lang?: string }): NodeSpec => {
   const id = `code-${Math.random().toString(36).slice(2, 8)}`;
   codeBlocks.set(id, { code: props.code, lang: props.lang || 'javascript' });
-  return [D, '', { id, cls: 'bg-code-bg rounded overflow-auto max-h-[300px]' }];
+  return [dv, '', { id, cls: 'bg-code-bg rounded overflow-auto max-h-[300px]' }];
 };
 
 // helper to escape HTML
@@ -130,23 +139,23 @@ const renderCodeBlocks = () => {
 };
 
 const Section = (props: { title: string; subtitle?: string }): NodeSpec =>
-  [V, [
-    [T, props.title, { cls: 'text-xs font-normal text-text-muted uppercase tracking-wider block' }],
-    props.subtitle ? [T, props.subtitle, { cls: 'text-sm text-text-secondary mt-1' }] : null
+  [vs, [
+    [tx, props.title, { cls: 'text-xs font-normal text-text-muted uppercase tracking-wider block' }],
+    props.subtitle ? [tx, props.subtitle, { cls: 'text-sm text-text-secondary mt-1' }] : null
   ].filter(Boolean) as NodeSpec[], { cls: 'mb-4' }];
 
 const ApiDetail = (props: { item: ApiItem; type: string }): NodeSpec => {
   const { item, type } = props;
   const children: NodeSpec[] = [
-    [H, [
-      [T, type, { cls: 'text-[10px] text-accent bg-bg-tertiary px-2 py-0.5 rounded uppercase' }],
-      [T, item.name || item.op || item.fullName || '', { cls: 'text-lg font-semibold text-text-primary' }]
+    [hs, [
+      [tx, type, { cls: 'text-[10px] text-accent bg-bg-tertiary px-2 py-0.5 rounded uppercase' }],
+      [tx, item.name || item.op || item.fullName || '', { cls: 'text-lg font-semibold text-text-primary' }]
     ], { cls: 'gap-2 items-center flex' }],
-    [T, item.description, { cls: 'text-text-secondary my-2 mb-4 block' }]
+    [tx, item.description, { cls: 'text-text-secondary my-2 mb-4 block' }]
   ];
   if (item.signature) children.push(Code({ code: item.signature }));
-  if (item.example) children.push([V, [
-    [T, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider' }],
+  if (item.example) children.push([vs, [
+    [tx, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider' }],
     Code({ code: item.example })
   ], { cls: 'gap-2 my-4' }]);
   return Card({}, children);
@@ -156,133 +165,206 @@ const ApiDetail = (props: { item: ApiItem; type: string }): NodeSpec => {
 // pages
 // ============================================================================
 
-type Page = 'home' | 'core-functions' | 'instance-methods' | 'components' | 'props' | 'events' | 'control-flow' | 'theming' | 'plugins' | 'function-components' | 'error-boundaries' | 'types' | 'examples';
+type Page = 'home' | 'core-functions' | 'instance-methods' | 'components' | 'props' | 'events' | 'control-flow' | 'theming' | 'plugins' | 'function-components' | 'error-boundaries' | 'types' | 'examples' | 'advanced-features';
 
 const pages: Record<Page, () => NodeSpec> = {
-  'home': () => [V, [
-    [V, [
-      [H, [[D, [Logo({ size: 48 })], { cls: 'w-12 h-12 drop-shadow-[0_4px_20px_rgba(0,170,255,0.3)]' }],
-        [V, [[T, 'tooey', { cls: 'text-2xl font-bold text-text-primary' }], [T, 'token-efficient ui for llm output', { cls: 'text-sm text-text-secondary' }]], { cls: 'gap-1' }]], { cls: 'gap-4 items-center flex' }],
-      [H, [[T, '~39%', { cls: 'text-accent font-semibold' }], [T, 'fewer tokens', { cls: 'text-text-secondary' }],
-        [T, '|', { cls: 'text-border mx-2' }], [T, '~10kb', { cls: 'text-accent font-semibold' }], [T, 'minified', { cls: 'text-text-secondary' }],
-        [T, '|', { cls: 'text-border mx-2' }], [T, '0', { cls: 'text-accent font-semibold' }], [T, 'deps', { cls: 'text-text-secondary' }]], { cls: 'gap-1.5 items-center flex-wrap flex my-6' }]
+  'home': () => [vs, [
+    [vs, [
+      [hs, [[dv, [Logo({ size: 48 })], { cls: 'w-12 h-12 drop-shadow-[0_4px_20px_rgba(0,170,255,0.3)]' }],
+        [vs, [[tx, 'tooey', { cls: 'text-2xl font-bold text-text-primary' }], [tx, 'token-efficient ui for llm output', { cls: 'text-sm text-text-secondary' }]], { cls: 'gap-1' }]], { cls: 'gap-4 items-center flex' }],
+      [hs, [[tx, '~39%', { cls: 'text-accent font-semibold' }], [tx, 'fewer tokens', { cls: 'text-text-secondary' }],
+        [tx, '|', { cls: 'text-border mx-2' }], [tx, '~10kb', { cls: 'text-accent font-semibold' }], [tx, 'minified', { cls: 'text-text-secondary' }],
+        [tx, '|', { cls: 'text-border mx-2' }], [tx, '0', { cls: 'text-accent font-semibold' }], [tx, 'deps', { cls: 'text-text-secondary' }]], { cls: 'gap-1.5 items-center flex-wrap flex my-6' }]
     ], { cls: 'mb-8' }],
-    Card({}, [Section({ title: 'quick start' }), Code({ code: `import { render, V, T, B } from '@tooey/ui';
+    Card({}, [Section({ title: 'quick start' }), Code({ code: `import { render, vs, tx, bt } from '@tooey/ui';
 render(document.getElementById('app'), {
   s: { count: 0 },
-  r: [V, [[T, { $: 'count' }], [B, '+', { c: 'count+' }]], { g: 8 }]
-});` }), [H, [[B, 'examples', { c: () => navigateTo('examples'), cls: 'bg-accent text-white px-4 py-2 rounded border-none cursor-pointer hover:bg-accent-hover transition-colors' }],
-      [L, 'github', { href: 'https://github.com/vijaypemmaraju/tooey', cls: 'text-text-secondary px-4 py-2 no-underline hover:text-accent transition-colors' }]], { cls: 'gap-2 flex mt-4' }]]),
-    [G, [
-      Card({}, [[T, 'signals & reactivity', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [T, 'fine-grained reactivity with signals, computed, and effects', { cls: 'text-text-secondary text-sm' }]]),
-      Card({}, [[T, 'function components', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [T, 'create reusable components as simple functions', { cls: 'text-text-secondary text-sm' }]]),
-      Card({}, [[T, 'theming', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [T, 'token-based theming with $token syntax', { cls: 'text-text-secondary text-sm' }]]),
-      Card({}, [[T, 'plugins', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [T, 'extend functionality with lifecycle hooks', { cls: 'text-text-secondary text-sm' }]])
+  r: [vs, [[tx, { $: 'count' }], [bt, '+', { c: 'count+' }]], { g: 8 }]
+});` }), [hs, [[bt, 'examples', { c: () => navigateTo('examples'), cls: 'bg-accent text-white px-4 py-2 rounded border-none cursor-pointer hover:bg-accent-hover transition-colors' }],
+      [ln, 'github', { href: 'https://github.com/vijaypemmaraju/tooey', cls: 'text-text-secondary px-4 py-2 no-underline hover:text-accent transition-colors' }]], { cls: 'gap-2 flex mt-4' }]]),
+    [gr, [
+      Card({}, [[tx, 'signals & reactivity', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [tx, 'fine-grained reactivity with signals, computed, and effects', { cls: 'text-text-secondary text-sm' }]]),
+      Card({}, [[tx, 'function components', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [tx, 'create reusable components as simple functions', { cls: 'text-text-secondary text-sm' }]]),
+      Card({}, [[tx, 'theming', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [tx, 'token-based theming with $token syntax', { cls: 'text-text-secondary text-sm' }]]),
+      Card({}, [[tx, 'advanced features', { cls: 'font-semibold text-text-primary text-sm block mb-2' }], [tx, 'refs, context, portals, fragments, memo, router, ssr, devtools', { cls: 'text-text-secondary text-sm' }]])
     ], { cols: 2, g: 16, cls: 'my-6' }],
-    Card({}, [Section({ title: 'components' }), [G, ['layout', 'text', 'form', 'table', 'list', 'media'].map(cat =>
-      [V, [[T, cat, { cls: 'text-accent text-xs uppercase tracking-wider' }],
-        [T, API_DATA.components.filter(c => c.category === cat).map(c => c.name).join(' '), { cls: 'text-text-primary font-mono' }]], { cls: 'gap-1' }]), { cols: 3, g: 16 }]])
+    Card({}, [Section({ title: 'components' }), [gr, ['layout', 'text', 'form', 'table', 'list', 'media'].map(cat =>
+      [vs, [[tx, cat, { cls: 'text-accent text-xs uppercase tracking-wider' }],
+        [tx, API_DATA.components.filter(c => c.category === cat).map(c => c.name).join(' '), { cls: 'text-text-primary font-mono' }]], { cls: 'gap-1' }]), { cols: 3, g: 16 }]])
   ], { cls: 'space-y-6' }],
 
-  'core-functions': () => [V, [Section({ title: 'core functions', subtitle: 'essential functions for rendering and state management' }),
+  'core-functions': () => [vs, [Section({ title: 'core functions', subtitle: 'essential functions for rendering and state management' }),
     ...API_DATA.coreFunctions.map(fn => ApiDetail({ item: fn, type: 'function' }))], { g: 16 }],
 
-  'instance-methods': () => [V, [Section({ title: 'instance methods', subtitle: 'methods on TooeyInstance returned by render()' }),
+  'instance-methods': () => [vs, [Section({ title: 'instance methods', subtitle: 'methods on TooeyInstance returned by render()' }),
     ...API_DATA.instanceMethods.map(m => ApiDetail({ item: m, type: 'method' }))], { g: 16 }],
 
-  'components': () => [V, [Section({ title: 'components', subtitle: '22 built-in components with short names' }),
+  'components': () => [vs, [Section({ title: 'components', subtitle: '23 built-in components with short names' }),
     ...['layout', 'text', 'form', 'table', 'list', 'media'].map(cat => Card({}, [
-      [T, cat, { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
-      [G, API_DATA.components.filter(c => c.category === cat).map(c => [V, [
-        [H, [[T, c.name, { cls: 'text-success font-bold font-mono text-base' }], [T, `(${c.fullName})`, { cls: 'text-text-muted text-xs' }]], { cls: 'gap-1.5 items-center flex' }],
-        [T, c.description, { cls: 'text-text-secondary text-xs' }], [T, c.element, { cls: 'text-text-muted text-xs font-mono' }]
+      [tx, cat, { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
+      [gr, API_DATA.components.filter(c => c.category === cat).map(c => [vs, [
+        [hs, [[tx, c.name, { cls: 'text-success font-bold font-mono text-base' }], [tx, `(${c.fullName})`, { cls: 'text-text-muted text-xs' }]], { cls: 'gap-1.5 items-center flex' }],
+        [tx, c.description, { cls: 'text-text-secondary text-xs' }], [tx, c.element, { cls: 'text-text-muted text-xs font-mono' }]
       ], { cls: 'gap-1 p-2 bg-bg-tertiary rounded' }]), { cols: 2, g: 8 }]
     ]))], { cls: 'space-y-4' }],
 
-  'props': () => [V, [Section({ title: 'props', subtitle: 'all style and element properties' }),
+  'props': () => [vs, [Section({ title: 'props', subtitle: 'all style and element properties' }),
     ...['spacing', 'sizing', 'colors', 'borders', 'positioning', 'typography', 'layout', 'misc', 'element'].map(cat => Card({}, [
-      [T, cat, { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
-      [V, API_DATA.props.filter(p => p.category === cat).map(p => [H, [
-        [T, p.name, { cls: 'text-success font-semibold font-mono text-sm w-10' }],
-        [T, p.fullName || '', { cls: 'text-text-primary text-sm w-[120px]' }],
-        [T, p.description, { cls: 'text-text-secondary text-xs flex-1' }],
-        [T, p.example || '', { cls: 'text-text-muted font-mono text-xs' }]
+      [tx, cat, { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
+      [vs, API_DATA.props.filter(p => p.category === cat).map(p => [hs, [
+        [tx, p.name, { cls: 'text-success font-semibold font-mono text-sm w-10' }],
+        [tx, p.fullName || '', { cls: 'text-text-primary text-sm w-[120px]' }],
+        [tx, p.description, { cls: 'text-text-secondary text-xs flex-1' }],
+        [tx, p.example || '', { cls: 'text-text-muted font-mono text-xs' }]
       ], { cls: 'gap-2 items-center flex py-1.5 border-b border-border' }]), { cls: 'space-y-0' }]
     ]))], { cls: 'space-y-4' }],
 
-  'events': () => [V, [Section({ title: 'events & operations', subtitle: 'event handlers and state operations' }),
-    Card({}, [[T, 'events', { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
-      [V, API_DATA.events.map(e => [H, [[T, e.name, { cls: 'text-success font-semibold font-mono text-sm w-10' }],
-        [T, e.fullName || '', { cls: 'text-text-primary text-sm w-[100px]' }], [T, e.description, { cls: 'text-text-secondary text-xs flex-1' }],
-        [T, e.example || '', { cls: 'text-text-muted font-mono text-xs' }]], { cls: 'gap-2 items-center flex py-2 border-b border-border' }]), { cls: 'space-y-0' }]]),
-    Card({}, [[T, 'state operations', { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
-      [V, API_DATA.stateOps.map(op => [H, [[T, op.op || '', { cls: 'text-warning font-bold font-mono text-base w-[30px] text-center' }],
-        [T, op.name, { cls: 'text-text-primary text-sm w-20' }], [T, op.description, { cls: 'text-text-secondary text-xs flex-1' }],
-        [T, op.example || '', { cls: 'text-text-muted font-mono text-xs' }]], { cls: 'gap-2 items-center flex py-2 border-b border-border' }]), { cls: 'space-y-0' }]])
+  'events': () => [vs, [Section({ title: 'events & operations', subtitle: 'event handlers and state operations' }),
+    Card({}, [[tx, 'events', { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
+      [vs, API_DATA.events.map(e => [hs, [[tx, e.name, { cls: 'text-success font-semibold font-mono text-sm w-10' }],
+        [tx, e.fullName || '', { cls: 'text-text-primary text-sm w-[100px]' }], [tx, e.description, { cls: 'text-text-secondary text-xs flex-1' }],
+        [tx, e.example || '', { cls: 'text-text-muted font-mono text-xs' }]], { cls: 'gap-2 items-center flex py-2 border-b border-border' }]), { cls: 'space-y-0' }]]),
+    Card({}, [[tx, 'state operations', { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
+      [vs, API_DATA.stateOps.map(op => [hs, [[tx, op.op || '', { cls: 'text-warning font-bold font-mono text-base w-[30px] text-center' }],
+        [tx, op.name, { cls: 'text-text-primary text-sm w-20' }], [tx, op.description, { cls: 'text-text-secondary text-xs flex-1' }],
+        [tx, op.example || '', { cls: 'text-text-muted font-mono text-xs' }]], { cls: 'gap-2 items-center flex py-2 border-b border-border' }]), { cls: 'space-y-0' }]])
   ], { cls: 'space-y-4' }],
 
-  'control-flow': () => [V, [Section({ title: 'control flow', subtitle: 'conditional rendering and list iteration' }),
-    ...API_DATA.controlFlow.map(cf => Card({}, [[T, cf.name, { cls: 'text-sm font-semibold text-text-primary block mb-2' }],
-      [T, cf.description, { cls: 'text-text-secondary text-sm block mb-3' }],
+  'control-flow': () => [vs, [Section({ title: 'control flow', subtitle: 'conditional rendering and list iteration' }),
+    ...API_DATA.controlFlow.map(cf => Card({}, [[tx, cf.name, { cls: 'text-sm font-semibold text-text-primary block mb-2' }],
+      [tx, cf.description, { cls: 'text-text-secondary text-sm block mb-3' }],
       Code({ code: cf.example || '' })]))], { cls: 'space-y-4' }],
 
-  'theming': () => [V, [Section({ title: 'theming', subtitle: 'token-based theming system' }),
-    Card({}, [[T, API_DATA.theming.description, { cls: 'text-text-secondary block mb-4' }],
-      [T, 'interface', { cls: 'text-xs text-text-muted uppercase tracking-wider' }], Code({ code: API_DATA.theming.interface })]),
-    Card({}, [[T, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }],
+  'theming': () => [vs, [Section({ title: 'theming', subtitle: 'token-based theming system' }),
+    Card({}, [[tx, API_DATA.theming.description, { cls: 'text-text-secondary block mb-4' }],
+      [tx, 'interface', { cls: 'text-xs text-text-muted uppercase tracking-wider' }], Code({ code: API_DATA.theming.interface })]),
+    Card({}, [[tx, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }],
       Code({ code: API_DATA.theming.example })])], { cls: 'space-y-4' }],
 
-  'plugins': () => [V, [Section({ title: 'plugins', subtitle: 'extend with lifecycle hooks' }),
-    Card({}, [[T, API_DATA.plugins.description, { cls: 'text-text-secondary block mb-4' }], Code({ code: API_DATA.plugins.interface })]),
-    Card({}, [[T, 'hooks', { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
-      [V, API_DATA.plugins.hooks.map(h => [H, [[T, h.name, { cls: 'text-success font-semibold font-mono text-sm w-[120px]' }],
-        [T, h.description, { cls: 'text-text-secondary text-xs flex-1' }]], { cls: 'gap-2 items-center flex py-2 border-b border-border' }]), { cls: 'space-y-0' }]]),
-    Card({}, [[T, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }], Code({ code: API_DATA.plugins.example })])
+  'plugins': () => [vs, [Section({ title: 'plugins', subtitle: 'extend with lifecycle hooks' }),
+    Card({}, [[tx, API_DATA.plugins.description, { cls: 'text-text-secondary block mb-4' }], Code({ code: API_DATA.plugins.interface })]),
+    Card({}, [[tx, 'hooks', { cls: 'text-sm font-semibold text-accent uppercase mb-3 block' }],
+      [vs, API_DATA.plugins.hooks.map(h => [hs, [[tx, h.name, { cls: 'text-success font-semibold font-mono text-sm w-[120px]' }],
+        [tx, h.description, { cls: 'text-text-secondary text-xs flex-1' }]], { cls: 'gap-2 items-center flex py-2 border-b border-border' }]), { cls: 'space-y-0' }]]),
+    Card({}, [[tx, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }], Code({ code: API_DATA.plugins.example })])
   ], { cls: 'space-y-4' }],
 
-  'function-components': () => [V, [Section({ title: 'function components', subtitle: 'create reusable components' }),
-    Card({}, [[T, API_DATA.functionComponents.description, { cls: 'text-text-secondary block mb-4' }], Code({ code: API_DATA.functionComponents.signature })]),
-    Card({}, [[T, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }], Code({ code: API_DATA.functionComponents.example })])], { cls: 'space-y-4' }],
+  'function-components': () => [vs, [Section({ title: 'function components', subtitle: 'create reusable components' }),
+    Card({}, [[tx, API_DATA.functionComponents.description, { cls: 'text-text-secondary block mb-4' }], Code({ code: API_DATA.functionComponents.signature })]),
+    Card({}, [[tx, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }], Code({ code: API_DATA.functionComponents.example })])], { cls: 'space-y-4' }],
 
-  'error-boundaries': () => [V, [Section({ title: 'error boundaries', subtitle: 'catch render errors gracefully' }),
-    Card({}, [[T, API_DATA.errorBoundaries.description, { cls: 'text-text-secondary block mb-4' }], Code({ code: API_DATA.errorBoundaries.interface })]),
-    Card({}, [[T, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }], Code({ code: API_DATA.errorBoundaries.example })])], { cls: 'space-y-4' }],
+  'error-boundaries': () => [vs, [Section({ title: 'error boundaries', subtitle: 'catch render errors gracefully' }),
+    Card({}, [[tx, API_DATA.errorBoundaries.description, { cls: 'text-text-secondary block mb-4' }], Code({ code: API_DATA.errorBoundaries.interface })]),
+    Card({}, [[tx, 'example', { cls: 'text-xs text-text-muted uppercase tracking-wider mb-2 block' }], Code({ code: API_DATA.errorBoundaries.example })])], { cls: 'space-y-4' }],
 
-  'types': () => [V, [Section({ title: 'types', subtitle: 'typescript type definitions' }),
-    ...API_DATA.types.map(t => Card({}, [[T, t.name, { cls: 'text-success font-semibold font-mono text-sm' }],
-      [T, t.description, { cls: 'text-text-secondary text-sm my-2' }], Code({ code: t.signature || '' })]))], { cls: 'space-y-4' }],
+  'types': () => [vs, [Section({ title: 'types', subtitle: 'typescript type definitions' }),
+    ...API_DATA.types.map(t => Card({}, [[tx, t.name, { cls: 'text-success font-semibold font-mono text-sm' }],
+      [tx, t.description, { cls: 'text-text-secondary text-sm my-2' }], Code({ code: t.signature || '' })]))], { cls: 'space-y-4' }],
 
-  'examples': () => [V, [Section({ title: 'examples', subtitle: 'interactive demos with token comparisons' }),
-    [V, API_DATA.examples.map((ex: { id: string; name: string; file: string; savings: string; tooeyTokens: number; reactTokens: number; description: string; tooeyCode: string; reactCode: string; demoSpec: string; reactDemoCode: string }) => Card({}, [
-      [H, [
-        [T, ex.name, { cls: 'text-text-primary font-semibold text-base' }],
-        [T, ex.savings, { cls: 'text-success font-bold font-mono text-sm' }]
+  'examples': () => [vs, [Section({ title: 'examples', subtitle: 'interactive demos with token comparisons' }),
+    [vs, API_DATA.examples.map((ex: { id: string; name: string; file: string; savings: string; tooeyTokens: number; reactTokens: number; description: string; tooeyCode: string; reactCode: string; demoSpec: string; reactDemoCode: string }) => Card({}, [
+      [hs, [
+        [tx, ex.name, { cls: 'text-text-primary font-semibold text-base' }],
+        [tx, ex.savings, { cls: 'text-success font-bold font-mono text-sm' }]
       ], { cls: 'justify-between items-center flex' }],
-      [T, ex.description, { cls: 'text-text-secondary text-sm my-2 mb-4' }],
-      [D, [
-        [V, [
-          [H, [[T, 'tooey', { cls: 'text-accent text-xs uppercase tracking-wider' }],
-            [T, `(${ex.tooeyTokens} tokens)`, { cls: 'text-text-muted text-xs' }]], { cls: 'gap-2 items-center flex' }],
+      [tx, ex.description, { cls: 'text-text-secondary text-sm my-2 mb-4' }],
+      [dv, [
+        [vs, [
+          [hs, [[tx, 'tooey', { cls: 'text-accent text-xs uppercase tracking-wider' }],
+            [tx, `(${ex.tooeyTokens} tokens)`, { cls: 'text-text-muted text-xs' }]], { cls: 'gap-2 items-center flex' }],
           Code({ code: ex.tooeyCode, lang: 'javascript' })
         ], { cls: 'gap-2' }],
-        [V, [
-          [H, [[T, 'react', { cls: 'text-warning text-xs uppercase tracking-wider' }],
-            [T, `(${ex.reactTokens} tokens)`, { cls: 'text-text-muted text-xs' }]], { cls: 'gap-2 items-center flex' }],
+        [vs, [
+          [hs, [[tx, 'react', { cls: 'text-warning text-xs uppercase tracking-wider' }],
+            [tx, `(${ex.reactTokens} tokens)`, { cls: 'text-text-muted text-xs' }]], { cls: 'gap-2 items-center flex' }],
           Code({ code: ex.reactCode, lang: 'jsx' })
         ], { cls: 'gap-2' }]
       ], { cls: 'grid grid-cols-1 sm:grid-cols-2 gap-4' }],
-      [T, 'live demos', { cls: 'text-text-muted text-xs uppercase tracking-wider mt-4 mb-2' }],
-      [D, [
-        [V, [
-          [T, 'tooey', { cls: 'text-accent text-[10px] uppercase tracking-wider' }],
-          [D, '', { id: `demo-tooey-${ex.id}`, cls: 'bg-bg-tertiary p-4 rounded-lg border border-border min-h-[100px]' }]
+      [tx, 'live demos', { cls: 'text-text-muted text-xs uppercase tracking-wider mt-4 mb-2' }],
+      [dv, [
+        [vs, [
+          [tx, 'tooey', { cls: 'text-accent text-[10px] uppercase tracking-wider' }],
+          [dv, '', { id: `demo-tooey-${ex.id}`, cls: 'bg-bg-tertiary p-4 rounded-lg border border-border min-h-[100px]' }]
         ], { cls: 'gap-2' }],
-        [V, [
-          [T, 'react', { cls: 'text-warning text-[10px] uppercase tracking-wider' }],
-          [D, '', { id: `demo-react-${ex.id}`, cls: 'bg-bg-tertiary p-4 rounded-lg border border-border min-h-[100px]' }]
+        [vs, [
+          [tx, 'react', { cls: 'text-warning text-[10px] uppercase tracking-wider' }],
+          [dv, '', { id: `demo-react-${ex.id}`, cls: 'bg-bg-tertiary p-4 rounded-lg border border-border min-h-[100px]' }]
         ], { cls: 'gap-2' }]
       ], { cls: 'grid grid-cols-1 sm:grid-cols-2 gap-4' }]
-    ])), { cls: 'space-y-6' }]], { cls: 'space-y-4' }]
+    ])), { cls: 'space-y-6' }]], { cls: 'space-y-4' }],
+
+  'advanced-features': () => [vs, [
+    Section({ title: 'advanced features', subtitle: 'refs, context, portals, fragments, reducer, memo, ssr, router, devtools' }),
+    // refs
+    Card({}, [
+      [hs, [[tx, 'refs', { cls: 'text-accent text-xs uppercase' }], [tx, 'ref()', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'access dom elements directly for focus, measurements, or third-party integration', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      Code({ code: `const inputRef = ref();
+render(el, { r: [vs, [
+  [In, '', { rf: inputRef, ph: 'type here...' }],
+  [bt, 'focus', { c: () => inputRef.el?.focus() }]
+]] });` })
+    ]),
+    // context
+    Card({}, [
+      [hs, [[tx, 'context', { cls: 'text-accent text-xs uppercase' }], [tx, 'cx() ux()', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'pass data deeply without prop drilling', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      Code({ code: `const ThemeCtx = cx('#007bff');
+const Themed = () => [tx, 'text', { fg: ux(ThemeCtx) }];
+render(el, { r: { pv: ThemeCtx, v: '#ff0000', c: [Themed] } });` })
+    ]),
+    // portals
+    Card({}, [
+      [hs, [[tx, 'portals', { cls: 'text-accent text-xs uppercase' }], [tx, '{ pt: target, c: [...] }', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'render content outside the normal dom tree (modals, tooltips)', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      Code({ code: `// render modal to document.body
+{ pt: document.body, c: [dv, [[tx, 'modal']], { pos: 'fix' }] }` })
+    ]),
+    // fragments
+    Card({}, [
+      [hs, [[tx, 'fragments', { cls: 'text-accent text-xs uppercase' }], [tx, 'fr', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'group children without a visible wrapper (uses display: contents)', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      Code({ code: `[fr, [[tx, 'one'], [tx, 'two'], [tx, 'three']]]` })
+    ]),
+    // reducer
+    Card({}, [
+      [hs, [[tx, 'reducer', { cls: 'text-accent text-xs uppercase' }], [tx, 'rd$()', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'complex state logic with reducer pattern (like useReducer)', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      Code({ code: `const reducer = (s, a) => a.type === 'inc' ? { n: s.n + 1 } : s;
+const { s, dp } = rd$(reducer, { n: 0 });
+render(el, { s, r: [vs, [[tx, { $: 'n' }], [bt, '+', { c: () => dp({ type: 'inc' }) }]]] });` })
+    ]),
+    // memo
+    Card({}, [
+      [hs, [[tx, 'memo', { cls: 'text-accent text-xs uppercase' }], [tx, 'mm()', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'memoize expensive components to prevent unnecessary re-renders', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      Code({ code: `const ExpensiveList = mm((props) => [vs, props.items.map(i => [tx, i])]);
+// or declarative: { mm: ['dep1', 'dep2'], c: [...] }` })
+    ]),
+    // ssr
+    Card({}, [
+      [hs, [[tx, 'ssr', { cls: 'text-accent text-xs uppercase' }], [tx, 'rts() hy()', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'server-side rendering and hydration', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      Code({ code: `// server
+const html = rts({ s: { name: 'world' }, r: [tx, { $: 'name' }] });
+// client
+const app = hy(container, spec);` })
+    ]),
+    // router
+    Card({}, [
+      [hs, [[tx, 'router', { cls: 'text-accent text-xs uppercase' }], [tx, 'lk ot() nav()', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'client-side routing for single-page apps', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      Code({ code: `const routes = [{ p: '/', c: Home }, { p: '/about', c: About }];
+[vs, [[lk, 'home', { to: '/' }], [lk, 'about', { to: '/about' }], ot(routes)]]` })
+    ]),
+    // devtools
+    Card({}, [
+      [hs, [[tx, 'devtools', { cls: 'text-accent text-xs uppercase' }], [tx, 'devtools()', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'debugging plugin with state inspection and history (this docs site uses it!)', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      Code({ code: `render(el, spec, { plugins: [devtools({ name: 'my-app' })] });
+// console: window.__TOOEY_DEVTOOLS__.getState()` })
+    ])
+  ], { cls: 'space-y-4' }]
 };
 
 // store demo data for lookup by ID
@@ -298,7 +380,7 @@ const navItems: Array<{ label: string; page: Page }> = [
   { label: 'components', page: 'components' }, { label: 'props', page: 'props' }, { label: 'events & ops', page: 'events' },
   { label: 'control flow', page: 'control-flow' }, { label: 'theming', page: 'theming' }, { label: 'plugins', page: 'plugins' },
   { label: 'function components', page: 'function-components' }, { label: 'error boundaries', page: 'error-boundaries' },
-  { label: 'types', page: 'types' }, { label: 'examples', page: 'examples' }
+  { label: 'advanced features', page: 'advanced-features' }, { label: 'types', page: 'types' }, { label: 'examples', page: 'examples' }
 ];
 
 // ============================================================================
@@ -503,10 +585,10 @@ const renderSearchResults = () => {
   const results = searchResults();
   if (!results.length) { searchContainer.innerHTML = ''; return; }
   searchContainer.innerHTML = '';
-  render(searchContainer, { r: [V, results.slice(0, 10).map(r => [D, [
-    [H, [[T, r.type, { cls: 'text-[9px] text-accent bg-bg-tertiary px-1.5 py-0.5 rounded uppercase' }],
-      [T, r.name, { cls: 'text-text-primary font-medium text-sm' }]], { cls: 'gap-1.5 items-center flex' }],
-    [T, r.description, { cls: 'text-text-secondary text-xs' }]
+  render(searchContainer, { r: [vs, results.slice(0, 10).map(r => [dv, [
+    [hs, [[tx, r.type, { cls: 'text-[9px] text-accent bg-bg-tertiary px-1.5 py-0.5 rounded uppercase' }],
+      [tx, r.name, { cls: 'text-text-primary font-medium text-sm' }]], { cls: 'gap-1.5 items-center flex' }],
+    [tx, r.description, { cls: 'text-text-secondary text-xs' }]
   ], { cls: 'search-result p-2 rounded cursor-pointer hover:bg-bg-tertiary transition-colors' }]), {
     cls: 'absolute top-[42px] left-0 right-0 bg-bg-secondary rounded p-2 z-[100] max-h-[300px] overflow-auto border border-border shadow-lg'
   }] });
@@ -516,6 +598,9 @@ const renderSearchResults = () => {
 // init
 // ============================================================================
 
+// create ref for search input (demonstrating refs feature)
+const searchRef = ref<HTMLInputElement | null>();
+
 const init = () => {
   applyCssVars(isDark() ? darkTheme : lightTheme);
   injectGlobalStyles();
@@ -523,35 +608,41 @@ const init = () => {
   const container = document.getElementById('app');
   if (!container) return;
 
+  // create devtools plugin (demonstrating devtools feature)
+  const docsDevtools = devtools({ name: 'tooey-docs', log: false });
+
   const spec: TooeySpec = {
     s: {},
-    r: [H, [
+    r: [hs, [
       // mobile menu button (hidden on desktop)
-      [B, '', { id: 'menu-btn', cls: 'fixed top-4 left-4 z-[1001] bg-bg-secondary p-2.5 rounded-lg border border-border hidden' }],
-      // sidebar overlay (for mobile)
-      [D, '', { id: 'sidebar-overlay', cls: 'fixed inset-0 z-[999] bg-black/50 hidden' }],
+      [bt, '', { id: 'menu-btn', cls: 'fixed top-4 left-4 z-[1001] bg-bg-secondary p-2.5 rounded-lg border border-border hidden' }],
+      // sidebar overlay (for mobile) - using portal would be cleaner but keeping simple for now
+      [dv, '', { id: 'sidebar-overlay', cls: 'fixed inset-0 z-[999] bg-black/50 hidden' }],
       // sidebar
-      [V, [
-        [H, [Logo({ size: 32 }), [T, 'tooey', { cls: 'text-lg font-bold text-text-primary' }]], { cls: 'gap-2 items-center flex mb-6' }],
-        [V, [
-          [I, '', { ph: 'search...', id: 'search', cls: 'bg-bg-tertiary text-text-primary px-3 py-2 rounded w-full border border-border outline-none focus:border-accent' }],
-          [D, '', { id: 'search-results' }]
+      [vs, [
+        [hs, [Logo({ size: 32 }), [tx, 'tooey', { cls: 'text-lg font-bold text-text-primary' }]], { cls: 'gap-2 items-center flex mb-6' }],
+        [vs, [
+          // using ref for search input
+          [In, '', { ph: 'search...', id: 'search', rf: searchRef, cls: 'bg-bg-tertiary text-text-primary px-3 py-2 rounded w-full border border-border outline-none focus:border-accent' }],
+          [dv, '', { id: 'search-results' }]
         ], { cls: 'relative mb-4' }],
-        [V, navItems.map(item => [B, item.label, { cls: 'nav-btn bg-transparent text-text-secondary px-3 py-2 rounded w-full text-left text-sm cursor-pointer border-none hover:bg-bg-tertiary hover:text-accent transition-colors' }]), { cls: 'gap-0.5' }],
-        [H, [[B, '', { id: 'theme-btn', cls: 'bg-transparent text-text-secondary p-2 rounded cursor-pointer border-none hover:text-accent transition-colors' }],
-          [L, '', { href: 'https://github.com/vijaypemmaraju/tooey', id: 'github-link', cls: 'text-text-secondary p-2 hover:text-accent transition-colors' }]], { cls: 'gap-2 mt-auto' }]
+        [vs, navItems.map(item => [bt, item.label, { cls: 'nav-btn bg-transparent text-text-secondary px-3 py-2 rounded w-full text-left text-sm cursor-pointer border-none hover:bg-bg-tertiary hover:text-accent transition-colors' }]), { cls: 'gap-0.5' }],
+        [hs, [[bt, '', { id: 'theme-btn', cls: 'bg-transparent text-text-secondary p-2 rounded cursor-pointer border-none hover:text-accent transition-colors' }],
+          [ln, '', { href: 'https://github.com/vijaypemmaraju/tooey', id: 'github-link', cls: 'text-text-secondary p-2 hover:text-accent transition-colors' }]], { cls: 'gap-2 mt-auto' }]
       ], { id: 'sidebar', cls: 'w-60 h-screen p-6 bg-bg-secondary fixed top-0 left-0 z-[1000] border-r border-border overflow-y-auto flex flex-col transition-transform duration-300' }],
-      // content
-      [D, [{ boundary: true, child: [D, '', { id: 'page-content' }], fallback: Card({}, [[T, 'error', { cls: 'text-error font-semibold' }]]), onError: (e) => console.error(e) }],
+      // content with error boundary
+      [dv, [{ boundary: true, child: [dv, '', { id: 'page-content' }], fallback: Card({}, [[tx, 'error', { cls: 'text-error font-semibold' }]]), onError: (e) => console.error(e) }],
         { id: 'main-content', cls: 'ml-60 p-8 max-w-[900px] min-h-screen' }]
     ], { cls: 'w-full' }]
   };
 
-  render(container, spec, { plugins: [loggerPlugin] });
+  // render with both logger and devtools plugins
+  render(container, spec, { plugins: [loggerPlugin, docsDevtools] });
 
   pageContainer = document.getElementById('page-content')!;
   searchContainer = document.getElementById('search-results')!;
-  const searchInput = document.getElementById('search') as HTMLInputElement;
+  // use ref for search input instead of getElementById (demonstrating refs feature)
+  const searchInput = searchRef.el;
   const themeBtn = document.getElementById('theme-btn')!;
   const githubLink = document.getElementById('github-link')!;
   const menuBtn = document.getElementById('menu-btn')!;
