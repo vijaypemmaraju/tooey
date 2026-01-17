@@ -44,6 +44,31 @@ const applyCssVars = (theme: Theme): void => {
   });
 };
 
+// inject global styles for layout
+const injectGlobalStyles = () => {
+  if (document.getElementById('tooey-docs-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'tooey-docs-styles';
+  style.textContent = `
+    .grid-2 {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 16px !important;
+    }
+    @media (max-width: 600px) {
+      .grid-2 {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    pre[class*="language-"], code[class*="language-"] {
+      font-family: 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace !important;
+      white-space: pre-wrap !important;
+      word-break: break-word !important;
+    }
+  `;
+  document.head.appendChild(style);
+};
+
 // ============================================================================
 // plugins
 // ============================================================================
@@ -255,7 +280,7 @@ render(document.getElementById('app'), {
             [T, `(${ex.reactTokens} tokens)`, { fg: 'var(--text-muted)', fs: 11 }]], { g: 8, ai: 'c' }],
           Code({ code: ex.reactCode, lang: 'jsx' })
         ], { g: 8 }]
-      ], { s: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' } }],
+      ], { cls: 'grid-2' }],
       [T, 'live demos', { fg: 'var(--text-muted)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' }, m: '16px 0 8px 0' }],
       [D, [
         [V, [
@@ -266,7 +291,7 @@ render(document.getElementById('app'), {
           [T, 'react', { fg: 'var(--warning)', fs: 10, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
           [D, '', { id: `demo-react-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' } }]
         ], { g: 8 }]
-      ], { s: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' } }]
+      ], { cls: 'grid-2' }]
     ])), { g: 24 }]], { g: 16 }]
 };
 
@@ -369,7 +394,13 @@ const highlightCode = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Prism = (window as any).Prism;
   if (Prism) {
-    Prism.highlightAll();
+    // highlight each code element individually for reliability
+    document.querySelectorAll('code[class*="language-"]').forEach((el) => {
+      if (!el.classList.contains('prism-highlighted')) {
+        Prism.highlightElement(el);
+        el.classList.add('prism-highlighted');
+      }
+    });
   }
 };
 
@@ -498,6 +529,7 @@ const renderSearchResults = () => {
 
 const init = () => {
   applyCssVars(isDark() ? darkTheme : lightTheme);
+  injectGlobalStyles();
 
   const container = document.getElementById('app');
   if (!container) return;
