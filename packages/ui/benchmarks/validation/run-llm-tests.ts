@@ -260,8 +260,6 @@ async function main() {
   const avgSavings = totalReactTokens > 0 ? Math.round((1 - totalTooeyTokens / totalReactTokens) * 100) : 0;
 
   // calculate total tokens including prompts (prompt is sent once per generation)
-  const tooeyPromptTokens = countTokens(TOOEY_PROMPT);
-  const reactPromptTokens = countTokens(REACT_PROMPT);
   const totalTooeyWithPrompt = totalTooeyTokens + (tooeyPromptTokens * results.length);
   const totalReactWithPrompt = totalReactTokens + (reactPromptTokens * results.length);
   const netSavings = totalReactWithPrompt > 0 ? Math.round((1 - totalTooeyWithPrompt / totalReactWithPrompt) * 100) : 0;
