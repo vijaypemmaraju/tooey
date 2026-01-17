@@ -4,7 +4,13 @@
  * tests how well LLMs understand different abbreviation styles
  */
 
+import * as fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { encode } from 'gpt-tokenizer';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
@@ -265,6 +271,76 @@ async function main() {
 
   console.log('\nefficiency score = accuracy% / total_tokens (higher = better)');
   console.log('');
+
+  // write markdown report
+  let report = `# abbreviation comprehension test results
+
+model: ${GEMINI_MODEL}
+date: ${new Date().toISOString().split('T')[0]}
+
+## summary
+
+tests how well LLMs understand different abbreviation styles without prior context.
+
+| scheme | accuracy | tokens | efficiency |
+|--------|----------|--------|------------|
+`;
+
+  for (const scheme of SCHEMES) {
+    const schemeResults = allResults.filter(r => r.scheme === scheme.name);
+    const correct = schemeResults.filter(r => r.correct).length;
+    const total = schemeResults.length;
+    const accuracy = correct / total;
+    const tokens = schemeResults.reduce((s, r) => s + r.tokens, 0);
+    const efficiency = (accuracy * 100 / tokens).toFixed(2);
+    report += `| ${scheme.name} | ${Math.round(accuracy * 100)}% (${correct}/${total}) | ${tokens} | ${efficiency} |\n`;
+  }
+
+  report += `\n## generation test
+
+| scheme | valid | output tokens |
+|--------|-------|---------------|
+`;
+
+  for (const gen of genResults) {
+    report += `| ${gen.scheme} | ${gen.valid ? '✓' : '✗'} | ${gen.tokens} |\n`;
+  }
+
+  report += `\n## detailed results\n\n`;
+
+  for (const scheme of SCHEMES) {
+    report += `### ${scheme.name}\n\n`;
+    report += `| abbrev | guessed | expected | correct |\n`;
+    report += `|--------|---------|----------|--------|\n`;
+
+    const schemeResults = allResults.filter(r => r.scheme === scheme.name);
+    for (const r of schemeResults) {
+      report += `| ${r.abbrev} | ${r.guessed.substring(0, 30)} | ${r.expected.split('/')[0].trim()} | ${r.correct ? '✓' : '✗'} |\n`;
+    }
+
+    const gen = genResults.find(g => g.scheme === scheme.name);
+    if (gen) {
+      report += `\n**generated code** (${gen.tokens} tokens):\n`;
+      report += `\`\`\`javascript\n${gen.code}\n\`\`\`\n\n`;
+    }
+  }
+
+  report += `## interpretation
+
+- **efficiency score** = accuracy% / total_tokens (higher is better)
+- measures the tradeoff between comprehension and token cost
+- single-letter abbreviations use fewer tokens but may have lower comprehension
+- longer abbreviations may be more "vector-adjacent" to their meanings
+
+## methodology
+
+1. **comprehension test**: given abbreviations without context, ask LLM to guess meanings
+2. **generation test**: given abbreviation mappings, ask LLM to generate a counter component
+3. compare accuracy and token efficiency across schemes
+`;
+
+  fs.writeFileSync(path.join(__dirname, 'ABBREVIATION_TEST_RESULTS.md'), report);
+  console.log('report: ABBREVIATION_TEST_RESULTS.md');
 }
 
 main().catch(err => {
