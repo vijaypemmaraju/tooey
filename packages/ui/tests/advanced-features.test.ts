@@ -19,6 +19,7 @@ import {
   Props,
   Component,
   NodeSpec,
+  TooeySpec,
   ProviderNode,
   PortalNode,
   MemoNode
@@ -260,22 +261,22 @@ describe('Advanced Features', () => {
 
       const Expensive: Component = (props) => {
         renderCount++;
-        return [tx, props?.label || 'default'];
+        return [tx, (props as Props & { label?: string })?.label || 'default'];
       };
 
       const MemoExpensive = mm(Expensive);
 
       // first render
-      const result1 = MemoExpensive({ label: 'test' });
+      const result1 = MemoExpensive({ label: 'test' } as Props);
       expect(renderCount).toBe(1);
 
       // same props - should use cache
-      const result2 = MemoExpensive({ label: 'test' });
+      const result2 = MemoExpensive({ label: 'test' } as Props);
       expect(renderCount).toBe(1);
       expect(result1).toBe(result2);
 
       // different props - should re-render
-      MemoExpensive({ label: 'changed' });
+      MemoExpensive({ label: 'changed' } as Props);
       expect(renderCount).toBe(2);
     });
 
@@ -290,10 +291,10 @@ describe('Advanced Features', () => {
       // always return true = never re-render
       const MemoComp = mm(Comp, () => true);
 
-      MemoComp({ label: 'a' });
+      MemoComp({ label: 'a' } as Props);
       expect(renderCount).toBe(1);
 
-      MemoComp({ label: 'b' });
+      MemoComp({ label: 'b' } as Props);
       expect(renderCount).toBe(1); // still 1 because compare returns true
     });
 
@@ -367,7 +368,7 @@ describe('Advanced Features', () => {
     });
 
     test('hy() hydrates SSR content', () => {
-      const spec = {
+      const spec: TooeySpec = {
         s: { count: 0 },
         r: [vs, [[tx, { $: 'count' }], [bt, '+', { c: 'count+' }]]]
       };
