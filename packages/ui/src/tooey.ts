@@ -2072,7 +2072,7 @@ interface RouteProps extends Props {
 
 // router component - renders matched route
 const Router: Component<RouterProps> = (props) => {
-  const routes = props?.routes || [];
+  const _routes = props?.routes || [];
   const base = props?.base || '';
 
   initRouter(base);
@@ -2153,6 +2153,7 @@ function devtools(options?: DevtoolsOptions): TooeyPlugin {
 
     onInit(instance) {
       if (shouldLog) {
+        // eslint-disable-next-line no-console
         console.log(`[${name}] initialized`, {
           state: Object.fromEntries(
             Object.entries(instance.state).map(([k, v]) => [k, v()])
@@ -2176,6 +2177,7 @@ function devtools(options?: DevtoolsOptions): TooeyPlugin {
 
     onDestroy(_instance) {
       if (shouldLog) {
+        // eslint-disable-next-line no-console
         console.log(`[${name}] destroyed`);
       }
       if (typeof window !== 'undefined') {
@@ -2197,6 +2199,7 @@ function devtools(options?: DevtoolsOptions): TooeyPlugin {
       }
 
       if (shouldLog) {
+        // eslint-disable-next-line no-console
         console.log(`[${name}] state change:`, key, oldVal, '→', newVal);
       }
     }
