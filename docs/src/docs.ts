@@ -244,7 +244,7 @@ render(document.getElementById('app'), {
         [T, ex.savings, { fg: 'var(--success)', fw: 700, ff: 'monospace', fs: 14 }]
       ], { jc: 'sb', ai: 'c' }],
       [T, ex.description, { fg: 'var(--text-secondary)', fs: 13, m: '8px 0 16px 0' }],
-      [G, [
+      [D, [
         [V, [
           [H, [[T, 'tooey', { fg: 'var(--accent)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
             [T, `(${ex.tooeyTokens} tokens)`, { fg: 'var(--text-muted)', fs: 11 }]], { g: 8, ai: 'c' }],
@@ -255,9 +255,9 @@ render(document.getElementById('app'), {
             [T, `(${ex.reactTokens} tokens)`, { fg: 'var(--text-muted)', fs: 11 }]], { g: 8, ai: 'c' }],
           Code({ code: ex.reactCode, lang: 'jsx' })
         ], { g: 8 }]
-      ], { cols: 2, g: 16 }],
+      ], { s: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' } }],
       [T, 'live demos', { fg: 'var(--text-muted)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' }, m: '16px 0 8px 0' }],
-      [G, [
+      [D, [
         [V, [
           [T, 'tooey', { fg: 'var(--accent)', fs: 10, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
           [D, '', { id: `demo-tooey-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' } }]
@@ -266,7 +266,7 @@ render(document.getElementById('app'), {
           [T, 'react', { fg: 'var(--warning)', fs: 10, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
           [D, '', { id: `demo-react-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' } }]
         ], { g: 8 }]
-      ], { cols: 2, g: 16 }]
+      ], { s: { display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' } }]
     ])), { g: 24 }]], { g: 16 }]
 };
 
@@ -307,14 +307,42 @@ const navigateTo = (page: Page) => {
 
 // load Prism for syntax highlighting
 let prismLoaded = false;
+let prismStyleEl: HTMLStyleElement | null = null;
+
+const updatePrismTheme = (dark: boolean) => {
+  if (!prismStyleEl) {
+    prismStyleEl = document.createElement('style');
+    document.head.appendChild(prismStyleEl);
+  }
+  // custom syntax highlighting colors that work in both modes
+  prismStyleEl.textContent = dark ? `
+    code[class*="language-"], pre[class*="language-"] { color: #e0e0e0; background: #111; }
+    .token.comment, .token.prolog, .token.doctype, .token.cdata { color: #6a9955; }
+    .token.punctuation { color: #808080; }
+    .token.property, .token.tag, .token.boolean, .token.number, .token.constant, .token.symbol { color: #b5cea8; }
+    .token.selector, .token.attr-name, .token.string, .token.char, .token.builtin { color: #ce9178; }
+    .token.operator, .token.entity, .token.url { color: #d4d4d4; }
+    .token.atrule, .token.attr-value, .token.keyword { color: #569cd6; }
+    .token.function, .token.class-name { color: #dcdcaa; }
+    .token.regex, .token.important, .token.variable { color: #d16969; }
+  ` : `
+    code[class*="language-"], pre[class*="language-"] { color: #333; background: #f4f4f4; }
+    .token.comment, .token.prolog, .token.doctype, .token.cdata { color: #6a9955; }
+    .token.punctuation { color: #393a34; }
+    .token.property, .token.tag, .token.boolean, .token.number, .token.constant, .token.symbol { color: #36acaa; }
+    .token.selector, .token.attr-name, .token.string, .token.char, .token.builtin { color: #9a6700; }
+    .token.operator, .token.entity, .token.url { color: #393a34; }
+    .token.atrule, .token.attr-value, .token.keyword { color: #0550ae; }
+    .token.function, .token.class-name { color: #6f42c1; }
+    .token.regex, .token.important, .token.variable { color: #cf222e; }
+  `;
+};
+
 const loadPrism = (): Promise<void> => {
   if (prismLoaded) return Promise.resolve();
   return new Promise((resolve) => {
-    // load dark theme CSS
-    const css = document.createElement('link');
-    css.rel = 'stylesheet';
-    css.href = 'https://unpkg.com/prismjs@1/themes/prism-tomorrow.min.css';
-    document.head.appendChild(css);
+    // apply initial theme
+    updatePrismTheme(isDark());
     // load Prism JS
     const script = document.createElement('script');
     script.src = 'https://unpkg.com/prismjs@1/prism.min.js';
@@ -406,8 +434,14 @@ const renderPage = () => {
   renderLogos();
 
   // render code blocks and apply syntax highlighting
-  renderCodeBlocks();
-  loadPrism().then(highlightCode);
+  // use requestAnimationFrame to ensure DOM is ready, then load Prism and highlight
+  requestAnimationFrame(() => {
+    renderCodeBlocks();
+    loadPrism().then(() => {
+      // double RAF to ensure code blocks are fully rendered
+      requestAnimationFrame(highlightCode);
+    });
+  });
 
   // update nav button styles
   document.querySelectorAll('.nav-btn').forEach((btn, i) => {
@@ -584,6 +618,7 @@ const init = () => {
     isDark.set(!isDark());
     applyCssVars(isDark() ? darkTheme : lightTheme);
     themeBtn.innerHTML = isDark() ? sunIcon : moonIcon;
+    updatePrismTheme(isDark());
   });
 
   // handle browser back/forward
