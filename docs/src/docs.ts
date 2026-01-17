@@ -63,19 +63,56 @@ const loggerPlugin: TooeyPlugin = {
 
 const Logo = (props: { size?: number }): NodeSpec => {
   const size = props.size || 32;
-  return [Sv, [
-    { tag: 'rect', x: 24, y: 8, width: 16, height: 48, rx: 8, fill: 'currentColor' },
-    { tag: 'rect', x: 12, y: 20, width: 40, height: 14, rx: 7, fill: 'currentColor', transform: 'rotate(-20 32 27)' }
-  ], { w: size, h: size, vb: '0 0 64 64', fg: 'var(--accent)' }];
+  return [D, '', {
+    w: size,
+    h: size,
+    s: {
+      display: 'inline-block',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any,
+    id: `logo-${Math.random().toString(36).slice(2, 8)}`
+  }];
+};
+
+// render logo SVG after DOM is ready
+const renderLogos = () => {
+  document.querySelectorAll('[id^="logo-"]').forEach((el) => {
+    if (el.innerHTML) return;
+    const size = parseInt((el as HTMLElement).style.width) || 32;
+    el.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 64 64" style="color: var(--accent);">
+      <rect x="24" y="8" width="16" height="48" rx="8" fill="currentColor"/>
+      <rect x="12" y="20" width="40" height="14" rx="7" fill="currentColor" transform="rotate(-20 32 27)"/>
+    </svg>`;
+  });
 };
 
 const Card = (_props: Props = {}, children: NodeSpec[] = []): NodeSpec =>
   [V, children, { bg: 'var(--bg-secondary)', p: 16, r: 8, s: { border: '1px solid var(--border)' } }];
 
-const Code = (props: { code: string }): NodeSpec =>
-  [D, [[T, props.code, { s: { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } }]], {
-    bg: 'var(--code-bg)', p: 8, r: 4, fs: 12, ff: 'ui-monospace, monospace', fg: 'var(--success)', ov: 'auto', s: { maxHeight: '300px' }
-  }];
+// store code blocks for later rendering with Prism
+const codeBlocks: Map<string, { code: string; lang: string }> = new Map();
+
+const Code = (props: { code: string; lang?: string }): NodeSpec => {
+  const id = `code-${Math.random().toString(36).slice(2, 8)}`;
+  codeBlocks.set(id, { code: props.code, lang: props.lang || 'javascript' });
+  return [D, '', { id, bg: 'var(--code-bg)', r: 4, ov: 'auto', s: { maxHeight: '300px' } }];
+};
+
+// helper to escape HTML
+const escapeHtml = (str: string): string =>
+  str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// render code blocks with Prism after DOM update
+const renderCodeBlocks = () => {
+  codeBlocks.forEach(({ code, lang }, id) => {
+    const el = document.getElementById(id);
+    if (el && !el.querySelector('pre')) {
+      el.innerHTML = `<pre style="margin:0;padding:8px;font-size:12px;line-height:1.4;"><code class="language-${lang}">${escapeHtml(code)}</code></pre>`;
+    }
+  });
+  // clear map to avoid memory leak on page changes
+  codeBlocks.clear();
+};
 
 const Section = (props: { title: string; subtitle?: string }): NodeSpec =>
   [V, [
@@ -211,29 +248,35 @@ render(document.getElementById('app'), {
         [V, [
           [H, [[T, 'tooey', { fg: 'var(--accent)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
             [T, `(${ex.tooeyTokens} tokens)`, { fg: 'var(--text-muted)', fs: 11 }]], { g: 8, ai: 'c' }],
-          Code({ code: ex.tooeyCode })
+          Code({ code: ex.tooeyCode, lang: 'javascript' })
         ], { g: 8 }],
         [V, [
           [H, [[T, 'react', { fg: 'var(--warning)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
             [T, `(${ex.reactTokens} tokens)`, { fg: 'var(--text-muted)', fs: 11 }]], { g: 8, ai: 'c' }],
-          [D, [[T, ex.reactCode, { s: { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } }]], {
-            bg: 'var(--code-bg)', p: 8, r: 4, fs: 12, ff: 'ui-monospace, monospace', fg: 'var(--warning)', ov: 'auto', s: { maxHeight: '300px' }
-          }]
+          Code({ code: ex.reactCode, lang: 'jsx' })
         ], { g: 8 }]
       ], { cols: 2, g: 16 }],
       [T, 'live demos', { fg: 'var(--text-muted)', fs: 11, s: { textTransform: 'uppercase', letterSpacing: '1px' }, m: '16px 0 8px 0' }],
       [G, [
         [V, [
           [T, 'tooey', { fg: 'var(--accent)', fs: 10, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
-          [D, '', { id: `demo-tooey-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' }, 'data-spec': ex.demoSpec }]
+          [D, '', { id: `demo-tooey-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' } }]
         ], { g: 8 }],
         [V, [
           [T, 'react', { fg: 'var(--warning)', fs: 10, s: { textTransform: 'uppercase', letterSpacing: '1px' } }],
-          [D, '', { id: `demo-react-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' }, 'data-react': ex.reactDemoCode }]
+          [D, '', { id: `demo-react-${ex.id}`, bg: 'var(--bg-tertiary)', p: 16, r: 8, s: { border: '1px solid var(--border)', minHeight: '100px' } }]
         ], { g: 8 }]
       ], { cols: 2, g: 16 }]
     ])), { g: 24 }]], { g: 16 }]
 };
+
+// store demo data for lookup by ID
+const demoSpecs: Record<string, string> = {};
+const reactDemos: Record<string, string> = {};
+API_DATA.examples.forEach((ex: { id: string; demoSpec: string; reactDemoCode: string }) => {
+  demoSpecs[ex.id] = ex.demoSpec;
+  reactDemos[ex.id] = ex.reactDemoCode;
+});
 
 const navItems: Array<{ label: string; page: Page }> = [
   { label: 'home', page: 'home' }, { label: 'core functions', page: 'core-functions' }, { label: 'instance methods', page: 'instance-methods' },
@@ -247,7 +290,7 @@ const navItems: Array<{ label: string; page: Page }> = [
 // app state
 // ============================================================================
 
-const currentPage = signal<Page>('home');
+const currentPage = signal<Page>((window.location.hash.slice(1) as Page) || 'home');
 const searchQuery = signal('');
 const searchResults = signal<SearchResult[]>([]);
 const isDark = signal(window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -256,9 +299,50 @@ let pageContainer: HTMLElement;
 let searchContainer: HTMLElement;
 
 const navigateTo = (page: Page) => {
+  window.location.hash = page;
   currentPage.set(page);
   searchQuery.set('');
   searchResults.set([]);
+};
+
+// load Prism for syntax highlighting
+let prismLoaded = false;
+const loadPrism = (): Promise<void> => {
+  if (prismLoaded) return Promise.resolve();
+  return new Promise((resolve) => {
+    // load dark theme CSS
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://unpkg.com/prismjs@1/themes/prism-tomorrow.min.css';
+    document.head.appendChild(css);
+    // load Prism JS
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/prismjs@1/prism.min.js';
+    script.onload = () => {
+      // load additional languages
+      const jsxScript = document.createElement('script');
+      jsxScript.src = 'https://unpkg.com/prismjs@1/components/prism-jsx.min.js';
+      jsxScript.onload = () => {
+        const tsScript = document.createElement('script');
+        tsScript.src = 'https://unpkg.com/prismjs@1/components/prism-typescript.min.js';
+        tsScript.onload = () => {
+          prismLoaded = true;
+          resolve();
+        };
+        document.head.appendChild(tsScript);
+      };
+      document.head.appendChild(jsxScript);
+    };
+    document.head.appendChild(script);
+  });
+};
+
+const highlightCode = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const Prism = (window as any).Prism;
+  if (Prism) {
+    Prism.highlightAll();
+  }
 };
 
 // load React and Babel from CDN for examples page
@@ -317,34 +401,42 @@ const renderPage = () => {
   const page = currentPage();
   pageContainer.innerHTML = '';
   render(pageContainer, { r: pages[page]() });
+
+  // render logos
+  renderLogos();
+
+  // render code blocks and apply syntax highlighting
+  renderCodeBlocks();
+  loadPrism().then(highlightCode);
+
+  // update nav button styles
   document.querySelectorAll('.nav-btn').forEach((btn, i) => {
     const el = btn as HTMLElement;
     el.style.background = navItems[i].page === page ? 'var(--bg-tertiary)' : 'transparent';
     el.style.color = navItems[i].page === page ? 'var(--accent)' : 'var(--text-secondary)';
   });
-  // render live demos
+
+  // render live demos on examples page
   if (page === 'examples') {
     // render tooey demos
-    document.querySelectorAll('[data-spec]').forEach((container) => {
-      const el = container as HTMLElement;
-      const specJson = el.getAttribute('data-spec');
-      if (specJson && !el.dataset.rendered) {
+    Object.keys(demoSpecs).forEach((id) => {
+      const el = document.getElementById(`demo-tooey-${id}`);
+      if (el && !el.dataset.rendered) {
         try {
-          const spec = JSON.parse(specJson);
+          const spec = JSON.parse(demoSpecs[id]);
           render(el, spec);
           el.dataset.rendered = 'true';
         } catch (e) {
-          console.warn('[tooey] failed to render demo:', e);
+          console.warn('[tooey] failed to render demo:', id, e);
         }
       }
     });
     // load react and render react demos
     loadReact().then(() => {
-      document.querySelectorAll('[data-react]').forEach((container) => {
-        const el = container as HTMLElement;
-        const code = el.getAttribute('data-react');
-        if (code && !el.dataset.rendered) {
-          renderReactDemo(el, code);
+      Object.keys(reactDemos).forEach((id) => {
+        const el = document.getElementById(`demo-react-${id}`);
+        if (el && !el.dataset.rendered) {
+          renderReactDemo(el, reactDemos[id]);
         }
       });
     });
@@ -494,9 +586,20 @@ const init = () => {
     themeBtn.innerHTML = isDark() ? sunIcon : moonIcon;
   });
 
+  // handle browser back/forward
+  window.addEventListener('popstate', () => {
+    const page = (window.location.hash.slice(1) as Page) || 'home';
+    if (navItems.some(n => n.page === page)) {
+      currentPage.set(page);
+    }
+  });
+
   // reactivity
   effect(renderPage);
   effect(renderSearchResults);
+
+  // render sidebar logos
+  renderLogos();
 };
 
 document.addEventListener('DOMContentLoaded', init);
