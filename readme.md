@@ -7,7 +7,7 @@
 token-efficient ui library ecosystem for llms
 
 ```
-~41% fewer tokens than react | ~10kb minified | 0 deps
+~75% fewer output tokens than react | ~10kb minified | 0 deps
 ```
 
 ## benchmarks
@@ -63,6 +63,7 @@ pnpm benchmark:test      # performance tests via vitest
 |---------|-------------|---------|
 | [@tooey/ui](./packages/ui) | core library | [![npm](https://img.shields.io/npm/v/@tooey/ui)](https://www.npmjs.com/package/@tooey/ui) |
 | [@tooey/components](./packages/components) | component library | coming soon |
+| [@tooey/claude-plugin](./packages/claude-plugin) | claude code plugin | [![npm](https://img.shields.io/npm/v/@tooey/claude-plugin)](https://www.npmjs.com/package/@tooey/claude-plugin) |
 
 ## quick start
 
@@ -83,6 +84,30 @@ render(document.getElementById('app'), {
 
 - [api reference](./API.md)
 - [examples](./packages/ui/examples)
+
+## claude code plugin
+
+generate token-efficient ui specs directly in claude code.
+
+### install
+
+```bash
+# add the tooey marketplace
+claude plugin marketplace add https://raw.githubusercontent.com/vijaypemmaraju/tooey/main/marketplace.json
+
+# install the plugin
+claude plugin install tooey
+```
+
+### use
+
+```
+/tooey:ui a counter with increment and decrement buttons
+/tooey:ui a login form with username and password fields
+/tooey:ui a modal dialog with close button
+```
+
+see [@tooey/claude-plugin](./packages/claude-plugin) for more installation options.
 
 ## ecosystem
 
