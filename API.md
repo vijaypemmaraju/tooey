@@ -13,6 +13,16 @@ complete api documentation for @tooey/ui - the token-efficient ui library for ll
 - [control flow](#control-flow)
 - [function components](#function-components)
 - [error boundaries](#error-boundaries)
+- [advanced features](#advanced-features)
+  - [refs](#refs)
+  - [context](#context)
+  - [portals](#portals)
+  - [fragments](#fragments)
+  - [reducer](#reducer)
+  - [memo](#memo)
+  - [ssr](#ssr)
+  - [router](#router)
+  - [devtools](#devtools)
 - [types](#types)
 
 ## core functions
@@ -206,6 +216,7 @@ theme tokens can be used with these props:
 | `hs` | `<div>` | horizontal stack (flex-direction: row) |
 | `dv` | `<div>` | plain div |
 | `gr` | `<div>` | grid container |
+| `fr` | `<div>` | fragment (display: contents, invisible wrapper) |
 
 ### text & buttons
 
@@ -346,6 +357,7 @@ theme tokens can be used with these props:
 | `rsp` | `Td`, `tc` | row span |
 | `cls` | any | css class name |
 | `id` | any | element id |
+| `rf` | any | ref (element reference, see [refs](#refs)) |
 
 ## events
 
@@ -558,6 +570,401 @@ interface ErrorInfo {
 }
 ```
 
+## advanced features
+
+### refs
+
+refs provide direct access to dom elements for focus management, measurements, or third-party library integration.
+
+#### `ref()`
+
+creates a ref object to hold an element reference.
+
+```typescript
+function ref<T = HTMLElement | null>(initial?: T): Ref<T>
+
+interface Ref<T> {
+  el: T;
+}
+```
+
+#### `rf` prop
+
+attaches an element to a ref object or calls a callback with the element.
+
+```javascript
+// ref object
+const myRef = ref();
+[bt, 'Click', { rf: myRef }]
+// later: myRef.el.focus()
+
+// callback ref
+[In, '', { rf: (el) => console.log(el) }]
+```
+
+**example:**
+
+```javascript
+import { render, ref, vs, In, bt } from '@tooey/ui';
+
+const inputRef = ref();
+
+render(container, {
+  r: [vs, [
+    [In, '', { rf: inputRef, ph: 'Type here...' }],
+    [bt, 'Focus', { c: () => inputRef.el?.focus() }]
+  ], { g: 8 }]
+});
+```
+
+### context
+
+context allows passing data deeply without prop drilling.
+
+#### `cx(default)`
+
+creates a new context with a default value.
+
+```typescript
+function cx<T>(defaultValue: T): Context<T>
+```
+
+#### `ux(context)`
+
+retrieves the current value from a context.
+
+```typescript
+function ux<T>(context: Context<T>): T
+```
+
+#### provider node
+
+provides a value to all descendants.
+
+```javascript
+{
+  pv: MyContext,  // context to provide
+  v: value,       // value to provide
+  c: [...]        // children
+}
+```
+
+**example:**
+
+```javascript
+import { render, cx, ux, vs, tx } from '@tooey/ui';
+
+const ThemeContext = cx('#007bff');
+
+const ThemedText = () => {
+  const color = ux(ThemeContext);
+  return [tx, 'Themed text', { fg: color }];
+};
+
+render(container, {
+  r: {
+    pv: ThemeContext,
+    v: '#ff0000',
+    c: [ThemedText]
+  }
+});
+```
+
+### portals
+
+portals render content outside the normal component tree (e.g., for modals).
+
+```javascript
+{
+  pt: target,  // HTMLElement or CSS selector
+  c: [...]     // children to render in target
+}
+```
+
+**example:**
+
+```javascript
+import { render, dv, tx, vs } from '@tooey/ui';
+
+// render modal to document.body
+render(container, {
+  r: [vs, [
+    [tx, 'Main content'],
+    {
+      pt: document.body,
+      c: [dv, [[tx, 'Modal content']], { pos: 'fix', t: 0, l: 0, w: '100%', h: '100%', bg: 'rgba(0,0,0,0.5)' }]
+    }
+  ]]
+});
+```
+
+### fragments
+
+fragments render multiple children without a visible wrapper element.
+
+```javascript
+[fr, [
+  [tx, 'First'],
+  [tx, 'Second'],
+  [tx, 'Third']
+]]
+```
+
+the `fr` component uses `display: contents` so it doesn't affect layout.
+
+### reducer
+
+reducers provide a pattern for complex state logic, similar to react's `useReducer`.
+
+#### `rd$(reducer, initialState)`
+
+creates state and a dispatch function.
+
+```typescript
+function rd$<S, A>(reducer: Reducer<S, A>, initialState: S): ReducerSpec<S, A>
+
+type Reducer<S, A> = (state: S, action: A) => S;
+
+interface ReducerSpec<S, A> {
+  s: S;           // initial state object
+  dp: Dispatch<A>; // dispatch function
+}
+```
+
+**example:**
+
+```javascript
+import { render, rd$, vs, tx, bt } from '@tooey/ui';
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'inc': return { count: state.count + 1 };
+    case 'dec': return { count: state.count - 1 };
+    case 'reset': return { count: 0 };
+    default: return state;
+  }
+};
+
+const { s, dp } = rd$(reducer, { count: 0 });
+
+render(container, {
+  s: s,
+  r: [vs, [
+    [tx, { $: 'count' }],
+    [bt, '+', { c: () => dp({ type: 'inc' }) }],
+    [bt, '-', { c: () => dp({ type: 'dec' }) }],
+    [bt, 'Reset', { c: () => dp({ type: 'reset' }) }]
+  ], { g: 8 }]
+});
+```
+
+### memo
+
+memoization prevents unnecessary re-renders for expensive components.
+
+#### `mm(component, compareFn?)`
+
+wraps a component with memoization.
+
+```typescript
+function mm<P extends Props>(
+  component: Component<P>,
+  compareFn?: (prevProps: P, nextProps: P) => boolean
+): Component<P>
+```
+
+**example:**
+
+```javascript
+import { mm, vs, tx } from '@tooey/ui';
+
+const ExpensiveList = mm((props) => {
+  // expensive rendering...
+  return [vs, props.items.map(i => [tx, i])];
+});
+
+// only re-renders when items actually change
+[ExpensiveList, '', { items: ['a', 'b', 'c'] }]
+```
+
+#### memo node
+
+declarative memoization based on state dependencies.
+
+```javascript
+{
+  mm: ['dep1', 'dep2'],  // state keys to watch
+  c: [...]               // component to memoize
+}
+```
+
+### ssr
+
+server-side rendering support for initial html generation.
+
+#### `rts(spec, options?)`
+
+renders a spec to an html string.
+
+```typescript
+function rts(spec: TooeySpec, options?: { theme?: Theme }): string
+```
+
+**example:**
+
+```javascript
+import { rts, vs, tx } from '@tooey/ui';
+
+const html = rts({
+  s: { name: 'World' },
+  r: [vs, [[tx, 'Hello, '], [tx, { $: 'name' }]]]
+});
+// html: '<div style="display:flex;flex-direction:column" data-tooey-ssr="true">...'
+```
+
+#### `hy(container, spec, options?)`
+
+hydrates server-rendered html with interactivity.
+
+```typescript
+function hy(container: HTMLElement, spec: TooeySpec, options?: RenderOptions): TooeyInstance
+```
+
+**example:**
+
+```javascript
+// server
+const html = rts(spec);
+// send html to client
+
+// client
+container.innerHTML = html;
+const app = hy(container, spec);
+// now interactive
+```
+
+### router
+
+client-side routing for single-page applications.
+
+#### `nav(path, options?)`
+
+programmatically navigates to a path.
+
+```typescript
+function nav(path: string, options?: { replace?: boolean }): void
+```
+
+#### `lk` (link component)
+
+declarative navigation link.
+
+```javascript
+[lk, 'Home', { to: '/' }]
+[lk, [[tx, 'About Us']], { to: '/about', cls: 'nav-link' }]
+```
+
+#### `ot(routes)` (outlet)
+
+renders the matched route.
+
+```javascript
+const routes = [
+  { p: '/', c: HomePage },
+  { p: '/about', c: AboutPage },
+  { p: '/user/:id', c: UserPage }
+];
+
+[vs, [
+  [hs, [[lk, 'Home', { to: '/' }], [lk, 'About', { to: '/about' }]]],
+  ot(routes)
+]]
+```
+
+#### route definition
+
+```typescript
+interface Route {
+  p: string;              // path pattern (supports :param and *)
+  c: NodeSpec | Component; // component to render
+  ch?: Route[];           // child routes for nesting
+}
+```
+
+**example:**
+
+```javascript
+import { render, vs, hs, tx, lk, ot, nav } from '@tooey/ui';
+
+const Home = () => [tx, 'Welcome home!'];
+const About = () => [tx, 'About us'];
+const User = (props) => [tx, `User: ${props?.params?.id || 'unknown'}`];
+
+const routes = [
+  { p: '/', c: Home },
+  { p: '/about', c: About },
+  { p: '/user/:id', c: User }
+];
+
+render(container, {
+  r: [vs, [
+    [hs, [
+      [lk, 'Home', { to: '/' }],
+      [lk, 'About', { to: '/about' }],
+      [lk, 'User 123', { to: '/user/123' }]
+    ], { g: 16 }],
+    ot(routes)
+  ], { g: 16 }]
+});
+```
+
+### devtools
+
+debugging plugin for development.
+
+#### `devtools(options?)`
+
+creates a devtools plugin.
+
+```typescript
+function devtools(options?: DevtoolsOptions): TooeyPlugin
+
+interface DevtoolsOptions {
+  name?: string;  // app name in logs (default: 'tooey')
+  log?: boolean;  // log state changes (default: true)
+}
+```
+
+**example:**
+
+```javascript
+import { render, devtools, vs, tx, bt } from '@tooey/ui';
+
+const app = render(container, {
+  s: { count: 0 },
+  r: [vs, [[tx, { $: 'count' }], [bt, '+', { c: 'count+' }]]]
+}, {
+  plugins: [devtools({ name: 'my-app' })]
+});
+
+// in browser console:
+// [my-app] initialized { state: { count: 0 } }
+// [my-app] state change: count 0 → 1
+```
+
+#### devtools api
+
+when enabled, a global api is exposed at `window.__TOOEY_DEVTOOLS__`:
+
+```javascript
+const dt = window.__TOOEY_DEVTOOLS__;
+
+dt.getState();           // current state snapshot
+dt.setState('key', val); // update state
+dt.getHistory();         // state change history
+dt.clearHistory();       // clear history
+```
+
 ## types
 
 ### TooeySpec
@@ -573,12 +980,12 @@ interface TooeySpec {
 
 ### NodeSpec
 
-a node specification (component). supports built-in components, function components, and control flow nodes.
+a node specification (component). supports built-in components, function components, control flow nodes, and advanced nodes.
 
 ```typescript
 type BuiltinNodeSpec = [ComponentType, Content?, Props?];
 type FunctionNodeSpec = [Component, Content?, Props?];
-type NodeSpec = BuiltinNodeSpec | FunctionNodeSpec | IfNode | MapNode;
+type NodeSpec = BuiltinNodeSpec | FunctionNodeSpec | IfNode | MapNode | ProviderNode | PortalNode | MemoNode;
 ```
 
 ### Component
@@ -672,6 +1079,6 @@ tooey targets es2020 and works in all modern browsers:
 
 ## bundle size
 
-- umd bundle: ~11 kb minified
-- esm bundle: ~10 kb minified
+- umd bundle: ~22 kb minified
+- esm bundle: ~21 kb minified
 - zero production dependencies
