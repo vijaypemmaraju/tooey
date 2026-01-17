@@ -219,18 +219,14 @@ examples:
 install the tooey plugin for claude code:
 
 ```bash
+# add the marketplace
+claude plugin marketplace add https://raw.githubusercontent.com/vijaypemmaraju/tooey/main/marketplace.json
+
+# install the plugin
 claude plugin install tooey
 ```
 
-or add to your project's `.claude/settings.json`:
-
-```json
-{
-  "plugins": ["tooey"]
-}
-```
-
-then use `/tooey:ui` to generate tooey specs directly.
+then use `/tooey:ui` to generate tooey specs directly. see [@tooey/claude-plugin](../claude-plugin) for more options.
 
 ## license
 

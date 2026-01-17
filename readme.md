@@ -87,13 +87,19 @@ render(document.getElementById('app'), {
 
 ## claude code plugin
 
-install the tooey plugin for claude code to generate token-efficient ui specs directly:
+generate token-efficient ui specs directly in claude code.
+
+### install
 
 ```bash
+# add the tooey marketplace
+claude plugin marketplace add https://raw.githubusercontent.com/vijaypemmaraju/tooey/main/marketplace.json
+
+# install the plugin
 claude plugin install tooey
 ```
 
-then use `/tooey:ui` followed by a description:
+### use
 
 ```
 /tooey:ui a counter with increment and decrement buttons
@@ -101,7 +107,7 @@ then use `/tooey:ui` followed by a description:
 /tooey:ui a modal dialog with close button
 ```
 
-see [@tooey/claude-plugin](./packages/claude-plugin) for more details.
+see [@tooey/claude-plugin](./packages/claude-plugin) for more installation options.
 
 ## ecosystem
 
