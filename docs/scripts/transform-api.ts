@@ -966,20 +966,12 @@ function getExamples(): ExampleData[] {
     }
   };
 
-  try {
-    const files = fs.readdirSync(examplesDir).filter(f => f.endsWith('.html') && f !== 'index.html');
-
-    for (const file of files.sort()) {
-      const data = exampleData[file];
-      if (data) {
-        examples.push({ ...data, file });
-      }
-    }
-  } catch {
-    console.warn('could not read examples directory');
+  // return all examples from static data (files no longer exist)
+  for (const [file, data] of Object.entries(exampleData)) {
+    examples.push({ ...data, file });
   }
 
-  return examples;
+  return examples.sort((a, b) => a.file.localeCompare(b.file));
 }
 
 // ============================================================================
