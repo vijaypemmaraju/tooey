@@ -19,6 +19,17 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3-flash-preview';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
+// ============ thresholds ============
+
+const THRESHOLDS = {
+  tooey: {
+    syntaxValid: 75,      // minimum % of tooey outputs with valid syntax
+    structureCorrect: 75, // minimum % of tooey outputs with correct structure
+  },
+  outputSavings: 50,      // minimum % token savings vs react output
+  sustainedSavings: 30,   // minimum % savings at 90% cache / sustained n=10
+};
+
 // ============ prompts ============
 
 const TOOEY_PROMPT = TOOEY_SYSTEM_PROMPT + `
@@ -383,6 +394,60 @@ ${scenarioResults.map(s => {
 
   fs.writeFileSync(path.join(__dirname, 'LLM_TEST_RESULTS.md'), report);
   console.log('report: LLM_TEST_RESULTS.md');
+
+  // threshold checks
+  const tooeyValidPct = Math.round(tooeyValid / results.length * 100);
+  const tooeyCorrectPct = Math.round(tooeyCorrect / results.length * 100);
+  const sustainedSavings = scenarioResults.find(s => s.cacheRate === 0.9)?.savings ?? 0;
+
+  const checks = [
+    {
+      name: 'tooey syntax validity',
+      actual: tooeyValidPct,
+      threshold: THRESHOLDS.tooey.syntaxValid,
+      unit: '%'
+    },
+    {
+      name: 'tooey structure correctness',
+      actual: tooeyCorrectPct,
+      threshold: THRESHOLDS.tooey.structureCorrect,
+      unit: '%'
+    },
+    {
+      name: 'output token savings',
+      actual: avgSavings,
+      threshold: THRESHOLDS.outputSavings,
+      unit: '%'
+    },
+    {
+      name: 'sustained/cached savings (90%)',
+      actual: sustainedSavings,
+      threshold: THRESHOLDS.sustainedSavings,
+      unit: '%'
+    }
+  ];
+
+  console.log('\n--- threshold checks ---\n');
+
+  let allPassed = true;
+  for (const check of checks) {
+    const passed = check.actual >= check.threshold;
+    const status = passed ? '✓ PASS' : '✗ FAIL';
+    console.log(`${status}  ${check.name}: ${check.actual}${check.unit} (threshold: ${check.threshold}${check.unit})`);
+    if (!passed) allPassed = false;
+  }
+
+  console.log('');
+
+  if (!allPassed) {
+    console.error('llm test failed: one or more thresholds not met');
+    process.exit(1);
+  }
+
+  console.log('llm test passed: all thresholds met');
 }
 
-main().catch(console.error);
+main().catch(err => {
+  console.error('llm test error:', err);
+  process.exit(1);
+});

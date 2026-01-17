@@ -76,10 +76,11 @@ jobs:
           pnpm exec tsx benchmarks/validation/run-llm-tests.ts
 
       - name: Upload LLM test results
-        if: env.GEMINI_API_KEY != ''
+        if: always() && env.GEMINI_API_KEY != ''
         uses: actions/upload-artifact@v4
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         with:
           name: llm-test-results
           path: packages/ui/benchmarks/validation/LLM_TEST_RESULTS.md
+          if-no-files-found: ignore
