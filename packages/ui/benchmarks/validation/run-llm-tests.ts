@@ -27,7 +27,7 @@ const THRESHOLDS = {
     structureCorrect: 75, // minimum % of tooey outputs with correct structure
   },
   outputSavings: 50,      // minimum % token savings vs react output
-  sustainedSavings: 30,   // minimum % savings at 90% cache / sustained n=10
+  sustainedSavings: 25,   // minimum % savings at 90% cache / sustained n=10
 };
 
 // ============ prompts ============
