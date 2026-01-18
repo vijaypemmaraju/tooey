@@ -375,6 +375,61 @@ API_DATA.examples.forEach((ex: { id: string; demoSpec: string; reactDemoCode: st
   reactDemos[ex.id] = ex.reactDemoCode;
 });
 
+const setupShoppingCartDemo = (instance: ReturnType<typeof render>): void => {
+  const q1 = instance.state.q1;
+  const q2 = instance.state.q2;
+  const total = instance.state.total;
+  if (!q1 || !q2 || !total) return;
+
+  effect(() => {
+    const rawQ1 = q1() as number;
+    const rawQ2 = q2() as number;
+    const safeQ1 = Math.max(0, rawQ1);
+    const safeQ2 = Math.max(0, rawQ2);
+
+    if (safeQ1 !== rawQ1) q1.set(safeQ1);
+    if (safeQ2 !== rawQ2) q2.set(safeQ2);
+
+    const newTotal = `$${safeQ1 * 25 + safeQ2 * 35}`;
+    if (total() !== newTotal) total.set(newTotal);
+  });
+};
+
+const setupTemperatureDemo = (instance: ReturnType<typeof render>): void => {
+  const c = instance.state.c;
+  const f = instance.state.f;
+  if (!c || !f) return;
+
+  let prevC = Number(c());
+  let prevF = Number(f());
+
+  effect(() => {
+    const currentC = Number(c());
+    const currentF = Number(f());
+    const cChanged = currentC !== prevC;
+    const fChanged = currentF !== prevF;
+
+    if (cChanged && !fChanged) {
+      const nextF = Math.round(currentC * 9 / 5 + 32);
+      prevC = currentC;
+      prevF = nextF;
+      if (f() !== nextF) f.set(nextF);
+      return;
+    }
+
+    if (fChanged && !cChanged) {
+      const nextC = Math.round((currentF - 32) * 5 / 9);
+      prevF = currentF;
+      prevC = nextC;
+      if (c() !== nextC) c.set(nextC);
+      return;
+    }
+
+    prevC = currentC;
+    prevF = currentF;
+  });
+};
+
 const navItems: Array<{ label: string; page: Page }> = [
   { label: 'home', page: 'home' }, { label: 'core functions', page: 'core-functions' }, { label: 'instance methods', page: 'instance-methods' },
   { label: 'components', page: 'components' }, { label: 'props', page: 'props' }, { label: 'events & ops', page: 'events' },
@@ -561,7 +616,13 @@ const renderPage = () => {
       if (el && !el.dataset.rendered) {
         try {
           const spec = JSON.parse(demoSpecs[id]);
-          render(el, spec);
+          const instance = render(el, spec);
+          if (id === 'shopping-cart') {
+            setupShoppingCartDemo(instance);
+          }
+          if (id === 'temperature') {
+            setupTemperatureDemo(instance);
+          }
           el.dataset.rendered = 'true';
         } catch (e) {
           console.warn('[tooey] failed to render demo:', id, e);
