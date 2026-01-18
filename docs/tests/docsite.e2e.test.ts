@@ -186,4 +186,57 @@ describe('docsite e2e', () => {
     expect(html).toContain('type="module"');
     expect(html).toContain('src="dist/docs.js"');
   });
+
+  it('@tooey/ui exports what @tooey/components needs', async () => {
+    // get the components bundle and extract what it imports from @tooey/ui
+    const componentsRes = await fetch(`${baseUrl}/packages/components/dist/index.esm.js`);
+    const componentsJs = await componentsRes.text();
+
+    // extract imports from @tooey/ui - pattern: import{...}from"@tooey/ui"
+    const importMatch = componentsJs.match(/import\{([^}]+)\}from"@tooey\/ui"/);
+    expect(importMatch, 'components should import from @tooey/ui').toBeTruthy();
+
+    // parse the import names (format: "originalName as alias" or just "originalName")
+    const importedNames = importMatch![1]
+      .split(',')
+      .map(s => s.trim().split(' as ')[0].trim())
+      .filter(Boolean);
+
+    // get the ui bundle and extract its exports
+    const uiRes = await fetch(`${baseUrl}/packages/ui/dist/tooey.esm.js`);
+    const uiJs = await uiRes.text();
+
+    // extract exports - pattern: export{...} at end of file
+    const exportMatch = uiJs.match(/export\{([^}]+)\}/);
+    expect(exportMatch, 'ui should have exports').toBeTruthy();
+
+    // parse the export names (format: "internalName as exportName")
+    const exportedNames = exportMatch![1]
+      .split(',')
+      .map(s => {
+        const parts = s.trim().split(' as ');
+        return parts.length > 1 ? parts[1].trim() : parts[0].trim();
+      })
+      .filter(Boolean);
+
+    // verify all imported names are exported
+    const missingExports = importedNames.filter(name => !exportedNames.includes(name));
+
+    expect(
+      missingExports,
+      `@tooey/ui is missing exports needed by @tooey/components: ${missingExports.join(', ')}`
+    ).toHaveLength(0);
+  });
+
+  it('docs.js bundle has valid imports', async () => {
+    const res = await fetch(`${baseUrl}/docs/dist/docs.js`);
+    const js = await res.text();
+
+    // verify docs.js imports from @tooey/ui and @tooey/components
+    expect(js).toContain('from"@tooey/ui"');
+    expect(js).toContain('from"@tooey/components"');
+
+    // verify it's a valid ES module (starts with import)
+    expect(js.trim()).toMatch(/^import/);
+  });
 });
