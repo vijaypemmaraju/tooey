@@ -32,7 +32,7 @@ test.describe('docsite loading', () => {
     });
 
     // navigate to docsite
-    await page.goto('/docs/');
+    await page.goto('/');
 
     // wait for the app to render (should not stay on "loading...")
     // the #app element should have content after JS executes
@@ -43,7 +43,7 @@ test.describe('docsite loading', () => {
   });
 
   test('sidebar navigation renders', async ({ page }) => {
-    await page.goto('/docs/');
+    await page.goto('/');
 
     // wait for sidebar to be visible
     const sidebar = page.locator('#sidebar');
@@ -55,7 +55,7 @@ test.describe('docsite loading', () => {
   });
 
   test('page content renders after navigation', async ({ page }) => {
-    await page.goto('/docs/');
+    await page.goto('/');
 
     // wait for initial load
     await expect(page.locator('#sidebar')).toBeVisible({ timeout: 10000 });
@@ -69,7 +69,7 @@ test.describe('docsite loading', () => {
   });
 
   test('search input is functional', async ({ page }) => {
-    await page.goto('/docs/');
+    await page.goto('/');
 
     // wait for search input
     const searchInput = page.locator('#search');
@@ -84,7 +84,7 @@ test.describe('docsite loading', () => {
   });
 
   test('theme toggle works', async ({ page }) => {
-    await page.goto('/docs/');
+    await page.goto('/');
 
     // wait for theme button
     const themeBtn = page.locator('#theme-btn');
@@ -125,7 +125,7 @@ test.describe('docsite loading', () => {
       }
     });
 
-    await page.goto('/docs/');
+    await page.goto('/');
 
     // wait for app to load
     await expect(page.locator('#app')).not.toBeEmpty({ timeout: 10000 });
