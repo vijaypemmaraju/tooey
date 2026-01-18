@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist",
+    "declaration": true,
+    "declarationDir": "dist",
+    "paths": {
+      "@tooey/ui": ["../ui/dist/tooey.d.ts"]
+    },
+    "baseUrl": "."
+  },
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
