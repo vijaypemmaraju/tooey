@@ -62,7 +62,8 @@ pnpm benchmark:test      # performance tests via vitest
 | package | description | version |
 |---------|-------------|---------|
 | [@tooey/ui](./packages/ui) | core library | [![npm](https://img.shields.io/npm/v/@tooey/ui)](https://www.npmjs.com/package/@tooey/ui) |
-| [@tooey/components](./packages/components) | component library | coming soon |
+| [@tooey/components](./packages/components) | shadcn-inspired component library | [![npm](https://img.shields.io/npm/v/@tooey/components)](https://www.npmjs.com/package/@tooey/components) |
+| [@tooey/server](./packages/server) | server-side rendering with streaming | [![npm](https://img.shields.io/npm/v/@tooey/server)](https://www.npmjs.com/package/@tooey/server) |
 | [@tooey/claude-plugin](./packages/claude-plugin) | claude code plugin | [![npm](https://img.shields.io/npm/v/@tooey/claude-plugin)](https://www.npmjs.com/package/@tooey/claude-plugin) |
 
 ## quick start
