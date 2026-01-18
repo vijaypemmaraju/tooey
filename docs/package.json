@@ -7,6 +7,7 @@
     "generate": "typedoc --json dist/api.json ../packages/ui/src/tooey.ts && tsx scripts/transform-api.ts",
     "build": "pnpm run generate && esbuild src/docs.ts --bundle --outfile=dist/docs.js --format=esm --minify --sourcemap --external:@tooey/ui --external:@tooey/components",
     "dev": "esbuild src/docs.ts --bundle --outfile=dist/docs.js --format=esm --sourcemap --watch --external:@tooey/ui --external:@tooey/components",
+    "serve": "node -e \"const h=require('http'),f=require('fs'),p=require('path');h.createServer((q,r)=>{let u=q.url.split('?')[0];if(u==='/'||u==='/docs'||u==='/docs/')u='/docs/index.html';const fp=p.join(__dirname,'..',u),m={'.html':'text/html','.js':'application/javascript','.css':'text/css','.json':'application/json'};f.readFile(fp,(e,d)=>{if(e){r.writeHead(404);r.end('Not found');return}r.writeHead(200,{'Content-Type':m[p.extname(fp)]||'text/plain'});r.end(d)})}).listen(3000,()=>console.log('Docsite at http://localhost:3000/docs/'))\"",
     "test": "vitest run",
     "test:watch": "vitest"
   },
