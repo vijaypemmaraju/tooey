@@ -47,6 +47,9 @@ jobs:
           # copy @tooey/ui dist for module imports
           mkdir -p _site/packages/ui
           cp -r packages/ui/dist _site/packages/ui/dist
+          # copy @tooey/components dist for module imports
+          mkdir -p _site/packages/components
+          cp -r packages/components/dist _site/packages/components/dist
 
       - name: setup pages
         uses: actions/configure-pages@v4
