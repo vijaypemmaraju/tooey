@@ -375,6 +375,26 @@ API_DATA.examples.forEach((ex: { id: string; demoSpec: string; reactDemoCode: st
   reactDemos[ex.id] = ex.reactDemoCode;
 });
 
+const setupShoppingCartDemo = (instance: ReturnType<typeof render>): void => {
+  const q1 = instance.state.q1;
+  const q2 = instance.state.q2;
+  const total = instance.state.total;
+  if (!q1 || !q2 || !total) return;
+
+  effect(() => {
+    const rawQ1 = q1() as number;
+    const rawQ2 = q2() as number;
+    const safeQ1 = Math.max(0, rawQ1);
+    const safeQ2 = Math.max(0, rawQ2);
+
+    if (safeQ1 !== rawQ1) q1.set(safeQ1);
+    if (safeQ2 !== rawQ2) q2.set(safeQ2);
+
+    const newTotal = `$${safeQ1 * 25 + safeQ2 * 35}`;
+    if (total() !== newTotal) total.set(newTotal);
+  });
+};
+
 const navItems: Array<{ label: string; page: Page }> = [
   { label: 'home', page: 'home' }, { label: 'core functions', page: 'core-functions' }, { label: 'instance methods', page: 'instance-methods' },
   { label: 'components', page: 'components' }, { label: 'props', page: 'props' }, { label: 'events & ops', page: 'events' },
@@ -561,7 +581,10 @@ const renderPage = () => {
       if (el && !el.dataset.rendered) {
         try {
           const spec = JSON.parse(demoSpecs[id]);
-          render(el, spec);
+          const instance = render(el, spec);
+          if (id === 'shopping-cart') {
+            setupShoppingCartDemo(instance);
+          }
           el.dataset.rendered = 'true';
         } catch (e) {
           console.warn('[tooey] failed to render demo:', id, e);

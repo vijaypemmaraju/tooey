@@ -856,11 +856,11 @@ function getExamples(): ExampleData[] {
   );
 }`,
       demoSpec: JSON.stringify({
-        s: { q1: 1, q2: 2 },
+        s: { q1: 1, q2: 2, total: '$95' },
         r: ['vs', [
           ['hs', [['tx', 'widget', { fg: '#ccc', s: { flex: '1' } }], ['hs', [['bt', '-', { c: ['q1', '-'] }], ['tx', { $: 'q1' }], ['bt', '+', { c: ['q1', '+'] }]], { g: 8, ai: 'c' }], ['tx', '$25', { fg: '#fa0', w: 50, ta: 'right' }]], { jc: 'sb', ai: 'c', p: '8px 0', s: { borderBottom: '1px solid #333' } }],
           ['hs', [['tx', 'gadget', { fg: '#ccc', s: { flex: '1' } }], ['hs', [['bt', '-', { c: ['q2', '-'] }], ['tx', { $: 'q2' }], ['bt', '+', { c: ['q2', '+'] }]], { g: 8, ai: 'c' }], ['tx', '$35', { fg: '#fa0', w: 50, ta: 'right' }]], { jc: 'sb', ai: 'c', p: '8px 0', s: { borderBottom: '1px solid #333' } }],
-          ['hs', [['tx', 'total:', { fg: '#888' }], ['tx', '$95', { fg: '#4f8', fw: 600 }]], { jc: 'sb', p: '16px 0' }]
+          ['hs', [['tx', 'total:', { fg: '#888' }], ['tx', { $: 'total' }, { fg: '#4f8', fw: 600 }]], { jc: 'sb', p: '16px 0' }]
         ], { g: 0 }]
       }),
       reactDemoCode: `function Cart() {
