@@ -45,14 +45,13 @@ importers:
   packages/claude-plugin: {}
 
   packages/components:
-    dependencies:
-      '@tooey/ui':
-        specifier: ^1.0.0
-        version: 1.0.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.0.0
         version: 9.39.2
+      '@tooey/ui':
+        specifier: workspace:*
+        version: link:../ui
       '@types/node':
         specifier: ^20.10.0
         version: 20.19.30
@@ -728,9 +727,6 @@ packages:
     resolution: {integrity: sha512-SPEpaL6DX4rmcXtnhdrQYgzQ5W2uW3SCJch88lB2zImhJRhIIK44fkUrgIV/Q8yUNfw5oyZ5vkeQsZLhCb06lw==}
     cpu: [x64]
     os: [win32]
-
-  '@tooey/ui@1.0.0':
-    resolution: {integrity: sha512-jxTevriAn5xX1ZAtb/S5v7uWp6GkX/Ozeou8yDIO4aPo6lXP3utYwzZiHtZ465xlpWMgZnLWTNAVsAZnIkwxvA==}
 
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
@@ -2143,8 +2139,6 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.55.1':
     optional: true
-
-  '@tooey/ui@1.0.0': {}
 
   '@types/chai@5.2.3':
     dependencies:
