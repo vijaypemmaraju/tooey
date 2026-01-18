@@ -203,3 +203,15 @@ export type {
 // ============ adapter type exports ============
 
 export type { RequestHandler } from './adapters/types.js';
+
+// ============ edge adapter exports ============
+// note: node adapter is separate (import from '@tooey/server/node')
+
+export {
+  edgeAdapter,
+  createFetchHandler,
+  createCfHandler,
+  createDenoHandler,
+  createVercelHandler,
+  createBunHandler,
+} from './adapters/edge.js';

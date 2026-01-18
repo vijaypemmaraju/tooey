@@ -67,4 +67,5 @@ export { rateLimit as rl } from './middleware.js';
 export { securityHeaders as sec } from './middleware.js';
 export type { RenderOptions, MetaTag, LinkTag, ScriptTag, RenderedPage, PageData, HydrationStrategy, IslandConfig, Island, StreamChunk, StreamOptions, AdapterRequest, AdapterResponse, Adapter, MiddlewareContext, MiddlewareHandler, RouteHandler, DevServerOptions, DevServerInstance, } from './types.js';
 export type { RequestHandler } from './adapters/types.js';
+export { edgeAdapter, createFetchHandler, createCfHandler, createDenoHandler, createVercelHandler, createBunHandler, } from './adapters/edge.js';
 //# sourceMappingURL=index.d.ts.map
