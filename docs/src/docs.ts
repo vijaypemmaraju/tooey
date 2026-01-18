@@ -395,6 +395,41 @@ const setupShoppingCartDemo = (instance: ReturnType<typeof render>): void => {
   });
 };
 
+const setupTemperatureDemo = (instance: ReturnType<typeof render>): void => {
+  const c = instance.state.c;
+  const f = instance.state.f;
+  if (!c || !f) return;
+
+  let prevC = Number(c());
+  let prevF = Number(f());
+
+  effect(() => {
+    const currentC = Number(c());
+    const currentF = Number(f());
+    const cChanged = currentC !== prevC;
+    const fChanged = currentF !== prevF;
+
+    if (cChanged && !fChanged) {
+      const nextF = Math.round(currentC * 9 / 5 + 32);
+      prevC = currentC;
+      prevF = nextF;
+      if (f() !== nextF) f.set(nextF);
+      return;
+    }
+
+    if (fChanged && !cChanged) {
+      const nextC = Math.round((currentF - 32) * 5 / 9);
+      prevF = currentF;
+      prevC = nextC;
+      if (c() !== nextC) c.set(nextC);
+      return;
+    }
+
+    prevC = currentC;
+    prevF = currentF;
+  });
+};
+
 const navItems: Array<{ label: string; page: Page }> = [
   { label: 'home', page: 'home' }, { label: 'core functions', page: 'core-functions' }, { label: 'instance methods', page: 'instance-methods' },
   { label: 'components', page: 'components' }, { label: 'props', page: 'props' }, { label: 'events & ops', page: 'events' },
@@ -584,6 +619,9 @@ const renderPage = () => {
           const instance = render(el, spec);
           if (id === 'shopping-cart') {
             setupShoppingCartDemo(instance);
+          }
+          if (id === 'temperature') {
+            setupTemperatureDemo(instance);
           }
           el.dataset.rendered = 'true';
         } catch (e) {

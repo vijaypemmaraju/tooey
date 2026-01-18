@@ -731,7 +731,11 @@ function getExamples(): ExampleData[] {
       demoSpec: JSON.stringify({
         s: { tab: 0 },
         r: ['vs', [
-          ['hs', [['bt', 'profile', { c: ['tab', '!', 0], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#fa0', borderBottom: '2px solid #fa0' } }], ['bt', 'settings', { c: ['tab', '!', 1], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#666' } }], ['bt', 'about', { c: ['tab', '!', 2], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#666' } }]], { g: 0, s: { borderBottom: '1px solid #333' } }],
+          ['hs', [
+            { '?': 'tab', is: 0, t: ['bt', 'profile', { c: ['tab', '!', 0], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#fa0', borderBottom: '2px solid #fa0' } }], e: ['bt', 'profile', { c: ['tab', '!', 0], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#666', borderBottom: 'none' } }] },
+            { '?': 'tab', is: 1, t: ['bt', 'settings', { c: ['tab', '!', 1], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#fa0', borderBottom: '2px solid #fa0' } }], e: ['bt', 'settings', { c: ['tab', '!', 1], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#666', borderBottom: 'none' } }] },
+            { '?': 'tab', is: 2, t: ['bt', 'about', { c: ['tab', '!', 2], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#fa0', borderBottom: '2px solid #fa0' } }], e: ['bt', 'about', { c: ['tab', '!', 2], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#666', borderBottom: 'none' } }] }
+          ], { g: 0, s: { borderBottom: '1px solid #333' } }],
           { '?': 'tab', is: 0, t: ['tx', 'user profile content', { p: 16, fg: '#ccc' }], e: { '?': 'tab', is: 1, t: ['tx', 'settings panel', { p: 16, fg: '#ccc' }], e: ['tx', 'about section', { p: 16, fg: '#ccc' }] } }
         ], { g: 0 }]
       }),
@@ -787,7 +791,7 @@ function getExamples(): ExampleData[] {
         r: ['vs', [
           ['bt', 'open modal', { c: ['open', '~'] }],
           { '?': 'open', t: ['dv', [
-            ['dv', [['tx', 'confirm action', { fw: 600, fg: '#fff', fs: 14 }], ['tx', 'are you sure?', { fg: '#888', fs: 12 }], ['bt', 'close', { c: ['open', '~'] }]], { bg: '#1a1a1a', p: 24, r: 8, g: 12, ta: 'center' }]
+            ['dv', [['tx', 'confirm action', { fw: 600, fg: '#fff', fs: 14 }], ['tx', 'are you sure?', { fg: '#888', fs: 12 }], ['bt', 'close', { c: ['open', '~'] }]], { bg: '#1a1a1a', p: 24, r: 8, g: 12, ta: 'center', s: { display: 'flex', flexDirection: 'column', gap: 12 } }]
           ], { pos: 'abs', t: 0, l: 0, w: '100%', h: '100%', bg: 'rgba(0,0,0,0.7)', s: { display: 'flex', alignItems: 'center', justifyContent: 'center' } }] }
         ], { pos: 'rel', h: 150 }]
       }),
@@ -940,7 +944,7 @@ function getExamples(): ExampleData[] {
         r: ['vs', [
           ['hs', [['dv', '', { w: 40, h: 4, bg: '#fa0', r: 2 }], ['dv', '', { w: 40, h: 4, bg: '#333', r: 2 }], ['dv', '', { w: 40, h: 4, bg: '#333', r: 2 }]], { g: 4 }],
           { '?': 'step', is: 0, t: ['vs', [['tx', 'step 1: name', { fw: 500, fg: '#fff' }], ['in', '', { v: { $: 'name' }, x: ['name', '!'], ph: 'your name', s: { padding: '8px', background: '#0a0a0f', color: '#fff', border: '1px solid #333', borderRadius: '4px', width: '100%' } }]], { g: 12 }], e: { '?': 'step', is: 1, t: ['vs', [['tx', 'step 2: email', { fw: 500, fg: '#fff' }], ['in', '', { type: 'email', v: { $: 'email' }, x: ['email', '!'], ph: 'email', s: { padding: '8px', background: '#0a0a0f', color: '#fff', border: '1px solid #333', borderRadius: '4px', width: '100%' } }]], { g: 12 }], e: ['vs', [['tx', 'done!', { fw: 600, fg: '#4f8', fs: 16 }], ['tx', 'thanks for signing up', { fg: '#888' }]], { g: 8 }] } },
-          ['hs', [['bt', 'back', { c: ['step', '-'] }], ['bt', 'next', { c: ['step', '+'] }]], { g: 8, jc: 'fe' }]
+          ['hs', [{ '?': 'step', is: 0, t: ['bt', 'back', { dis: true }], e: ['bt', 'back', { c: ['step', '-'] }] }, ['bt', 'next', { c: ['step', '+'] }]], { g: 8, jc: 'fe' }]
         ], { g: 16 }]
       }),
       reactDemoCode: `function Wizard() {
