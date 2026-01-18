@@ -35,13 +35,21 @@ function createStaticServer(): Promise<{ server: Server; url: string }> {
         // remove query string
         urlPath = urlPath.split('?')[0];
 
-        // default to index.html for root
-        if (urlPath === '/' || urlPath === '/docs/' || urlPath === '/docs') {
-          urlPath = '/docs/index.html';
-        }
+        // mimic deployed structure:
+        // / or /index.html -> docs/index.html
+        // /dist/... -> docs/dist/...
+        // /packages/... -> packages/...
+        let filePath: string;
 
-        // resolve file path relative to project root
-        const filePath = join(PROJECT_ROOT, urlPath);
+        if (urlPath === '/' || urlPath === '/index.html') {
+          filePath = join(PROJECT_ROOT, 'docs/index.html');
+        } else if (urlPath.startsWith('/dist/')) {
+          filePath = join(PROJECT_ROOT, 'docs', urlPath);
+        } else if (urlPath.startsWith('/packages/')) {
+          filePath = join(PROJECT_ROOT, urlPath);
+        } else {
+          filePath = join(PROJECT_ROOT, urlPath);
+        }
 
         // security: prevent directory traversal
         if (!filePath.startsWith(PROJECT_ROOT)) {
@@ -108,7 +116,7 @@ afterAll(async () => {
 
 describe('docsite e2e', () => {
   it('serves index.html', async () => {
-    const res = await fetch(`${baseUrl}/docs/index.html`);
+    const res = await fetch(`${baseUrl}/`);
 
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('text/html');
@@ -119,7 +127,7 @@ describe('docsite e2e', () => {
   });
 
   it('serves docs.js bundle', async () => {
-    const res = await fetch(`${baseUrl}/docs/dist/docs.js`);
+    const res = await fetch(`${baseUrl}/dist/docs.js`);
 
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('javascript');
@@ -140,19 +148,19 @@ describe('docsite e2e', () => {
   });
 
   it('has correct import map paths', async () => {
-    const res = await fetch(`${baseUrl}/docs/index.html`);
+    const res = await fetch(`${baseUrl}/`);
     const html = await res.text();
 
-    // verify import map contains correct relative paths
-    expect(html).toContain('"@tooey/ui": "../packages/ui/dist/tooey.esm.js"');
-    expect(html).toContain('"@tooey/components": "../packages/components/dist/index.esm.js"');
+    // verify import map contains correct relative paths for deployed structure
+    expect(html).toContain('"@tooey/ui": "./packages/ui/dist/tooey.esm.js"');
+    expect(html).toContain('"@tooey/components": "./packages/components/dist/index.esm.js"');
   });
 
   it('does not show loading state when all resources are available', async () => {
-    // verify all required resources exist and are accessible
+    // verify all required resources exist and are accessible (deployed structure)
     const resources = [
-      '/docs/index.html',
-      '/docs/dist/docs.js',
+      '/',
+      '/dist/docs.js',
       '/packages/ui/dist/tooey.esm.js',
       '/packages/components/dist/index.esm.js',
     ];
@@ -171,7 +179,7 @@ describe('docsite e2e', () => {
   });
 
   it('html has app container element', async () => {
-    const res = await fetch(`${baseUrl}/docs/index.html`);
+    const res = await fetch(`${baseUrl}/`);
     const html = await res.text();
 
     // verify app container exists
@@ -179,7 +187,7 @@ describe('docsite e2e', () => {
   });
 
   it('html loads docs.js as module', async () => {
-    const res = await fetch(`${baseUrl}/docs/index.html`);
+    const res = await fetch(`${baseUrl}/`);
     const html = await res.text();
 
     // verify script is loaded as module
@@ -229,7 +237,7 @@ describe('docsite e2e', () => {
   });
 
   it('docs.js bundle has valid imports', async () => {
-    const res = await fetch(`${baseUrl}/docs/dist/docs.js`);
+    const res = await fetch(`${baseUrl}/dist/docs.js`);
     const js = await res.text();
 
     // verify docs.js imports from @tooey/ui and @tooey/components

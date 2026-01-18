@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 /**
  * simple static file server for docsite testing
- * serves from project root so import maps resolve correctly
+ * mimics github pages deployed structure where:
+ * - /index.html serves docs/index.html
+ * - /packages/... serves packages/...
+ * - /dist/... serves docs/dist/...
  */
 
 const http = require('http');
@@ -27,12 +30,30 @@ const MIME_TYPES = {
 const server = http.createServer((req, res) => {
   let urlPath = req.url.split('?')[0];
 
-  // default to docs index
-  if (urlPath === '/' || urlPath === '/docs' || urlPath === '/docs/') {
-    urlPath = '/docs/index.html';
-  }
+  // mimic deployed structure:
+  // / or /index.html -> docs/index.html
+  // /dist/... -> docs/dist/...
+  // /packages/... -> packages/...
+  // /examples/... -> packages/ui/examples/...
+  let filePath;
 
-  const filePath = path.join(ROOT, urlPath);
+  if (urlPath === '/' || urlPath === '/index.html') {
+    filePath = path.join(ROOT, 'docs/index.html');
+  } else if (urlPath.startsWith('/dist/')) {
+    filePath = path.join(ROOT, 'docs', urlPath);
+  } else if (urlPath.startsWith('/packages/')) {
+    filePath = path.join(ROOT, urlPath);
+  } else if (urlPath.startsWith('/examples/')) {
+    filePath = path.join(ROOT, 'packages/ui', urlPath);
+  } else {
+    // fallback: try docs folder first, then root
+    const docsPath = path.join(ROOT, 'docs', urlPath);
+    if (fs.existsSync(docsPath)) {
+      filePath = docsPath;
+    } else {
+      filePath = path.join(ROOT, urlPath);
+    }
+  }
 
   // security: prevent directory traversal
   if (!filePath.startsWith(ROOT)) {
@@ -65,5 +86,6 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/docs/`);
+  console.log(`Server running at http://localhost:${PORT}/`);
+  console.log('Mimics GitHub Pages deployed structure');
 });
