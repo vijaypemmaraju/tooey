@@ -832,6 +832,9 @@ function createHandler(
         actualVal = (itemContext.item as Record<string, unknown>)?.[key];
       }
     }
+    if (isStateRef(actualVal)) {
+      actualVal = resolveValue(actualVal, state);
+    }
     if (op === '!' && val === undefined && event) {
       const target = event.target as HTMLInputElement;
       actualVal = target.type === 'checkbox' ? target.checked : target.value;

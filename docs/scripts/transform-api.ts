@@ -416,7 +416,7 @@ function getExamples(): ExampleData[] {
 }`,
       demoSpec: JSON.stringify({
         s: { n: 0 },
-        r: ['vs', [['tx', { $: 'n' }, { fs: 24, fg: '#0af' }], ['hs', [['bt', '-', { c: ['n', '-'] }], ['bt', '+', { c: ['n', '+'] }]], { g: 8 }]], { g: 16, ai: 'c' }]
+        r: ['vs', [['tx', { $: 'n' }, { fs: 24, fg: '#fa0' }], ['hs', [['bt', '-', { c: ['n', '-'] }], ['bt', '+', { c: ['n', '+'] }]], { g: 8 }]], { g: 16, ai: 'c' }]
       }),
       reactDemoCode: `function Counter() {
   const [n, setN] = React.useState(0);
@@ -470,7 +470,7 @@ function getExamples(): ExampleData[] {
       demoSpec: JSON.stringify({
         s: { txt: '', items: ['buy milk', 'walk dog'] },
         r: ['vs', [
-          ['hs', [['in', '', { v: { $: 'txt' }, x: ['txt', '!'], ph: 'add item...' }], ['bt', '+', { c: ['items', '<', { $: 'txt' }] }]], { g: 8 }],
+          ['hs', [['in', '', { v: { $: 'txt' }, x: ['txt', '!'], ph: 'add item...', s: { flex: '1', padding: '8px', background: '#0a0a0f', color: '#fff', border: '1px solid #333', borderRadius: '4px' } }], ['bt', '+', { c: ['items', '<', { $: 'txt' }] }]], { g: 8 }],
           { m: 'items', a: ['hs', [['tx', '$item', { s: { flex: '1' } }], ['bt', 'x', { c: ['items', 'X', '$index'] }]], { g: 8, p: '8px 0', s: { borderBottom: '1px solid #333' } }] }
         ], { g: 12 }]
       }),
@@ -533,10 +533,10 @@ function getExamples(): ExampleData[] {
       demoSpec: JSON.stringify({
         s: { name: '', email: '', agree: false },
         r: ['vs', [
-          ['vs', [['tx', 'name', { fs: 12, fg: '#888' }], ['in', '', { ph: 'your name', v: { $: 'name' }, x: ['name', '!'] }]], { g: 4 }],
-          ['vs', [['tx', 'email', { fs: 12, fg: '#888' }], ['in', '', { type: 'email', ph: 'you@example.com', v: { $: 'email' }, x: ['email', '!'] }]], { g: 4 }],
+          ['vs', [['tx', 'name', { fs: 12, fg: '#888' }], ['in', '', { ph: 'your name', v: { $: 'name' }, x: ['name', '!'], s: { padding: '8px', background: '#0a0a0f', color: '#fff', border: '1px solid #333', borderRadius: '4px', width: '100%' } }]], { g: 4 }],
+          ['vs', [['tx', 'email', { fs: 12, fg: '#888' }], ['in', '', { type: 'email', ph: 'you@example.com', v: { $: 'email' }, x: ['email', '!'], s: { padding: '8px', background: '#0a0a0f', color: '#fff', border: '1px solid #333', borderRadius: '4px', width: '100%' } }]], { g: 4 }],
           ['hs', [['cb', '', { ch: { $: 'agree' }, x: ['agree', '~'] }], ['tx', 'i agree to terms', { fs: 13 }]], { g: 8, ai: 'c' }],
-          ['bt', 'sign up', { bg: '#0af', fg: '#000', p: '10px 20px', r: 4, s: { border: 'none', cursor: 'pointer' } }]
+          ['bt', 'sign up', { bg: '#fa0', fg: '#000', p: '10px 20px', r: 4, s: { border: 'none', cursor: 'pointer' } }]
         ], { g: 16 }]
       }),
       reactDemoCode: `function Form() {
@@ -603,11 +603,11 @@ function getExamples(): ExampleData[] {
   );
 }`,
       demoSpec: JSON.stringify({
-        s: { c: 20 },
+        s: { c: 20, f: 68 },
         r: ['hs', [
-          ['vs', [['tx', 'celsius', { fs: 12, fg: '#888' }], ['in', '', { type: 'number', v: { $: 'c' }, x: ['c', '!'] }]], { g: 4 }],
-          ['tx', '=', { fs: 24, fg: '#0af' }],
-          ['vs', [['tx', 'fahrenheit', { fs: 12, fg: '#888' }], ['tx', '68', { fs: 16 }]], { g: 4 }]
+          ['vs', [['tx', 'celsius', { fs: 12, fg: '#888' }], ['in', '', { type: 'number', v: { $: 'c' }, x: ['c', '!'], s: { padding: '8px', background: '#0a0a0f', color: '#fff', border: '1px solid #333', borderRadius: '4px', width: '80px' } }]], { g: 4 }],
+          ['tx', '=', { fs: 24, fg: '#fa0' }],
+          ['vs', [['tx', 'fahrenheit', { fs: 12, fg: '#888' }], ['in', '', { type: 'number', v: { $: 'f' }, x: ['f', '!'], s: { padding: '8px', background: '#0a0a0f', color: '#fff', border: '1px solid #333', borderRadius: '4px', width: '80px' } }]], { g: 4 }]
         ], { g: 16, ai: 'c' }]
       }),
       reactDemoCode: `function TempConverter() {
@@ -681,9 +681,9 @@ function getExamples(): ExampleData[] {
         s: { data: [{ name: 'alice', age: 28, role: 'engineer' }, { name: 'bob', age: 34, role: 'designer' }, { name: 'carol', age: 25, role: 'manager' }] },
         r: ['vs', [
           ['tb', [
-            ['th', [['Tr', [['tc', 'name', { fg: '#0af' }], ['tc', 'age', { fg: '#0af' }], ['tc', 'role', { fg: '#0af' }]]]]],
-            ['bd', [{ m: 'data', a: ['Tr', [['Td', '$item.name'], ['Td', '$item.age'], ['Td', '$item.role']]] }]]
-          ]]
+            ['th', [['tr', [['tc', 'name', { fg: '#fa0', s: { textAlign: 'left', padding: '8px', borderBottom: '1px solid #333' } }], ['tc', 'age', { fg: '#fa0', s: { textAlign: 'left', padding: '8px', borderBottom: '1px solid #333' } }], ['tc', 'role', { fg: '#fa0', s: { textAlign: 'left', padding: '8px', borderBottom: '1px solid #333' } }]]]]],
+            ['bd', [{ m: 'data', a: ['tr', [['td', '$item.name', { s: { padding: '8px', borderBottom: '1px solid #333' } }], ['td', '$item.age', { s: { padding: '8px', borderBottom: '1px solid #333' } }], ['td', '$item.role', { s: { padding: '8px', borderBottom: '1px solid #333' } }]]] }]]
+          ], { s: { width: '100%', borderCollapse: 'collapse' } }]
         ], { g: 12 }]
       }),
       reactDemoCode: `function DataTable() {
@@ -731,7 +731,11 @@ function getExamples(): ExampleData[] {
       demoSpec: JSON.stringify({
         s: { tab: 0 },
         r: ['vs', [
-          ['hs', [['bt', 'profile', { c: ['tab', '!', 0] }], ['bt', 'settings', { c: ['tab', '!', 1] }], ['bt', 'about', { c: ['tab', '!', 2] }]], { g: 0, s: { borderBottom: '1px solid #333' } }],
+          ['hs', [
+            { '?': 'tab', is: 0, t: ['bt', 'profile', { c: ['tab', '!', 0], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#fa0', borderBottom: '2px solid #fa0' } }], e: ['bt', 'profile', { c: ['tab', '!', 0], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#666', borderBottom: 'none' } }] },
+            { '?': 'tab', is: 1, t: ['bt', 'settings', { c: ['tab', '!', 1], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#fa0', borderBottom: '2px solid #fa0' } }], e: ['bt', 'settings', { c: ['tab', '!', 1], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#666', borderBottom: 'none' } }] },
+            { '?': 'tab', is: 2, t: ['bt', 'about', { c: ['tab', '!', 2], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#fa0', borderBottom: '2px solid #fa0' } }], e: ['bt', 'about', { c: ['tab', '!', 2], s: { padding: '8px 16px', background: 'transparent', border: 'none', cursor: 'pointer', color: '#666', borderBottom: 'none' } }] }
+          ], { g: 0, s: { borderBottom: '1px solid #333' } }],
           { '?': 'tab', is: 0, t: ['tx', 'user profile content', { p: 16, fg: '#ccc' }], e: { '?': 'tab', is: 1, t: ['tx', 'settings panel', { p: 16, fg: '#ccc' }], e: ['tx', 'about section', { p: 16, fg: '#ccc' }] } }
         ], { g: 0 }]
       }),
@@ -787,7 +791,7 @@ function getExamples(): ExampleData[] {
         r: ['vs', [
           ['bt', 'open modal', { c: ['open', '~'] }],
           { '?': 'open', t: ['dv', [
-            ['dv', [['tx', 'confirm action', { fw: 600, fg: '#fff', fs: 14 }], ['tx', 'are you sure?', { fg: '#888', fs: 12 }], ['bt', 'close', { c: ['open', '~'] }]], { bg: '#1a1a1a', p: 24, r: 8, g: 12, ta: 'c' }]
+            ['dv', [['tx', 'confirm action', { fw: 600, fg: '#fff', fs: 14 }], ['tx', 'are you sure?', { fg: '#888', fs: 12 }], ['bt', 'close', { c: ['open', '~'] }]], { bg: '#1a1a1a', p: 24, r: 8, g: 12, ta: 'center', s: { display: 'flex', flexDirection: 'column', gap: 12 } }]
           ], { pos: 'abs', t: 0, l: 0, w: '100%', h: '100%', bg: 'rgba(0,0,0,0.7)', s: { display: 'flex', alignItems: 'center', justifyContent: 'center' } }] }
         ], { pos: 'rel', h: 150 }]
       }),
@@ -856,11 +860,11 @@ function getExamples(): ExampleData[] {
   );
 }`,
       demoSpec: JSON.stringify({
-        s: { q1: 1, q2: 2 },
+        s: { q1: 1, q2: 2, total: '$95' },
         r: ['vs', [
-          ['hs', [['tx', 'widget', { fg: '#ccc', s: { flex: '1' } }], ['hs', [['bt', '-', { c: ['q1', '-'] }], ['tx', { $: 'q1' }], ['bt', '+', { c: ['q1', '+'] }]], { g: 8, ai: 'c' }], ['tx', '$25', { fg: '#0af', w: 50, ta: 'rt' }]], { jc: 'sb', ai: 'c', p: '8px 0', s: { borderBottom: '1px solid #333' } }],
-          ['hs', [['tx', 'gadget', { fg: '#ccc', s: { flex: '1' } }], ['hs', [['bt', '-', { c: ['q2', '-'] }], ['tx', { $: 'q2' }], ['bt', '+', { c: ['q2', '+'] }]], { g: 8, ai: 'c' }], ['tx', '$35', { fg: '#0af', w: 50, ta: 'rt' }]], { jc: 'sb', ai: 'c', p: '8px 0', s: { borderBottom: '1px solid #333' } }],
-          ['hs', [['tx', 'total:', { fg: '#888' }], ['tx', '$95', { fg: '#4f8', fw: 600 }]], { jc: 'sb', p: '16px 0' }]
+          ['hs', [['tx', 'widget', { fg: '#ccc', s: { flex: '1' } }], ['hs', [['bt', '-', { c: ['q1', '-'] }], ['tx', { $: 'q1' }], ['bt', '+', { c: ['q1', '+'] }]], { g: 8, ai: 'c' }], ['tx', '$25', { fg: '#fa0', w: 50, ta: 'right' }]], { jc: 'sb', ai: 'c', p: '8px 0', s: { borderBottom: '1px solid #333' } }],
+          ['hs', [['tx', 'gadget', { fg: '#ccc', s: { flex: '1' } }], ['hs', [['bt', '-', { c: ['q2', '-'] }], ['tx', { $: 'q2' }], ['bt', '+', { c: ['q2', '+'] }]], { g: 8, ai: 'c' }], ['tx', '$35', { fg: '#fa0', w: 50, ta: 'right' }]], { jc: 'sb', ai: 'c', p: '8px 0', s: { borderBottom: '1px solid #333' } }],
+          ['hs', [['tx', 'total:', { fg: '#888' }], ['tx', { $: 'total' }, { fg: '#4f8', fw: 600 }]], { jc: 'sb', p: '16px 0' }]
         ], { g: 0 }]
       }),
       reactDemoCode: `function Cart() {
@@ -938,9 +942,9 @@ function getExamples(): ExampleData[] {
       demoSpec: JSON.stringify({
         s: { step: 0, name: '', email: '' },
         r: ['vs', [
-          ['hs', [['dv', '', { w: 40, h: 4, bg: '#0af', r: 2 }], ['dv', '', { w: 40, h: 4, bg: '#333', r: 2 }], ['dv', '', { w: 40, h: 4, bg: '#333', r: 2 }]], { g: 4 }],
-          { '?': 'step', is: 0, t: ['vs', [['tx', 'step 1: name', { fw: 500, fg: '#fff' }], ['in', '', { v: { $: 'name' }, x: ['name', '!'], ph: 'your name' }]], { g: 12 }], e: { '?': 'step', is: 1, t: ['vs', [['tx', 'step 2: email', { fw: 500, fg: '#fff' }], ['in', '', { type: 'email', v: { $: 'email' }, x: ['email', '!'], ph: 'email' }]], { g: 12 }], e: ['vs', [['tx', 'done!', { fw: 600, fg: '#4f8', fs: 16 }], ['tx', 'thanks for signing up', { fg: '#888' }]], { g: 8 }] } },
-          ['hs', [['bt', 'back', { c: ['step', '-'] }], ['bt', 'next', { c: ['step', '+'] }]], { g: 8, jc: 'fe' }]
+          ['hs', [['dv', '', { w: 40, h: 4, bg: '#fa0', r: 2 }], ['dv', '', { w: 40, h: 4, bg: '#333', r: 2 }], ['dv', '', { w: 40, h: 4, bg: '#333', r: 2 }]], { g: 4 }],
+          { '?': 'step', is: 0, t: ['vs', [['tx', 'step 1: name', { fw: 500, fg: '#fff' }], ['in', '', { v: { $: 'name' }, x: ['name', '!'], ph: 'your name', s: { padding: '8px', background: '#0a0a0f', color: '#fff', border: '1px solid #333', borderRadius: '4px', width: '100%' } }]], { g: 12 }], e: { '?': 'step', is: 1, t: ['vs', [['tx', 'step 2: email', { fw: 500, fg: '#fff' }], ['in', '', { type: 'email', v: { $: 'email' }, x: ['email', '!'], ph: 'email', s: { padding: '8px', background: '#0a0a0f', color: '#fff', border: '1px solid #333', borderRadius: '4px', width: '100%' } }]], { g: 12 }], e: ['vs', [['tx', 'done!', { fw: 600, fg: '#4f8', fs: 16 }], ['tx', 'thanks for signing up', { fg: '#888' }]], { g: 8 }] } },
+          ['hs', [{ '?': 'step', is: 0, t: ['bt', 'back', { dis: true }], e: ['bt', 'back', { c: ['step', '-'] }] }, ['bt', 'next', { c: ['step', '+'] }]], { g: 8, jc: 'fe' }]
         ], { g: 16 }]
       }),
       reactDemoCode: `function Wizard() {
