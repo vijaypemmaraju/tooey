@@ -14,7 +14,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'node ../scripts/serve.js',
-    url: 'http://localhost:3000/docs/',
+    url: 'http://localhost:3000/',
     reuseExistingServer: !process.env.CI,
     timeout: 10000,
   },
