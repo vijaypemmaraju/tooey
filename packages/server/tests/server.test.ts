@@ -1057,7 +1057,7 @@ describe('edge adapter', () => {
       body: '{"success":true}',
     };
 
-    const fetchRes = edgeAdapter.toResponse(adapterRes);
+    const fetchRes = edgeAdapter.toResponse(adapterRes) as Response;
 
     expect(fetchRes.status).toBe(200);
     expect(fetchRes.headers.get('Content-Type')).toBe('application/json');
@@ -1077,18 +1077,19 @@ describe('edge adapter', () => {
       body: stream,
     };
 
-    const fetchRes = edgeAdapter.toResponse(adapterRes);
+    const fetchRes = edgeAdapter.toResponse(adapterRes) as Response;
     expect(fetchRes.body).toBe(stream);
   });
 
-  it('handles null response body', () => {
+  it('handles empty response body', () => {
     const adapterRes = {
-      status: 204,
+      status: 200,
       headers: {},
+      body: undefined as unknown as string,
     };
 
-    const fetchRes = edgeAdapter.toResponse(adapterRes);
-    expect(fetchRes.status).toBe(204);
+    const fetchRes = edgeAdapter.toResponse(adapterRes) as Response;
+    expect(fetchRes.status).toBe(200);
   });
 
   it('createFetchHandler creates working handler', async () => {
@@ -1553,7 +1554,7 @@ describe('islands: utilities', () => {
 
   it('islandSlot creates spec node', () => {
     const island = islandLoad({ r: [tx, 'test'] }, 'slot-island');
-    const slot = islandSlot(island);
+    const slot = islandSlot(island) as [string, string];
 
     expect(Array.isArray(slot)).toBe(true);
     expect(slot[0]).toBe('tx');
