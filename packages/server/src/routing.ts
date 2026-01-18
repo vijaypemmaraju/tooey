@@ -50,6 +50,12 @@ export interface RtContext {
   loc: Record<string, unknown>;
   /** headers helper */
   hdr: (name: string) => string | undefined;
+  /** response (for middleware to modify) */
+  response: {
+    status?: number;
+    headers?: Record<string, string>;
+    body?: string;
+  };
 }
 
 /** route result (redirect, response, etc) */
@@ -163,7 +169,12 @@ export function createRouter(config: RouterConfig = {}) {
       if (match) {
         const params: Record<string, string> = {};
         route.paramNames.forEach((name, i) => {
-          params[name] = match[i + 1] || '';
+          // decode url-encoded params
+          try {
+            params[name] = decodeURIComponent(match[i + 1] || '');
+          } catch {
+            params[name] = match[i + 1] || '';
+          }
         });
         return { route, params };
       }
@@ -191,6 +202,9 @@ export function createRouter(config: RouterConfig = {}) {
       body: req.body,
       loc: {},
       hdr: (name: string) => req.headers[name.toLowerCase()],
+      response: {
+        headers: {},
+      },
     };
   }
 
@@ -204,20 +218,11 @@ export function createRouter(config: RouterConfig = {}) {
     }
 
     const matched = matchRoute(path, req.method);
-
-    if (!matched) {
-      if (config.notFound) {
-        const ctx = createContext(req, {});
-        const result = await config.notFound(ctx);
-        return resultToResponse(result);
-      }
-      return { status: 404, headers: {}, body: 'not found' };
-    }
-
-    const ctx = createContext(req, matched.params);
+    const ctx = createContext(req, matched?.params || {});
 
     try {
-      // run middleware
+      // run middleware (before route handler)
+      let middlewareHandled = false;
       if (config.mw && config.mw.length > 0) {
         let i = 0;
         const next = async () => {
@@ -226,21 +231,55 @@ export function createRouter(config: RouterConfig = {}) {
           }
         };
         await next();
+
+        // check if middleware set a response (e.g., cors preflight, rate limit)
+        if (ctx.response.body !== undefined && ctx.response.status) {
+          middlewareHandled = true;
+        }
       }
 
+      // if middleware already handled the response, return it
+      if (middlewareHandled) {
+        return {
+          status: ctx.response.status!,
+          headers: ctx.response.headers || {},
+          body: ctx.response.body as string,
+        };
+      }
+
+      // handle 404
+      if (!matched) {
+        if (config.notFound) {
+          const result = await config.notFound(ctx);
+          return mergeHeaders(resultToResponse(result), ctx.response.headers);
+        }
+        return mergeHeaders({ status: 404, headers: {}, body: 'not found' }, ctx.response.headers);
+      }
+
+      // run route handler
       const result = await matched.route.handler(ctx);
-      return resultToResponse(result);
+      return mergeHeaders(resultToResponse(result), ctx.response.headers);
     } catch (err) {
       if (config.onError) {
         const result = config.onError(err as Error, ctx);
-        return resultToResponse(result);
+        return mergeHeaders(resultToResponse(result), ctx.response.headers);
       }
-      return {
+      return mergeHeaders({
         status: 500,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ error: (err as Error).message }),
-      };
+      }, ctx.response.headers);
     }
+  }
+
+  function mergeHeaders(response: AdapterResponse, mwHeaders?: Record<string, string>): AdapterResponse {
+    if (!mwHeaders || Object.keys(mwHeaders).length === 0) {
+      return response;
+    }
+    return {
+      ...response,
+      headers: { ...mwHeaders, ...response.headers },
+    };
   }
 
   function resultToResponse(result: RtResult): AdapterResponse {

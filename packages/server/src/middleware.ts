@@ -9,14 +9,23 @@
  *   nxt - next
  */
 
-import type { MiddlewareContext, MiddlewareHandler, AdapterRequest } from './types.js';
+import type { AdapterRequest } from './types.js';
+import type { RtContext } from './routing.js';
+
+// middleware handler type compatible with router
+export type MwHandler = (ctx: RtContext, next: () => Promise<void>) => Promise<void>;
+
+// helper to get request from context (handles both formats)
+function getRequest(ctx: RtContext): AdapterRequest {
+  return ctx.req;
+}
 
 // ============ middleware composition ============
 
 /**
  * compose multiple middleware into one
  */
-export function compose(...handlers: MiddlewareHandler[]): MiddlewareHandler {
+export function compose(...handlers: MwHandler[]): MwHandler {
   return async (ctx, next) => {
     let index = -1;
 
@@ -48,7 +57,7 @@ export function cors(options: {
   headers?: string[];
   credentials?: boolean;
   maxAge?: number;
-} = {}): MiddlewareHandler {
+} = {}): MwHandler {
   const {
     origin = '*',
     methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -58,7 +67,8 @@ export function cors(options: {
   } = options;
 
   return async (ctx, next) => {
-    const requestOrigin = ctx.request.headers.origin || '';
+    const req = getRequest(ctx);
+    const requestOrigin = req.headers.origin || '';
 
     // determine allowed origin
     let allowedOrigin = '*';
@@ -81,7 +91,7 @@ export function cors(options: {
     }
 
     // handle preflight
-    if (ctx.request.method === 'OPTIONS') {
+    if (req.method === 'OPTIONS') {
       ctx.response.headers['Access-Control-Max-Age'] = String(maxAge);
       ctx.response.status = 204;
       ctx.response.body = '';
@@ -97,8 +107,8 @@ export function cors(options: {
  */
 export function logger(options: {
   format?: 'tiny' | 'short' | 'full';
-  skip?: (ctx: MiddlewareContext) => boolean;
-} = {}): MiddlewareHandler {
+  skip?: (ctx: RtContext) => boolean;
+} = {}): MwHandler {
   const { format = 'short', skip } = options;
 
   return async (ctx, next) => {
@@ -107,8 +117,9 @@ export function logger(options: {
       return;
     }
 
+    const req = getRequest(ctx);
     const start = Date.now();
-    const { method, url } = ctx.request;
+    const { method, url } = req;
 
     await next();
 
@@ -125,7 +136,7 @@ export function logger(options: {
       case 'full':
         console.log(
           `[${new Date().toISOString()}] ${method} ${url} ${status} ${ms}ms`,
-          `\n  headers: ${JSON.stringify(ctx.request.headers)}`
+          `\n  headers: ${JSON.stringify(req.headers)}`
         );
         break;
     }
@@ -141,14 +152,14 @@ export function rateLimit(options: {
   /** window size in ms */
   window?: number;
   /** key extractor (default: ip) */
-  keyFn?: (ctx: MiddlewareContext) => string;
+  keyFn?: (ctx: RtContext) => string;
   /** error message */
   message?: string;
-} = {}): MiddlewareHandler {
+} = {}): MwHandler {
   const {
     max = 100,
     window = 60000,
-    keyFn = (ctx) => ctx.request.headers['x-forwarded-for'] || 'unknown',
+    keyFn = (ctx) => getRequest(ctx).headers['x-forwarded-for'] || 'unknown',
     message = 'too many requests',
   } = options;
 
@@ -199,13 +210,14 @@ export function rateLimit(options: {
 export function compress(options: {
   threshold?: number;
   encodings?: string[];
-} = {}): MiddlewareHandler {
+} = {}): MwHandler {
   const { threshold = 1024, encodings = ['gzip', 'deflate', 'br'] } = options;
 
   return async (ctx, next) => {
     await next();
 
-    const acceptEncoding = ctx.request.headers['accept-encoding'] || '';
+    const req = getRequest(ctx);
+    const acceptEncoding = req.headers['accept-encoding'] || '';
     const body = ctx.response.body;
 
     if (typeof body !== 'string' || body.length < threshold) {
@@ -218,7 +230,7 @@ export function compress(options: {
         ctx.response.headers = ctx.response.headers || {};
         ctx.response.headers['Content-Encoding'] = encoding;
         // note: actual compression should be done by the adapter
-        ctx.locals._compress = encoding;
+        ctx.loc._compress = encoding;
         break;
       }
     }
@@ -234,7 +246,7 @@ export function securityHeaders(options: {
   xssFilter?: boolean;
   frameOptions?: 'DENY' | 'SAMEORIGIN' | false;
   csp?: string | false;
-} = {}): MiddlewareHandler {
+} = {}): MwHandler {
   const {
     hsts = true,
     noSniff = true,
@@ -280,12 +292,13 @@ export function securityHeaders(options: {
 export function bodyParser(options: {
   maxSize?: number;
   types?: string[];
-} = {}): MiddlewareHandler {
+} = {}): MwHandler {
   const { maxSize = 1024 * 1024, types = ['application/json', 'application/x-www-form-urlencoded'] } = options;
 
   return async (ctx, next) => {
-    const contentType = ctx.request.headers['content-type'] || '';
-    const contentLength = parseInt(ctx.request.headers['content-length'] || '0', 10);
+    const req = getRequest(ctx);
+    const contentType = req.headers['content-type'] || '';
+    const contentLength = parseInt(req.headers['content-length'] || '0', 10);
 
     if (contentLength > maxSize) {
       ctx.response.status = 413;
@@ -301,7 +314,7 @@ export function bodyParser(options: {
 
     // body should already be parsed by adapter
     // this middleware just validates and provides typed access
-    ctx.locals.body = ctx.request.body;
+    ctx.loc.body = ctx.body;
 
     await next();
   };
@@ -310,30 +323,39 @@ export function bodyParser(options: {
 // ============ middleware context helpers ============
 
 /**
- * create middleware context from adapter request
+ * create context from adapter request (for testing/middleware)
  */
-export function createContext(req: AdapterRequest): MiddlewareContext {
+export function createContext(req: AdapterRequest): RtContext {
+  const urlObj = new URL(req.url, 'http://localhost');
+  const qry: Record<string, string> = {};
+  urlObj.searchParams.forEach((v, k) => {
+    qry[k] = v;
+  });
+
   return {
-    request: req,
+    req,
+    prm: {},
+    qry,
+    body: undefined,
+    loc: {},
+    hdr: (name: string) => req.headers[name.toLowerCase()],
     response: {
       status: 200,
       headers: {},
     },
-    params: {},
-    locals: {},
   };
 }
 
 /**
  * get typed locals from context
  */
-export function getLocal<T>(ctx: MiddlewareContext, key: string): T | undefined {
-  return ctx.locals[key] as T | undefined;
+export function getLocal<T>(ctx: RtContext, key: string): T | undefined {
+  return ctx.loc[key] as T | undefined;
 }
 
 /**
  * set locals on context
  */
-export function setLocal<T>(ctx: MiddlewareContext, key: string, value: T): void {
-  ctx.locals[key] = value;
+export function setLocal<T>(ctx: RtContext, key: string, value: T): void {
+  ctx.loc[key] = value;
 }

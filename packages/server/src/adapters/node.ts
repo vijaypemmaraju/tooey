@@ -199,7 +199,7 @@ export async function serve(
   options: { port?: number; host?: string } = {}
 ): Promise<{ url: string; close: () => Promise<void> }> {
   const { createServer } = await import('http');
-  const port = options.port || 3000;
+  const port = options.port ?? 3000;
   const host = options.host || 'localhost';
 
   const httpHandler = createHttpHandler(handler);
@@ -208,7 +208,10 @@ export async function serve(
     const server = createServer(httpHandler);
 
     server.listen(port, host, () => {
-      const url = `http://${host}:${port}`;
+      // get actual port (important when port 0 is used for random assignment)
+      const addr = server.address();
+      const actualPort = typeof addr === 'object' && addr ? addr.port : port;
+      const url = `http://${host}:${actualPort}`;
       console.log(`[tooey/server] listening on ${url}`);
 
       resolve({

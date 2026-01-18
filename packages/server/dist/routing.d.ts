@@ -36,6 +36,12 @@ export interface RtContext {
     loc: Record<string, unknown>;
     /** headers helper */
     hdr: (name: string) => string | undefined;
+    /** response (for middleware to modify) */
+    response: {
+        status?: number;
+        headers?: Record<string, string>;
+        body?: string;
+    };
 }
 /** route result (redirect, response, etc) */
 export type RtResult = {
