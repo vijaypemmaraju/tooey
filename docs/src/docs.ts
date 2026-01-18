@@ -2,6 +2,7 @@
  * tooey documentation site
  * demonstrates the full tooey ecosystem: signals, computed, effects, plugins, theming, function components
  * now also demonstrates advanced features: refs, context, portals, fragments, memo, devtools
+ * now also demonstrates @tooey/components - shadcn-inspired component library
  */
 
 import {
@@ -14,6 +15,11 @@ import {
   // types
   type TooeySpec, type NodeSpec, type Props, type TooeyPlugin, type ProviderNode, type PortalNode
 } from '@tooey/ui';
+// shadcn-inspired components from @tooey/components
+import {
+  Bt, Bg, Al, AlT, AlD, Pg, Sp, Av,
+  shadcnTheme
+} from '@tooey/components';
 import { API_DATA, searchAPI, type SearchResult, type ApiItem } from './api-data';
 
 // ============================================================================
@@ -165,7 +171,7 @@ const ApiDetail = (props: { item: ApiItem; type: string }): NodeSpec => {
 // pages
 // ============================================================================
 
-type Page = 'home' | 'core-functions' | 'instance-methods' | 'components' | 'props' | 'events' | 'control-flow' | 'theming' | 'plugins' | 'function-components' | 'error-boundaries' | 'types' | 'examples' | 'advanced-features';
+type Page = 'home' | 'core-functions' | 'instance-methods' | 'components' | 'props' | 'events' | 'control-flow' | 'theming' | 'plugins' | 'function-components' | 'error-boundaries' | 'types' | 'examples' | 'advanced-features' | 'component-library';
 
 const pages: Record<Page, () => NodeSpec> = {
   'home': () => [vs, [
@@ -364,6 +370,116 @@ const app = hy(container, spec);` })
       Code({ code: `render(el, spec, { plugins: [devtools({ name: 'my-app' })] });
 // console: window.__TOOEY_DEVTOOLS__.getState()` })
     ])
+  ], { cls: 'space-y-4' }],
+
+  'component-library': () => [vs, [
+    Section({ title: '@tooey/components', subtitle: 'shadcn-inspired component library for tooey' }),
+    // intro card
+    Card({}, [
+      [tx, 'a collection of pre-built, beautifully designed components inspired by shadcn/ui. includes buttons, cards, badges, alerts, progress bars, and more - all optimized for token efficiency.', { cls: 'text-text-secondary text-sm block mb-4' }],
+      [hs, [
+        [Bg, [[tx, 'beta']], { variant: 'secondary' }],
+        [Bg, [[tx, '~10kb']], { variant: 'outline' }],
+        [Bg, [[tx, 'token-efficient']], {}]
+      ], { cls: 'gap-2 flex flex-wrap' }]
+    ]),
+    // buttons
+    Card({}, [
+      [hs, [[tx, 'buttons', { cls: 'text-accent text-xs uppercase' }], [tx, 'Bt', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, '6 variants (default, destructive, outline, secondary, ghost, link) and 4 sizes', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      [hs, [
+        [Bt, '', { label: 'default' }],
+        [Bt, '', { label: 'destructive', variant: 'destructive' }],
+        [Bt, '', { label: 'outline', variant: 'outline' }],
+        [Bt, '', { label: 'secondary', variant: 'secondary' }],
+        [Bt, '', { label: 'ghost', variant: 'ghost' }],
+        [Bt, '', { label: 'link', variant: 'link' }]
+      ], { cls: 'gap-2 flex flex-wrap' }],
+      Code({ code: `[Bt, '', { label: 'click me', variant: 'outline' }]` })
+    ]),
+    // badges
+    Card({}, [
+      [hs, [[tx, 'badges', { cls: 'text-accent text-xs uppercase' }], [tx, 'Bg', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, '4 variants for labels, tags, and status indicators', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      [hs, [
+        [Bg, '', { label: 'default' }],
+        [Bg, '', { label: 'secondary', variant: 'secondary' }],
+        [Bg, '', { label: 'destructive', variant: 'destructive' }],
+        [Bg, '', { label: 'outline', variant: 'outline' }]
+      ], { cls: 'gap-2 flex flex-wrap' }],
+      Code({ code: `[Bg, '', { label: 'new', variant: 'secondary' }]` })
+    ]),
+    // alerts
+    Card({}, [
+      [hs, [[tx, 'alerts', { cls: 'text-accent text-xs uppercase' }], [tx, 'Al AlT AlD', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'notification messages with title and description', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      [Al, [
+        [AlT, [[tx, 'heads up!']]],
+        [AlD, [[tx, 'you can use these components to build beautiful uis']]]
+      ]],
+      [dv, '', { h: 8 }],
+      [Al, [
+        [AlT, [[tx, 'error']]],
+        [AlD, [[tx, 'something went wrong']]]
+      ], { variant: 'destructive' }],
+      Code({ code: `[Al, [[AlT, [[tx, 'title']]], [AlD, [[tx, 'description']]]], { variant: 'destructive' }]` })
+    ]),
+    // progress
+    Card({}, [
+      [hs, [[tx, 'progress', { cls: 'text-accent text-xs uppercase' }], [tx, 'Pg', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'progress bar with customizable value and max', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      [vs, [
+        [Pg, '', { value: 25 }],
+        [Pg, '', { value: 50 }],
+        [Pg, '', { value: 75 }]
+      ], { cls: 'gap-2' }],
+      Code({ code: `[Pg, '', { value: 75, max: 100 }]` })
+    ]),
+    // avatar
+    Card({}, [
+      [hs, [[tx, 'avatar', { cls: 'text-accent text-xs uppercase' }], [tx, 'Av', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'user avatar with image support and fallback initials', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      [hs, [
+        [Av, '', { fallback: 'JD' }],
+        [Av, '', { fallback: 'AB', w: 48 }],
+        [Av, '', { fallback: '?', w: 32 }]
+      ], { cls: 'gap-2 items-center flex' }],
+      Code({ code: `[Av, '', { fallback: 'JD', w: 48 }]` })
+    ]),
+    // separator
+    Card({}, [
+      [hs, [[tx, 'separator', { cls: 'text-accent text-xs uppercase' }], [tx, 'Sp', { cls: 'text-success font-mono text-sm' }]], { cls: 'gap-2 items-center flex mb-2' }],
+      [tx, 'divider line - horizontal or vertical', { cls: 'text-text-secondary text-sm mb-3 block' }],
+      [vs, [
+        [tx, 'content above', { cls: 'text-text-secondary text-sm' }],
+        [Sp],
+        [tx, 'content below', { cls: 'text-text-secondary text-sm' }]
+      ], { cls: 'gap-2' }],
+      Code({ code: `[Sp]  // or [Sp, '', { orientation: 'vertical' }]` })
+    ]),
+    // available components
+    Card({}, [
+      [tx, 'all available components', { cls: 'text-accent text-xs uppercase mb-2 block' }],
+      [gr, [
+        [vs, [[tx, 'layout', { cls: 'text-success text-xs uppercase' }], [tx, 'Cd CdH CdT CdD CdC CdF', { cls: 'text-text-primary font-mono text-sm' }]], { cls: 'gap-1' }],
+        [vs, [[tx, 'form', { cls: 'text-success text-xs uppercase' }], [tx, 'Ip Ta Sl Cb Rg RgI Lb Sw', { cls: 'text-text-primary font-mono text-sm' }]], { cls: 'gap-1' }],
+        [vs, [[tx, 'feedback', { cls: 'text-success text-xs uppercase' }], [tx, 'Al AlT AlD Bg Pg Sk', { cls: 'text-text-primary font-mono text-sm' }]], { cls: 'gap-1' }],
+        [vs, [[tx, 'overlay', { cls: 'text-success text-xs uppercase' }], [tx, 'Dg DgO DgC DgH DgT DgD DgF', { cls: 'text-text-primary font-mono text-sm' }]], { cls: 'gap-1' }],
+        [vs, [[tx, 'navigation', { cls: 'text-success text-xs uppercase' }], [tx, 'Tb TbL TbT TbC Ac AcI AcT AcC', { cls: 'text-text-primary font-mono text-sm' }]], { cls: 'gap-1' }],
+        [vs, [[tx, 'misc', { cls: 'text-success text-xs uppercase' }], [tx, 'Av Sp Tt Dd DdT DdM DdI', { cls: 'text-text-primary font-mono text-sm' }]], { cls: 'gap-1' }]
+      ], { cols: 3, g: 16 }]
+    ]),
+    // installation
+    Card({}, [
+      [tx, 'installation', { cls: 'text-accent text-xs uppercase mb-2 block' }],
+      Code({ code: `npm install @tooey/components
+
+import { Bt, Cd, Bg, Al, shadcnTheme } from '@tooey/components';
+import { createTooey } from '@tooey/ui';
+
+const tooey = createTooey({ theme: shadcnTheme });
+tooey.render(el, { r: [Bt, '', { label: 'hello' }] });` })
+    ])
   ], { cls: 'space-y-4' }]
 };
 
@@ -380,7 +496,8 @@ const navItems: Array<{ label: string; page: Page }> = [
   { label: 'components', page: 'components' }, { label: 'props', page: 'props' }, { label: 'events & ops', page: 'events' },
   { label: 'control flow', page: 'control-flow' }, { label: 'theming', page: 'theming' }, { label: 'plugins', page: 'plugins' },
   { label: 'function components', page: 'function-components' }, { label: 'error boundaries', page: 'error-boundaries' },
-  { label: 'advanced features', page: 'advanced-features' }, { label: 'types', page: 'types' }, { label: 'examples', page: 'examples' }
+  { label: 'advanced features', page: 'advanced-features' }, { label: 'types', page: 'types' }, { label: 'examples', page: 'examples' },
+  { label: '@tooey/components', page: 'component-library' }
 ];
 
 // ============================================================================
